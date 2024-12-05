@@ -1,5 +1,5 @@
 <h1 align="center" style="margin: 30px 0 30px; font-weight: bold; font-size: 30px">RuoYi-Go</h1>
-<h4 align="center">基于Go+Gin+Gorm实现的<p style="margin: 0, 10px; font-weight: bold; font-size: 20px">若依<p>服务端脚手架</h4>
+<h4 align="center">基于Go+Gin+Gorm实现的若依服务端脚手架</h4>
 
 ## 平台简介
 
