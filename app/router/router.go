@@ -24,15 +24,16 @@ func Register(server *gin.Engine) {
 	// 已授权并且不需要记录操作日志
 	api = server.Group("/api", middleware.AuthMiddleware())
 	{
-		api.GET("/getInfo", (&controller.AuthController{}).GetInfo)
-		api.GET("/getRouters", (&controller.AuthController{}).GetRouters)
+		api.GET("/getInfo", (&controller.AuthController{}).GetInfo)       // 获取用户信息
+		api.GET("/getRouters", (&controller.AuthController{}).GetRouters) // 获取路由信息
 
 		// 系统管理
-		api.GET("/system/user/deptTree", (&systemcontroller.UserController{}).DeptTree)                      // 获取部门树列表
-		api.GET("/system/user/list", (&systemcontroller.UserController{}).List)                              // 获取用户列表
-		api.GET("/system/user/profile", (&systemcontroller.UserController{}).GetProfile)                     // 获取用户信息
-		api.PUT("/system/user/profile", (&systemcontroller.UserController{}).UpdateProfile)                  // 更新个人信息
-		api.PUT("/system/user/profile/updatePwd", (&systemcontroller.UserController{}).UserProfileUpdatePwd) // 更新个人密码
+		api.GET("/system/user/profile", (&systemcontroller.UserController{}).GetProfile)                     // 个人信息
+		api.PUT("/system/user/profile", (&systemcontroller.UserController{}).UpdateProfile)                  // 修改用户
+		api.PUT("/system/user/profile/updatePwd", (&systemcontroller.UserController{}).UserProfileUpdatePwd) // 重置密码
+
+		api.GET("/system/user/deptTree", (&systemcontroller.UserController{}).DeptTree) // 获取部门树列表
+		api.GET("/system/user/list", (&systemcontroller.UserController{}).List)         // 获取用户列表
 
 		api.GET("/system/role/list", (&systemcontroller.RoleController{}).List) // 获取角色列表
 		api.GET("/system/menu/list", (&systemcontroller.MenuController{}).List) // 获取菜单列表
@@ -42,8 +43,8 @@ func Register(server *gin.Engine) {
 		api.GET("/system/dict/type/list", (&systemcontroller.DictTypeController{}).List)           // 获取字典类型列表
 		api.GET("/system/dict/data/type/:dictType", (&systemcontroller.DictDataController{}).Type) // 根据字典类型查询字典数据
 
-		api.GET("/system/config/list", (&systemcontroller.ConfigController{}).List)                      // 获取参数列表
-		api.GET("/system/config/configKey/:configKey", (&systemcontroller.ConfigController{}).ConfigKey) // 根据配置key获取配置值
+		api.GET("/system/config/list", (&systemcontroller.ConfigController{}).List)                      // 获取参数配置列表
+		api.GET("/system/config/configKey/:configKey", (&systemcontroller.ConfigController{}).ConfigKey) // 根据参数键名查询参数值
 
 		// 日志管理
 		api.GET("/monitor/operlog/list", (&monitorcontroller.OperlogController{}).List)       // 获取操作日志列表
