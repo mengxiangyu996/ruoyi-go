@@ -1,4 +1,4 @@
-package controller
+package systemcontroller
 
 import (
 	"ruoyi-go/app/service"
@@ -11,7 +11,7 @@ import (
 type DictDataController struct{}
 
 // 根据字典类型查询字典数据
-func (*DictDataController) GetDictDataByDictType(ctx *gin.Context) {
+func (*DictDataController) Type(ctx *gin.Context) {
 
 	dictType := ctx.Param("dictType")
 

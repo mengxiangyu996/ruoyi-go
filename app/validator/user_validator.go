@@ -8,7 +8,7 @@ import (
 )
 
 // 更新个人资料验证
-func UpdateUserProfileValidator(param dto.UpdateUserProfile) error {
+func UpdateUserProfileValidator(param dto.UpdateProfile) error {
 
 	if param.NickName == "" {
 		return errors.New("请输入用户昵称")
@@ -26,7 +26,7 @@ func UpdateUserProfileValidator(param dto.UpdateUserProfile) error {
 }
 
 // 更新个人密码验证
-func UpdateUserProfilePasswordValidator(param dto.UpdateUserProfilePassword) error {
+func UpdateUserProfilePasswordValidator(param dto.UserProfileUpdatePwd) error {
 
 	if param.OldPassword == "" {
 		return errors.New("请输入旧密码")

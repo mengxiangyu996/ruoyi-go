@@ -8,10 +8,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type DictController struct{}
+type DictTypeController struct{}
 
 // 字典类型列表
-func (*DictController) List(ctx *gin.Context) {
+func (*DictTypeController) List(ctx *gin.Context) {
 
 	var param dto.DictTypeRequest
 

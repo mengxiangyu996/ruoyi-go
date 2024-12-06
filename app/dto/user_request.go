@@ -31,7 +31,7 @@ type UpdateUser struct {
 }
 
 // 修改个人信息
-type UpdateUserProfile struct {
+type UpdateProfile struct {
 	NickName    string `json:"nickName"`
 	Email       string `json:"email"`
 	Phonenumber string `json:"phonenumber"`
@@ -39,7 +39,7 @@ type UpdateUserProfile struct {
 }
 
 // 更新个人密码
-type UpdateUserProfilePassword struct {
+type UserProfileUpdatePwd struct {
 	OldPassword string `query:"oldPassword" form:"oldPassword"`
 	NewPassword string `query:"newPassword" form:"newPassword"`
 }

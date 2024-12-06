@@ -1,13 +1,13 @@
 package middleware
 
 import (
+	permsmap "ruoyi-go/app/router/perms-map"
 	"ruoyi-go/app/service"
 	"ruoyi-go/app/token"
 	"ruoyi-go/common/types/constant"
 	statusCode "ruoyi-go/common/types/status-code"
 	"ruoyi-go/common/utils"
 	"ruoyi-go/framework/response"
-	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -40,18 +40,20 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		if user.Status != constant.NORMAL_STATUS {
-			response.NewError().SetCode(statusCode.Unauthorized).SetMsg("用户被禁用").Json(ctx)
+			response.NewError().SetCode(601).SetMsg("用户被禁用").Json(ctx)
 			ctx.Abort()
 			return
 		}
 
-		// 获取用户权限
-		perms := (&service.MenuService{}).GetPermsByUserId(user.UserId)
-		perm := strings.ReplaceAll(strings.ReplaceAll(ctx.Request.URL.Path, "/api/", ""), "/", ":")
-		if utils.Contains(perms, perm) {
-			response.NewError().SetCode(statusCode.Unauthorized).Json(ctx)
-			ctx.Abort()
-			return
+		// 去路由权限映射表中查询权限
+		perm := permsmap.HasPermi(ctx.Request.Method + ":" + ctx.FullPath())
+		if perm != "" {
+			// 获取用户权限
+			perms := (&service.MenuService{}).GetPermsByUserId(user.UserId)
+			// 查询用户是否拥有权限
+			if !utils.Contains(perms, perm) {
+				response.NewError().SetCode(601).SetMsg("权限不足").Json(ctx)
+			}
 		}
 
 		ctx.Next()

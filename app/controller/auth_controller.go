@@ -97,7 +97,7 @@ func (*AuthController) Login(ctx *gin.Context) {
 }
 
 // 获取授权信息
-func (*AuthController) GetAuthInfo(ctx *gin.Context) {
+func (*AuthController) GetInfo(ctx *gin.Context) {
 
 	loginUser, _ := token.GetLoginUser(ctx)
 
@@ -123,7 +123,7 @@ func (*AuthController) GetAuthInfo(ctx *gin.Context) {
 }
 
 // 获取授权路由
-func (*AuthController) GetRoutes(ctx *gin.Context) {
+func (*AuthController) GetRouters(ctx *gin.Context) {
 
 	loginUser, _ := token.GetLoginUser(ctx)
 

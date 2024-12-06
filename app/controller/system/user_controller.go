@@ -7,6 +7,7 @@ import (
 	"ruoyi-go/app/validator"
 	"ruoyi-go/common/password"
 	"ruoyi-go/framework/response"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -48,8 +49,22 @@ func (*UserController) List(ctx *gin.Context) {
 	response.NewSuccess().SetPageData(users, total).Json(ctx)
 }
 
+// 获取用户详情
+func (*UserController) Query(ctx *gin.Context) {
+
+	userId, _ := strconv.Atoi(ctx.Param("userId"))
+
+	response := response.NewSuccess()
+
+	if userId > 0 {
+		
+	}
+
+	response.Json(ctx)
+}
+
 // 个人信息
-func (*UserController) GetUserProfile(ctx *gin.Context) {
+func (*UserController) GetProfile(ctx *gin.Context) {
 
 	loginUser, _ := token.GetLoginUser(ctx)
 
@@ -81,9 +96,9 @@ func (*UserController) GetUserProfile(ctx *gin.Context) {
 }
 
 // 修改个人信息
-func (*UserController) UpdateUserProfile(ctx *gin.Context) {
+func (*UserController) UpdateProfile(ctx *gin.Context) {
 
-	var param dto.UpdateUserProfile
+	var param dto.UpdateProfile
 
 	if err := ctx.ShouldBindJSON(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
@@ -112,9 +127,9 @@ func (*UserController) UpdateUserProfile(ctx *gin.Context) {
 }
 
 // 修改个人密码
-func (*UserController) UpdateUserProfilePassword(ctx *gin.Context) {
+func (*UserController) UserProfileUpdatePwd(ctx *gin.Context) {
 
-	var param dto.UpdateUserProfilePassword
+	var param dto.UserProfileUpdatePwd
 
 	if err := ctx.ShouldBindQuery(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
