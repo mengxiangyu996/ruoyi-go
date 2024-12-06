@@ -13,13 +13,11 @@ type Response struct {
 	Data map[string]interface{} `json:"-"`
 }
 
-type OperationType int
-
 // 初始化成功响应
 func NewSuccess() *Response {
 
 	return &Response{
-		
+
 		Code: statusCode.Success,
 		Msg:  statusCode.GetMessage(statusCode.Success),
 		Data: make(map[string]interface{}),
