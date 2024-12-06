@@ -10,7 +10,7 @@ import (
 type PostService struct{}
 
 // 岗位列表
-func (s *PostService) GetPostList(param dto.PostListRequest) ([]dto.PostListResponse, int) {
+func (s *PostService) GetPostList(param dto.PostListRequest, isPaging bool) ([]dto.PostListResponse, int) {
 
 	var count int64
 	posts := make([]dto.PostListResponse, 0)
@@ -29,9 +29,27 @@ func (s *PostService) GetPostList(param dto.PostListRequest) ([]dto.PostListResp
 		query.Where("status = ?", param.Status)
 	}
 
-	query.Count(&count).Offset((param.PageNum - 1) * param.PageSize).Limit(param.PageSize).Find(&posts)
+	if isPaging {
+		query.Count(&count).Offset((param.PageNum - 1) * param.PageSize).Limit(param.PageSize)
+	}
+
+	query.Find(&posts)
 
 	return posts, int(count)
+}
+
+// 根据用户id查询岗位id集合
+func (s *PostService) GetPostIdsByUserId(userId int) []int {
+
+	var postIds []int
+
+	dal.Gorm.Model(model.SysPost{}).
+		Joins("JOIN sys_user_post ON sys_user_post.post_id = sys_post.post_id").
+		Where("sys_user_post.user_id = ? AND sys_post.status = ?", userId, constant.NORMAL_STATUS).
+		Pluck("sys_post.post_id", &postIds)
+
+	return postIds
+
 }
 
 // 根据用户id查询角色名

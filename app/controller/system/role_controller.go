@@ -20,7 +20,7 @@ func (*RoleController) List(ctx *gin.Context) {
 		return
 	}
 
-	roles, total := (&service.RoleService{}).GetRoleList(param)
+	roles, total := (&service.RoleService{}).GetRoleList(param, true)
 
 	response.NewSuccess().SetPageData(roles, total).Json(ctx)
 }

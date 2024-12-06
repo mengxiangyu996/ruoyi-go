@@ -34,6 +34,9 @@ func Register(server *gin.Engine) {
 
 		api.GET("/system/user/deptTree", (&systemcontroller.UserController{}).DeptTree) // 获取部门树列表
 		api.GET("/system/user/list", (&systemcontroller.UserController{}).List)         // 获取用户列表
+		api.GET("/system/user/", (&systemcontroller.UserController{}).Detail)           // 根据用户编号获取详细信息
+		api.GET("/system/user/:userId", (&systemcontroller.UserController{}).Detail)    // 根据用户编号获取详细信息
+		api.POST("/system/user", (&systemcontroller.UserController{}).Add)              // 新增用户
 
 		api.GET("/system/role/list", (&systemcontroller.RoleController{}).List) // 获取角色列表
 		api.GET("/system/menu/list", (&systemcontroller.MenuController{}).List) // 获取菜单列表

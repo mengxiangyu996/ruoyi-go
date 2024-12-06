@@ -8,8 +8,62 @@ import (
 
 type UserService struct{}
 
-// 更新个人资料
-func (s *UserService) UpdateUser(param dto.UpdateUser) error {
+// 新增用户
+func (s *UserService) CreateUser(param dto.SaveUser, roleIds, postIds []int) error {
+
+	tx := dal.Gorm.Begin()
+
+	user := model.SysUser{
+		DeptId:      param.DeptId,
+		NickName:    param.NickName,
+		UserType:    param.UserType,
+		Email:       param.Email,
+		Phonenumber: param.Phonenumber,
+		Sex:         param.Sex,
+		Avatar:      param.Avatar,
+		Password:    param.Password,
+		LoginIP:     param.LoginIP,
+		LoginDate:   param.LoginDate,
+		Status:      param.Status,
+		CreateBy:    param.CreateBy,
+		Remark:      param.Remark,
+	}
+
+	if err := tx.Model(model.SysUser{}).Create(&user).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if len(roleIds) > 0 {
+		for _, roleId := range roleIds {
+			if err := tx.Model(model.SysUserRole{}).Create(&model.SysUserRole{
+				UserId: user.UserId,
+				RoleId: roleId,
+			}).Error; err != nil {
+				tx.Rollback()
+				return err
+			}
+		}
+	}
+
+	if len(postIds) > 0 {
+		for _, postId := range postIds {
+			if err := tx.Model(model.SysUserPost{}).Create(&model.SysUserPost{
+				UserId: user.UserId,
+				PostId: postId,
+			}).Error; err != nil {
+				tx.Rollback()
+				return err
+			}
+		}
+	}
+
+	return tx.Commit().Error
+}
+
+// 更新用户
+func (s *UserService) UpdateUser(param dto.SaveUser) error {
+
 	return dal.Gorm.Model(model.SysUser{}).Where("user_id = ?", param.UserId).Updates(&model.SysUser{
 		DeptId:      param.DeptId,
 		NickName:    param.NickName,
@@ -22,6 +76,8 @@ func (s *UserService) UpdateUser(param dto.UpdateUser) error {
 		LoginIP:     param.LoginIP,
 		LoginDate:   param.LoginDate,
 		Status:      param.Status,
+		UpdateBy:    param.UpdateBy,
+		Remark:      param.Remark,
 	}).Error
 }
 
@@ -89,6 +145,52 @@ func (s *UserService) GetUserByUsername(userName string) dto.UserTokenResponse {
 		).
 		Joins("LEFT JOIN sys_dept ON sys_user.dept_id = sys_dept.dept_id").
 		Where("sys_user.user_name = ?", userName).
+		Last(&user)
+
+	return user
+}
+
+// 根据邮箱查询用户信息
+func (s *UserService) GetUserByEmail(email string) dto.UserTokenResponse {
+
+	var user dto.UserTokenResponse
+
+	dal.Gorm.Model(model.SysUser{}).
+		Select(
+			"sys_user.user_id",
+			"sys_user.dept_id",
+			"sys_user.user_name",
+			"sys_user.nick_name",
+			"sys_user.user_type",
+			"sys_user.password",
+			"sys_user.status",
+			"sys_dept.dept_name",
+		).
+		Joins("LEFT JOIN sys_dept ON sys_user.dept_id = sys_dept.dept_id").
+		Where("sys_user.email = ?", email).
+		Last(&user)
+
+	return user
+}
+
+// 根据手机号码查询用户信息
+func (s *UserService) GetUserByPhonenumber(phonenumber string) dto.UserTokenResponse {
+
+	var user dto.UserTokenResponse
+
+	dal.Gorm.Model(model.SysUser{}).
+		Select(
+			"sys_user.user_id",
+			"sys_user.dept_id",
+			"sys_user.user_name",
+			"sys_user.nick_name",
+			"sys_user.user_type",
+			"sys_user.password",
+			"sys_user.status",
+			"sys_dept.dept_name",
+		).
+		Joins("LEFT JOIN sys_dept ON sys_user.dept_id = sys_dept.dept_id").
+		Where("sys_user.phonenumber = ?", phonenumber).
 		Last(&user)
 
 	return user

@@ -20,7 +20,7 @@ func (*PostController) List(ctx *gin.Context) {
 		return
 	}
 
-	posts, total := (&service.PostService{}).GetPostList(param)
+	posts, total := (&service.PostService{}).GetPostList(param, true)
 
 	response.NewSuccess().SetPageData(posts, total).Json(ctx)
 }

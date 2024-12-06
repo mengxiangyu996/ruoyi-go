@@ -10,7 +10,7 @@ import (
 type RoleService struct{}
 
 // 获取角色列表
-func (s *RoleService) GetRoleList(param dto.RoleListRequest) ([]dto.RoleListResponse, int) {
+func (s *RoleService) GetRoleList(param dto.RoleListRequest, isPaging bool) ([]dto.RoleListResponse, int) {
 
 	var count int64
 	roles := make([]dto.RoleListResponse, 0)
@@ -33,7 +33,11 @@ func (s *RoleService) GetRoleList(param dto.RoleListRequest) ([]dto.RoleListResp
 		query = query.Where("sys_user.create_time BETWEEN ? AND ?", param.BeginTime, param.EndTime)
 	}
 
-	query.Count(&count).Offset((param.PageNum - 1) * param.PageSize).Limit(param.PageSize).Find(&roles)
+	if isPaging {
+		query.Count(&count).Offset((param.PageNum - 1) * param.PageSize).Limit(param.PageSize)
+	}
+	
+	query.Find(&roles)
 
 	return roles, int(count)
 }

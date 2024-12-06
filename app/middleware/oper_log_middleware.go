@@ -25,9 +25,9 @@ func OperLogMiddleware() gin.HandlerFunc {
 
 		var operName, deptName string
 
-		if user, _ := token.GetLoginUser(ctx); user != nil {
-			operName = user.NickName
-			deptName = user.DeptName
+		if loginUser, _ := token.GetLoginUser(ctx); loginUser != nil {
+			operName = loginUser.NickName
+			deptName = loginUser.DeptName
 		}
 
 		// 记录请求时间，用于获取请求耗时

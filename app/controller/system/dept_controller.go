@@ -21,9 +21,9 @@ func (*DeptController) List(ctx *gin.Context) {
 		return
 	}
 
-	user, _ := token.GetLoginUser(ctx)
+	loginUser, _ := token.GetLoginUser(ctx)
 
-	depts := (&service.DeptService{}).GetDeptList(param, user.UserId)
+	depts := (&service.DeptService{}).GetDeptList(param, loginUser.UserId)
 
 	response.NewSuccess().SetData("data", depts).Json(ctx)
 }
