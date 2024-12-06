@@ -3,6 +3,7 @@ package service
 import (
 	"ruoyi-go/app/dto"
 	"ruoyi-go/app/model"
+	"ruoyi-go/common/types/constant"
 	"ruoyi-go/framework/dal"
 )
 
@@ -31,4 +32,17 @@ func (s *PostService) GetPostList(param dto.PostListRequest) ([]dto.PostListResp
 	query.Count(&count).Offset((param.PageNum - 1) * param.PageSize).Limit(param.PageSize).Find(&posts)
 
 	return posts, int(count)
+}
+
+// 根据用户id查询角色名
+func (s *PostService) GetPostNamesByUserId(userId int) []string {
+
+	var postNames []string
+
+	dal.Gorm.Model(model.SysPost{}).
+		Joins("JOIN sys_user_post ON sys_user_post.post_id = sys_post.post_id").
+		Where("sys_user_post.user_id = ? AND sys_post.status = ?", userId, constant.NORMAL_STATUS).
+		Pluck("sys_post.post_name", &postNames)
+
+	return postNames
 }

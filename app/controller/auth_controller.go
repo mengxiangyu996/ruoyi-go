@@ -13,6 +13,7 @@ import (
 	statusCode "ruoyi-go/common/types/status-code"
 	"ruoyi-go/config"
 	"ruoyi-go/framework/dal"
+	"ruoyi-go/framework/datetime"
 	"ruoyi-go/framework/response"
 	"strconv"
 	"strings"
@@ -84,6 +85,13 @@ func (*AuthController) Login(ctx *gin.Context) {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
+
+	// 更新登录的ip和时间
+	(&service.UserService{}).UpdateUser(dto.UpdateUser{
+		UserId:    user.UserId,
+		LoginIP:   ctx.ClientIP(),
+		LoginDate: datetime.Datetime{Time: time.Now()},
+	})
 
 	response.NewSuccess().SetData("token", token).Json(ctx)
 }

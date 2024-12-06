@@ -38,19 +38,6 @@ func (s *RoleService) GetRoleList(param dto.RoleListRequest) ([]dto.RoleListResp
 	return roles, int(count)
 }
 
-// 根据用户id查询角色key
-func (s *RoleService) GetRoleKeysByUserId(userId int) []string {
-
-	roleKeys := make([]string, 0)
-
-	dal.Gorm.Model(model.SysRole{}).
-		Joins("JOIN sys_user_role ON sys_role.role_id = sys_user_role.role_id").
-		Where("sys_role.delete_time IS NULL AND sys_user_role.user_id = ? AND sys_role.status = ?", userId, constant.NORMAL_STATUS).
-		Pluck("sys_role.role_key", &roleKeys)
-
-	return roleKeys
-}
-
 // 根据用户id查询角色列表
 func (s *RoleService) GetRoleListByUserId(userId int) []dto.RoleListResponse {
 
@@ -58,8 +45,34 @@ func (s *RoleService) GetRoleListByUserId(userId int) []dto.RoleListResponse {
 
 	dal.Gorm.Model(model.SysRole{}).Select("sys_role.*").
 		Joins("JOIN sys_user_role ON sys_role.role_id = sys_user_role.role_id").
-		Where("sys_role.delete_time IS NULL AND sys_user_role.user_id = ? AND sys_role.status = ?", userId, constant.NORMAL_STATUS).
+		Where("sys_user_role.user_id = ? AND sys_role.status = ?", userId, constant.NORMAL_STATUS).
 		Find(&roles)
 
 	return roles
+}
+
+// 根据用户id查询角色key
+func (s *RoleService) GetRoleKeysByUserId(userId int) []string {
+
+	roleKeys := make([]string, 0)
+
+	dal.Gorm.Model(model.SysRole{}).
+		Joins("JOIN sys_user_role ON sys_user_role.role_id = sys_role.role_id").
+		Where("sys_user_role.user_id = ? AND sys_role.status = ?", userId, constant.NORMAL_STATUS).
+		Pluck("sys_role.role_key", &roleKeys)
+
+	return roleKeys
+}
+
+// 根据用户id查询角色名
+func (s *RoleService) GetRoleNamesByUserId(userId int) []string {
+
+	var roleNames []string
+
+	dal.Gorm.Model(model.SysRole{}).
+		Joins("JOIN sys_user_role ON sys_user_role.role_id = sys_role.role_id").
+		Where("sys_user_role.user_id = ? AND sys_role.status = ?", userId, constant.NORMAL_STATUS).
+		Pluck("sys_role.role_name", &roleNames)
+
+	return roleNames
 }

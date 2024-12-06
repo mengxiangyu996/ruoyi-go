@@ -43,7 +43,7 @@ func (s *MenuService) GetPermsByUserId(userId int) []string {
 			Joins("JOIN sys_role_menu ON sys_menu.menu_id = sys_role_menu.menu_id").
 			Joins("JOIN sys_role ON sys_role_menu.role_id = sys_role.role_id").
 			Joins("JOIN sys_user_role ON sys_role.role_id = sys_user_role.role_id").
-			Where("sys_menu.delete_time IS NULL AND sys_user_role.user_id = ? AND sys_menu.status = ?", userId, constant.NORMAL_STATUS).
+			Where("sys_user_role.user_id = ? AND sys_menu.status = ?", userId, constant.NORMAL_STATUS).
 			Pluck("sys_menu.perms", &perms)
 	}
 
@@ -61,7 +61,7 @@ func (s *MenuService) GetMenuMCListByUserId(userId int) []dto.MenuListResponse {
 		Joins("LEFT JOIN sys_role_menu ON sys_menu.menu_id = sys_role_menu.menu_id").
 		Joins("LEFT JOIN sys_role ON sys_role_menu.role_id = sys_role.role_id").
 		Joins("LEFT JOIN sys_user_role ON sys_role.role_id = sys_user_role.role_id").
-		Where("sys_menu.delete_time IS NULL AND sys_menu.status = ? AND sys_role.status = ? AND sys_menu.menu_type IN ?", constant.NORMAL_STATUS, constant.NORMAL_STATUS, []string{"M", "C"})
+		Where("sys_menu.status = ? AND sys_role.status = ? AND sys_menu.menu_type IN ?", constant.NORMAL_STATUS, constant.NORMAL_STATUS, []string{"M", "C"})
 
 	if userId > 1 {
 		query = query.Where("sys_user_role.user_id = ?", userId)

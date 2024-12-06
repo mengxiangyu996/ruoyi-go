@@ -32,14 +32,18 @@ func Register(server *gin.Engine) {
 		api.GET("/config/getConfigValueByKey/:configKey", (&controller.ConfigController{}).GetConfigValueByKey) // 根据配置key获取配置值
 
 		// 系统管理
-		api.GET("/system/user/deptTree", (&systemcontroller.UserController{}).DeptTree) // 获取用户管理中的部门树
-		api.GET("/system/user/list", (&systemcontroller.UserController{}).List)         // 获取用户列表
-		api.GET("/system/role/list", (&systemcontroller.RoleController{}).List)         // 获取角色列表
-		api.GET("/system/menu/list", (&systemcontroller.MenuController{}).List)         // 获取菜单列表
-		api.GET("/system/dept/list", (&systemcontroller.DeptController{}).List)         // 获取部门列表
-		api.GET("/system/post/list", (&systemcontroller.PostController{}).List)         // 获取岗位列表
-		api.GET("/system/dict/list", (&systemcontroller.DictController{}).List)         // 获取字典类型列表
-		api.GET("/system/config/list", (&systemcontroller.ConfigController{}).List)     // 获取参数列表
+		api.GET("/system/user/deptTree", (&systemcontroller.UserController{}).DeptTree)                           // 获取用户管理中的部门树
+		api.GET("/system/user/list", (&systemcontroller.UserController{}).List)                                   // 获取用户列表
+		api.GET("/system/user/profile", (&systemcontroller.UserController{}).GetUserProfile)                      // 获取用户信息
+		api.PUT("/system/user/profile", (&systemcontroller.UserController{}).UpdateUserProfile)                   // 更新个人信息
+		api.PUT("/system/user/profile/updatePwd", (&systemcontroller.UserController{}).UpdateUserProfilePassword) // 更新个人密码
+
+		api.GET("/system/role/list", (&systemcontroller.RoleController{}).List)     // 获取角色列表
+		api.GET("/system/menu/list", (&systemcontroller.MenuController{}).List)     // 获取菜单列表
+		api.GET("/system/dept/list", (&systemcontroller.DeptController{}).List)     // 获取部门列表
+		api.GET("/system/post/list", (&systemcontroller.PostController{}).List)     // 获取岗位列表
+		api.GET("/system/dict/list", (&systemcontroller.DictController{}).List)     // 获取字典类型列表
+		api.GET("/system/config/list", (&systemcontroller.ConfigController{}).List) // 获取参数列表
 
 		// 日志管理
 		api.GET("/monitor/operlog/list", (&monitorcontroller.OperlogController{}).List)       // 获取操作日志列表

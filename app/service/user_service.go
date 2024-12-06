@@ -8,6 +8,23 @@ import (
 
 type UserService struct{}
 
+// 更新个人资料
+func (s *UserService) UpdateUser(param dto.UpdateUser) error {
+	return dal.Gorm.Model(model.SysUser{}).Where("user_id = ?", param.UserId).Updates(&model.SysUser{
+		DeptId:      param.DeptId,
+		NickName:    param.NickName,
+		UserType:    param.UserType,
+		Email:       param.Email,
+		Phonenumber: param.Phonenumber,
+		Sex:         param.Sex,
+		Avatar:      param.Avatar,
+		Password:    param.Password,
+		LoginIP:     param.LoginIP,
+		LoginDate:   param.LoginDate,
+		Status:      param.Status,
+	}).Error
+}
+
 // 获取用户列表
 func (s *UserService) GetUserList(param dto.UserListRequest, userId int) ([]dto.UserListResponse, int) {
 
