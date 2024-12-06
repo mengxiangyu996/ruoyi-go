@@ -19,6 +19,7 @@ type OperationType int
 func NewSuccess() *Response {
 
 	return &Response{
+		
 		Code: statusCode.Success,
 		Msg:  statusCode.GetMessage(statusCode.Success),
 		Data: make(map[string]interface{}),
@@ -29,6 +30,7 @@ func NewSuccess() *Response {
 func NewError() *Response {
 
 	return &Response{
+
 		Code: statusCode.Error,
 		Msg:  statusCode.GetMessage(statusCode.Error),
 		Data: make(map[string]interface{}),
@@ -54,6 +56,7 @@ func (r *Response) SetMsg(msg string) *Response {
 	}
 
 	r.Msg = msg
+
 	return r
 }
 
@@ -85,6 +88,7 @@ func (r *Response) SetDataMap(data map[string]interface{}) *Response {
 		if key == "code" || key == "msg" {
 			continue
 		}
+
 		r.Data[key] = value
 	}
 
