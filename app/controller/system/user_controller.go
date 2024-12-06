@@ -145,6 +145,7 @@ func (*UserController) Add(ctx *gin.Context) {
 		CreateBy:    loginUser.UserName,
 	}, param.RoleIds, param.PostIds); err != nil {
 		response.NewError().SetMsg("新增用户失败").Json(ctx)
+		return
 	}
 
 	response.NewSuccess().Json(ctx)
