@@ -21,5 +21,5 @@ func (*DictDataController) GetDictDataByDictType(ctx *gin.Context) {
 		dictDatas[key].Default = dictData.IsDefault == constant.IS_DEFAULT_YES
 	}
 
-	response.NewSuccess().SetData("data", dictDatas).ToJson(ctx)
+	response.NewSuccess().SetData("data", dictDatas).Json(ctx)
 }

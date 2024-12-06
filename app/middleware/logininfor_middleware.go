@@ -35,7 +35,7 @@ func LogininforMiddleware() gin.HandlerFunc {
 		var param dto.LoginRequest
 
 		if err := ctx.ShouldBindJSON(&param); err != nil {
-			response.NewError().SetCode(statusCode.BadRequest).SetMsg(err.Error()).ToJson(ctx)
+			response.NewError().SetCode(statusCode.BadRequest).SetMsg(err.Error()).Json(ctx)
 			ctx.Abort()
 			return
 		}

@@ -18,7 +18,7 @@ func (*OperlogController) List(ctx *gin.Context) {
 	var param dto.OperLogListRequest
 
 	if err := ctx.ShouldBindQuery(&param); err != nil {
-		response.NewError().SetMsg(err.Error()).ToJson(ctx)
+		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
 
@@ -36,5 +36,5 @@ func (*OperlogController) List(ctx *gin.Context) {
 
 	operLogs, total := (&service.OperLogService{}).GetOperLogList(param)
 
-	response.NewSuccess().SetPageData(operLogs, total).ToJson(ctx)
+	response.NewSuccess().SetPageData(operLogs, total).Json(ctx)
 }

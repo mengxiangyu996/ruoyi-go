@@ -17,7 +17,7 @@ func (*DeptController) List(ctx *gin.Context) {
 	var param dto.DeptListRequest
 
 	if err := ctx.ShouldBindQuery(&param); err != nil {
-		response.NewError().SetMsg(err.Error()).ToJson(ctx)
+		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
 
@@ -25,5 +25,5 @@ func (*DeptController) List(ctx *gin.Context) {
 
 	depts := (&service.DeptService{}).GetDeptList(param, user.UserId)
 
-	response.NewSuccess().SetData("data", depts).ToJson(ctx)
+	response.NewSuccess().SetData("data", depts).Json(ctx)
 }

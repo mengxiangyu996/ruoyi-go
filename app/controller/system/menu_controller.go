@@ -16,11 +16,11 @@ func (*MenuController) List(ctx *gin.Context) {
 	var param dto.MenuListRequest
 
 	if err := ctx.ShouldBindQuery(&param); err != nil {
-		response.NewError().SetMsg(err.Error()).ToJson(ctx)
+		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
 
 	menus := (&service.MenuService{}).GetMenuList(param)
 
-	response.NewSuccess().SetData("data", menus).ToJson(ctx)
+	response.NewSuccess().SetData("data", menus).Json(ctx)
 }

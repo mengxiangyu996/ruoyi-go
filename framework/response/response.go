@@ -92,7 +92,7 @@ func (r *Response) SetDataMap(data map[string]interface{}) *Response {
 }
 
 // 序列化返回
-func (r *Response) ToJson(ctx *gin.Context) {
+func (r *Response) Json(ctx *gin.Context) {
 
 	response := gin.H{
 		"code": r.Code,

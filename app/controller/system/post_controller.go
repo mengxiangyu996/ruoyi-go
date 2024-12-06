@@ -16,11 +16,11 @@ func (*PostController) List(ctx *gin.Context) {
 	var param dto.PostListRequest
 
 	if err := ctx.ShouldBindQuery(&param); err != nil {
-		response.NewError().SetMsg(err.Error()).ToJson(ctx)
+		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
 
 	posts, total := (&service.PostService{}).GetPostList(param)
 
-	response.NewSuccess().SetPageData(posts, total).ToJson(ctx)
+	response.NewSuccess().SetPageData(posts, total).Json(ctx)
 }

@@ -18,7 +18,7 @@ func (*LogininforController) List(ctx *gin.Context) {
 	var param dto.LogininforListRequest
 
 	if err := ctx.ShouldBindQuery(&param); err != nil {
-		response.NewError().SetMsg(err.Error()).ToJson(ctx)
+		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
 
@@ -36,5 +36,5 @@ func (*LogininforController) List(ctx *gin.Context) {
 
 	logininfors, total := (&service.LogininforService{}).GetLogininforList(param)
 
-	response.NewSuccess().SetPageData(logininfors, total).ToJson(ctx)
+	response.NewSuccess().SetPageData(logininfors, total).Json(ctx)
 }

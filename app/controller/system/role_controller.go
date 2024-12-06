@@ -16,11 +16,11 @@ func (*RoleController) List(ctx *gin.Context) {
 	var param dto.RoleListRequest
 
 	if err := ctx.ShouldBindQuery(&param); err != nil {
-		response.NewError().SetMsg(err.Error()).ToJson(ctx)
+		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
 
 	roles, total := (&service.RoleService{}).GetRoleList(param)
 
-	response.NewSuccess().SetPageData(roles, total).ToJson(ctx)
+	response.NewSuccess().SetPageData(roles, total).Json(ctx)
 }

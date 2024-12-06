@@ -20,7 +20,7 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		user, err := token.GetLoginUser(ctx)
 		if user == nil || err != nil {
-			response.NewError().SetCode(statusCode.Unauthorized).SetMsg(err.Error()).ToJson(ctx)
+			response.NewError().SetCode(statusCode.Unauthorized).SetMsg(err.Error()).Json(ctx)
 			ctx.Abort()
 			return
 		}
@@ -40,7 +40,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		if user.Status != constant.NORMAL_STATUS {
-			response.NewError().SetCode(statusCode.Unauthorized).SetMsg("用户被禁用").ToJson(ctx)
+			response.NewError().SetCode(statusCode.Unauthorized).SetMsg("用户被禁用").Json(ctx)
 			ctx.Abort()
 			return
 		}
@@ -49,7 +49,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		perms := (&service.MenuService{}).GetPermsByUserId(user.UserId)
 		perm := strings.ReplaceAll(strings.ReplaceAll(ctx.Request.URL.Path, "/api/", ""), "/", ":")
 		if utils.Contains(perms, perm) {
-			response.NewError().SetCode(statusCode.Unauthorized).ToJson(ctx)
+			response.NewError().SetCode(statusCode.Unauthorized).Json(ctx)
 			ctx.Abort()
 			return
 		}

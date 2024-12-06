@@ -20,7 +20,7 @@ func (*UserController) DeptTree(ctx *gin.Context) {
 
 	tree := (&service.UserService{}).DeptListToTree(depts)
 
-	response.NewSuccess().SetData("data", tree).ToJson(ctx)
+	response.NewSuccess().SetData("data", tree).Json(ctx)
 }
 
 // 获取用户列表
@@ -29,7 +29,7 @@ func (*UserController) List(ctx *gin.Context) {
 	var param dto.UserListRequest
 
 	if err := ctx.ShouldBindQuery(&param); err != nil {
-		response.NewError().SetMsg(err.Error()).ToJson(ctx)
+		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
 
@@ -42,5 +42,5 @@ func (*UserController) List(ctx *gin.Context) {
 		users[key].Dept.Leader = user.Leader
 	}
 
-	response.NewSuccess().SetPageData(users, total).ToJson(ctx)
+	response.NewSuccess().SetPageData(users, total).Json(ctx)
 }

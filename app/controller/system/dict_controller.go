@@ -16,11 +16,11 @@ func (*DictController) List(ctx *gin.Context) {
 	var param dto.DictTypeRequest
 
 	if err := ctx.ShouldBindQuery(&param); err != nil {
-		response.NewError().SetMsg(err.Error()).ToJson(ctx)
+		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
 
 	dictTypes, total := (&service.DictService{}).GetDictTypeList(param)
 
-	response.NewSuccess().SetPageData(dictTypes, total).ToJson(ctx)
+	response.NewSuccess().SetPageData(dictTypes, total).Json(ctx)
 }

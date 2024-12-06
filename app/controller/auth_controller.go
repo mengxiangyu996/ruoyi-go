@@ -32,7 +32,7 @@ func (*AuthController) CaptchaImage(ctx *gin.Context) {
 
 	b64s = strings.Replace(b64s, "data:image/png;base64,", "", 1)
 
-	response.NewSuccess().SetData("uuid", id).SetData("img", b64s).SetData("captchaEnabled", true).ToJson(ctx)
+	response.NewSuccess().SetData("uuid", id).SetData("img", b64s).SetData("captchaEnabled", true).Json(ctx)
 }
 
 // 登录
@@ -41,23 +41,23 @@ func (*AuthController) Login(ctx *gin.Context) {
 	var param dto.LoginRequest
 
 	if err := ctx.ShouldBindJSON(&param); err != nil {
-		response.NewError().SetCode(statusCode.BadRequest).SetMsg(err.Error()).ToJson(ctx)
+		response.NewError().SetCode(statusCode.BadRequest).SetMsg(err.Error()).Json(ctx)
 		return
 	}
 
 	if err := validator.LoginValidator(&param); err != nil {
-		response.NewError().SetCode(statusCode.BadRequest).SetMsg(err.Error()).ToJson(ctx)
+		response.NewError().SetCode(statusCode.BadRequest).SetMsg(err.Error()).Json(ctx)
 		return
 	}
 
 	if !captcha.NewCaptcha().Verify(param.Uuid, param.Code) {
-		response.NewError().SetMsg("验证码错误").ToJson(ctx)
+		response.NewError().SetMsg("验证码错误").Json(ctx)
 		return
 	}
 
 	user := (&service.UserService{}).GetUserByUsername(param.Username)
 	if user.UserId <= 0 || user.Status != constant.NORMAL_STATUS {
-		response.NewError().SetMsg("用户不存在或被禁用").ToJson(ctx)
+		response.NewError().SetMsg("用户不存在或被禁用").Json(ctx)
 		return
 	}
 
@@ -65,14 +65,14 @@ func (*AuthController) Login(ctx *gin.Context) {
 	redisKey := rediskey.LoginPasswordErrorKey + param.Username
 	count, _ := dal.Redis.Get(context.Background(), redisKey).Int()
 	if count >= config.Data.User.Password.MaxRetryCount {
-		response.NewError().SetMsg("密码错误次数超过限制，请" + strconv.Itoa(config.Data.User.Password.LockTime) + "分钟后重试").ToJson(ctx)
+		response.NewError().SetMsg("密码错误次数超过限制，请" + strconv.Itoa(config.Data.User.Password.LockTime) + "分钟后重试").Json(ctx)
 		return
 	}
 
 	if !password.Verify(user.Password, param.Password) {
 		// 密码错误次数加1，并设置缓存过期时间为锁定时间
 		dal.Redis.Set(context.Background(), redisKey, count+1, time.Minute*time.Duration(config.Data.User.Password.LockTime))
-		response.NewError().SetMsg("密码错误").ToJson(ctx)
+		response.NewError().SetMsg("密码错误").Json(ctx)
 		return
 	}
 
@@ -81,11 +81,11 @@ func (*AuthController) Login(ctx *gin.Context) {
 
 	token, err := token.GetClaims().GenerateToken(user)
 	if err != nil {
-		response.NewError().SetMsg(err.Error()).ToJson(ctx)
+		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
 
-	response.NewSuccess().SetData("token", token).ToJson(ctx)
+	response.NewSuccess().SetData("token", token).Json(ctx)
 }
 
 // 获取授权信息
@@ -111,7 +111,7 @@ func (*AuthController) GetAuthInfo(ctx *gin.Context) {
 
 	perms := (&service.MenuService{}).GetPermsByUserId(loginUser.UserId)
 
-	response.NewSuccess().SetData("user", data).SetData("roles", roleKeys).SetData("permissions", perms).ToJson(ctx)
+	response.NewSuccess().SetData("user", data).SetData("roles", roleKeys).SetData("permissions", perms).Json(ctx)
 }
 
 // 获取授权路由
@@ -125,7 +125,7 @@ func (*AuthController) GetRoutes(ctx *gin.Context) {
 
 	routers := (&service.MenuService{}).BuildRouterMenus(tree)
 
-	response.NewSuccess().SetData("data", routers).ToJson(ctx)
+	response.NewSuccess().SetData("data", routers).Json(ctx)
 }
 
 // 退出登录
@@ -133,5 +133,5 @@ func (*AuthController) Logout(ctx *gin.Context) {
 
 	token.DeleteToken(ctx)
 
-	response.NewSuccess().ToJson(ctx)
+	response.NewSuccess().Json(ctx)
 }

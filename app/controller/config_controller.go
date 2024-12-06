@@ -16,5 +16,5 @@ func (*ConfigController) GetConfigValueByKey(ctx *gin.Context) {
 
 	config := (&service.ConfigService{}).GetConfigByConfigKey(configKey)
 
-	response.NewSuccess().SetMsg(config.ConfigValue).ToJson(ctx)
+	response.NewSuccess().SetMsg(config.ConfigValue).Json(ctx)
 }
