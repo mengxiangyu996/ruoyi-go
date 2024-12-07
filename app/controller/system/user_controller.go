@@ -150,7 +150,7 @@ func (*UserController) Add(ctx *gin.Context) {
 	}
 
 	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_ADD)
+	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_INSERT)
 
 	response.NewSuccess().Json(ctx)
 }
@@ -202,7 +202,7 @@ func (*UserController) Update(ctx *gin.Context) {
 	}
 
 	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_EDIT)
+	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
 
 	response.NewSuccess().Json(ctx)
 }
@@ -229,7 +229,7 @@ func (*UserController) Remove(ctx *gin.Context) {
 	}
 
 	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_DEL)
+	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_DELETE)
 
 	response.NewSuccess().Json(ctx)
 }
