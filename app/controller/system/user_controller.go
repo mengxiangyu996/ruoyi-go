@@ -111,7 +111,7 @@ func (*UserController) Add(ctx *gin.Context) {
 		return
 	}
 
-	loginUser, _ := token.GetLoginUser(ctx)
+	// loginUser, _ := token.GetLoginUser(ctx)
 
 	if user := (&service.UserService{}).GetUserByUsername(param.UserName); user.UserId > 0 {
 		response.NewError().SetMsg("用户名称已存在").Json(ctx)
@@ -132,21 +132,21 @@ func (*UserController) Add(ctx *gin.Context) {
 		}
 	}
 
-	if err := (&service.UserService{}).CreateUser(dto.SaveUser{
-		DeptId:      param.DeptId,
-		UserName:    param.UserName,
-		NickName:    param.NickName,
-		Email:       param.Email,
-		Phonenumber: param.Phonenumber,
-		Sex:         param.Sex,
-		Password:    password.Generate(param.Password),
-		Status:      param.Status,
-		Remark:      param.Remark,
-		CreateBy:    loginUser.UserName,
-	}, param.RoleIds, param.PostIds); err != nil {
-		response.NewError().SetMsg("新增用户失败").Json(ctx)
-		return
-	}
+	// if err := (&service.UserService{}).CreateUser(dto.SaveUser{
+	// 	DeptId:      param.DeptId,
+	// 	UserName:    param.UserName,
+	// 	NickName:    param.NickName,
+	// 	Email:       param.Email,
+	// 	Phonenumber: param.Phonenumber,
+	// 	Sex:         param.Sex,
+	// 	Password:    password.Generate(param.Password),
+	// 	Status:      param.Status,
+	// 	Remark:      param.Remark,
+	// 	CreateBy:    loginUser.UserName,
+	// }, param.RoleIds, param.PostIds); err != nil {
+	// 	response.NewError().SetMsg("新增用户失败").Json(ctx)
+	// 	return
+	// }
 
 	response.NewSuccess().Json(ctx)
 }

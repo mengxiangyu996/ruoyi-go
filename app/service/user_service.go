@@ -3,6 +3,7 @@ package service
 import (
 	"ruoyi-go/app/dto"
 	"ruoyi-go/app/model"
+	"ruoyi-go/common/types/constant"
 	"ruoyi-go/framework/dal"
 )
 
@@ -224,4 +225,20 @@ func (s *UserService) DeptListToTree(depts []dto.DeptTreeResponse) []*dto.DeptTr
 	}
 
 	return tree
+}
+
+// 查询用户是否拥有权限，拥有返回true
+func (s *UserService) UserHasPerm(userId int, perm string) bool {
+
+	var count int64
+
+	dal.Gorm.Model(model.SysUserRole{}).
+		Joins("JOIN sys_role ON sys_user_role.role_id = sys_role.role_id").
+		Joins("JOIN sys_role_menu ON sys_role_menu.role_id = sys_role.role_id").
+		Joins("JOIN sys_menu ON sys_menu.menu_id = sys_role_menu.menu_id").
+		Where("sys_role.delete_time IS NULL AND sys_menu.delete_time IS NULL").
+		Where("sys_user_role.user_id = ? AND sys_menu.status = ? AND sys_menu.perms = ?", userId, constant.NORMAL_STATUS, perm).
+		Count(&count)
+
+	return count > 0
 }

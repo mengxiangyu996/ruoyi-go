@@ -91,7 +91,7 @@ var permsMap = map[string]string{
 // 判断api权限是否存在
 //
 // 为了实现@PreAuthorize("@ss.hasPermi('system:user:list')")注解
-func HasPermi(api string) string {
+func HasPerm(api string) string {
 
 	if perm, ok := permsMap[api]; ok {
 		return perm
