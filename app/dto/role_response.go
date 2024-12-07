@@ -13,4 +13,5 @@ type RoleListResponse struct {
 	DeptCheckStrictly bool              `json:"deptCheckStrictly"`
 	Status            string            `json:"status"`
 	CreateTime        datetime.Datetime `json:"createTime"`
+	Flag              bool              `json:"flag" gorm:"-"`
 }

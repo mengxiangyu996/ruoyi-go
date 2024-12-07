@@ -100,3 +100,31 @@ func RemoveUserValidator(userIds []int, loginUserId int) error {
 
 	return nil
 }
+
+// 修改用户状态验证
+func ChangeUserStatusValidator(param dto.UpdateUserRequest) error {
+
+	if param.UserId <= 0 {
+		return errors.New("参数错误")
+	}
+
+	if param.Status == "" {
+		return errors.New("请选择状态")
+	}
+
+	return nil
+}
+
+// 重置用户密码验证
+func ResetUserPwdValidator(param dto.UpdateUserRequest) error {
+
+	if param.UserId <= 0 {
+		return errors.New("参数错误")
+	}
+
+	if param.Password == "" {
+		return errors.New("请输入用户密码")
+	}
+
+	return nil
+}

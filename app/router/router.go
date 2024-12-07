@@ -32,10 +32,11 @@ func Register(server *gin.Engine) {
 		api.PUT("/system/user/profile", (&systemcontroller.UserController{}).UpdateProfile)                  // 修改用户
 		api.PUT("/system/user/profile/updatePwd", (&systemcontroller.UserController{}).UserProfileUpdatePwd) // 重置密码
 
-		api.GET("/system/user/deptTree", middleware.HasPerm("system:user:list"), (&systemcontroller.UserController{}).DeptTree) // 获取部门树列表
-		api.GET("/system/user/list", middleware.HasPerm("system:user:list"), (&systemcontroller.UserController{}).List)         // 获取用户列表
-		api.GET("/system/user/", middleware.HasPerm("system:user:query"), (&systemcontroller.UserController{}).Detail)          // 根据用户编号获取详细信息
-		api.GET("/system/user/:userId", middleware.HasPerm("system:user:query"), (&systemcontroller.UserController{}).Detail)   // 根据用户编号获取详细信息
+		api.GET("/system/user/deptTree", middleware.HasPerm("system:user:list"), (&systemcontroller.UserController{}).DeptTree)          // 获取部门树列表
+		api.GET("/system/user/list", middleware.HasPerm("system:user:list"), (&systemcontroller.UserController{}).List)                  // 获取用户列表
+		api.GET("/system/user/", middleware.HasPerm("system:user:query"), (&systemcontroller.UserController{}).Detail)                   // 根据用户编号获取详细信息
+		api.GET("/system/user/:userId", middleware.HasPerm("system:user:query"), (&systemcontroller.UserController{}).Detail)            // 根据用户编号获取详细信息
+		api.GET("/system/user/authRole/:userId", middleware.HasPerm("system:user:query"), (&systemcontroller.UserController{}).AuthRole) // 根据用户编号获取详细信息
 
 		api.GET("/system/role/list", middleware.HasPerm("system:role:list"), (&systemcontroller.RoleController{}).List) // 获取角色列表
 		api.GET("/system/menu/list", middleware.HasPerm("system:menu:list"), (&systemcontroller.MenuController{}).List) // 获取菜单列表
@@ -56,8 +57,11 @@ func Register(server *gin.Engine) {
 	// 已授权并且需要记录操作日志
 	api = server.Group("/api", middleware.AuthMiddleware(), middleware.OperLogMiddleware())
 	{
-		api.POST("/system/user", middleware.HasPerm("system:user:add"), (&systemcontroller.UserController{}).Add)                  // 新增用户
-		api.PUT("/system/user", middleware.HasPerm("system:user:edit"), (&systemcontroller.UserController{}).Update)               // 更新用户
-		api.DELETE("/system/user/:userIds", middleware.HasPerm("system:user:remove"), (&systemcontroller.UserController{}).Remove) // 删除用户
+		api.POST("/system/user", middleware.HasPerm("system:user:add"), (&systemcontroller.UserController{}).Add)                       // 新增用户
+		api.PUT("/system/user", middleware.HasPerm("system:user:edit"), (&systemcontroller.UserController{}).Update)                    // 更新用户
+		api.DELETE("/system/user/:userIds", middleware.HasPerm("system:user:remove"), (&systemcontroller.UserController{}).Remove)      // 删除用户
+		api.PUT("/system/user/changeStatus", middleware.HasPerm("system:user:edit"), (&systemcontroller.UserController{}).ChangeStatus) // 修改用户状态
+		api.PUT("/system/user/resetPwd", middleware.HasPerm("system:user:edit"), (&systemcontroller.UserController{}).ResetPwd)         // 重置用密码
+		api.PUT("/system/user/authRole", middleware.HasPerm("system:user:edit"), (&systemcontroller.UserController{}).AddAuthRole)      // 用户授权角色
 	}
 }

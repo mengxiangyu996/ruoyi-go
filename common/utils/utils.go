@@ -70,7 +70,11 @@ func Desensitize(content string, start, end int) string {
 // 字符串转为int数组
 func StringToIntSlice(param, char string) ([]int, error) {
 
-	var intSlice []int
+	intSlice := make([]int, 0)
+
+	if param == "" {
+		return intSlice, nil
+	}
 
 	stringSlice := strings.Split(param, char)
 	

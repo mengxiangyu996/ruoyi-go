@@ -77,10 +77,10 @@ func (*UserController) Detail(ctx *gin.Context) {
 		for _, role := range roles {
 			roleIds = append(roleIds, role.RoleId)
 		}
-		response.SetData("roleIds", roleIds).SetData("roleIds", roleIds)
+		response.SetData("roleIds", roleIds)
 
 		postIds := (&service.PostService{}).GetPostIdsByUserId(user.UserId)
-		response.SetData("roleIds", roleIds).SetData("postIds", postIds)
+		response.SetData("postIds", postIds)
 	}
 
 	roles, _ := (&service.RoleService{}).GetRoleList(dto.RoleListRequest{}, false)
@@ -145,7 +145,7 @@ func (*UserController) Add(ctx *gin.Context) {
 		Remark:      param.Remark,
 		CreateBy:    loginUser.UserName,
 	}, param.RoleIds, param.PostIds); err != nil {
-		response.NewError().SetMsg("新增用户失败").Json(ctx)
+		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
 
@@ -197,7 +197,7 @@ func (*UserController) Update(ctx *gin.Context) {
 		Remark:      param.Remark,
 		UpdateBy:    loginUser.UserName,
 	}, param.RoleIds, param.PostIds); err != nil {
-		response.NewError().SetMsg("更新用户失败").Json(ctx)
+		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
 
@@ -230,6 +230,142 @@ func (*UserController) Remove(ctx *gin.Context) {
 
 	// 设置业务类型，操作日志获取
 	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_DELETE)
+
+	response.NewSuccess().Json(ctx)
+}
+
+// 更改用户状态
+func (*UserController) ChangeStatus(ctx *gin.Context) {
+
+	var param dto.UpdateUserRequest
+
+	if err := ctx.ShouldBindJSON(&param); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	if err := validator.ChangeUserStatusValidator(param); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	loginUser, _ := token.GetLoginUser(ctx)
+
+	if err := (&service.UserService{}).UpdateUser(dto.SaveUser{
+		UserId:   param.UserId,
+		Status:   param.Status,
+		UpdateBy: loginUser.UserName,
+	}, nil, nil); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	// 设置业务类型，操作日志获取
+	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
+
+	response.NewSuccess().Json(ctx)
+}
+
+// 重置用户密码
+func (*UserController) ResetPwd(ctx *gin.Context) {
+
+	var param dto.UpdateUserRequest
+
+	if err := ctx.ShouldBindJSON(&param); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	if err := validator.ResetUserPwdValidator(param); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	loginUser, _ := token.GetLoginUser(ctx)
+
+	if err := (&service.UserService{}).UpdateUser(dto.SaveUser{
+		UserId:   param.UserId,
+		Password: password.Generate(param.Password),
+		UpdateBy: loginUser.UserName,
+	}, nil, nil); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	// 设置业务类型，操作日志获取
+	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
+
+	response.NewSuccess().Json(ctx)
+}
+
+// 根据用户编号获取授权角色
+func (*UserController) AuthRole(ctx *gin.Context) {
+
+	userId, _ := strconv.Atoi(ctx.Param("userId"))
+
+	response := response.NewSuccess()
+
+	var userHasRoleIds []int
+
+	if userId > 0 {
+		user := (&service.UserService{}).GetUserByUserId(userId)
+
+		user.Admin = user.UserId == 1
+
+		dept := (&service.DeptService{}).GetDeptByDeptId(user.DeptId)
+
+		roles := (&service.RoleService{}).GetRoleListByUserId(user.UserId)
+		for _, role := range roles {
+			userHasRoleIds = append(userHasRoleIds, role.RoleId)
+		}
+
+		response.SetData("user", dto.AuthUserInfoResponse{
+			UserDetailResponse: user,
+			Dept:               dept,
+			Roles:              roles,
+		})
+	}
+
+	roles, _ := (&service.RoleService{}).GetRoleList(dto.RoleListRequest{}, false)
+	if userId != 1 {
+		roles = utils.Filter(roles, func(role dto.RoleListResponse) bool {
+			return role.RoleId != 1
+		})
+		// 设置角色选中标识，如果角色在用户所拥有的角色列表中设置标识为true
+		for key, role := range roles {
+			if utils.Contains(userHasRoleIds, role.RoleId) {
+				roles[key].Flag = true
+			}
+		}
+	}
+	response.SetData("roles", roles)
+
+	response.Json(ctx)
+}
+
+// 用户授权角色
+func (*UserController) AddAuthRole(ctx *gin.Context) {
+
+	var param dto.AddUserAuthRoleRequest
+
+	if err := ctx.ShouldBindQuery(&param); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	roleIds, err := utils.StringToIntSlice(param.RoleIds, ",")
+	if err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	if err := (&service.UserService{}).AddAuthRole(param.UserId, roleIds); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	// 设置业务类型，操作日志获取
+	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
 
 	response.NewSuccess().Json(ctx)
 }

@@ -64,6 +64,12 @@ type UpdateUserRequest struct {
 	RoleIds     []int  `json:"roleIds"`
 }
 
+// 用户授权角色
+type AddUserAuthRoleRequest struct {
+	UserId  int    `query:"userId" form:"userId"`
+	RoleIds string `query:"roleIds" form:"roleIds"`
+}
+
 // 修改个人信息
 type UpdateProfileRequest struct {
 	NickName    string `json:"nickName"`

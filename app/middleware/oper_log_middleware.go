@@ -44,7 +44,7 @@ func OperLogMiddleware() gin.HandlerFunc {
 			Body:           bytes.NewBufferString(""),
 		}
 
-		var param map[string]interface{}
+		param := make(map[string]interface{}, 0)
 
 		ctx.ShouldBind(&param)
 
