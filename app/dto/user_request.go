@@ -34,7 +34,7 @@ type UserListRequest struct {
 }
 
 // 新增用户
-type AddUserRequest struct {
+type CreateUserRequest struct {
 	DeptId      int    `json:"deptId"`
 	UserName    string `json:"userName"`
 	NickName    string `json:"nickName"`

@@ -5,7 +5,7 @@ import (
 )
 
 type SysDictData struct {
-	DictCode   int
+	DictCode   int `gorm:"primaryKey;autoIncrement"`
 	DictSort   int
 	DictLabel  string
 	DictValue  string

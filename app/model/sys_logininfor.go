@@ -3,7 +3,7 @@ package model
 import "ruoyi-go/framework/datetime"
 
 type SysLogininfor struct {
-	InfoId        int
+	InfoId        int `gorm:"primaryKey;autoIncrement"`
 	UserName      string
 	Ipaddr        string
 	LoginLocation string

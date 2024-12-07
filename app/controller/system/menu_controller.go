@@ -24,3 +24,13 @@ func (*MenuController) List(ctx *gin.Context) {
 
 	response.NewSuccess().SetData("data", menus).Json(ctx)
 }
+
+// 获取菜单下拉树列表
+func (*MenuController) Treeselect(ctx *gin.Context) {
+
+	menus := (&service.MenuService{}).Menuselect()
+
+	tree := (&service.MenuService{}).MenuSeleteToTree(menus, 0)
+
+	response.NewSuccess().SetData("data", tree).Json(ctx)
+}

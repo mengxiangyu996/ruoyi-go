@@ -40,7 +40,7 @@ func UserProfileUpdatePwdValidator(param dto.UserProfileUpdatePwdRequest) error 
 }
 
 // 添加用户验证
-func AddUserValidator(param dto.AddUserRequest) error {
+func CreateUserValidator(param dto.CreateUserRequest) error {
 
 	if param.NickName == "" {
 		return errors.New("请输入用户昵称")

@@ -41,7 +41,7 @@ func (*UserController) List(ctx *gin.Context) {
 
 	loginUser, _ := token.GetLoginUser(ctx)
 
-	users, total := (&service.UserService{}).GetUserList(param, loginUser.UserId)
+	users, total := (&service.UserService{}).GetUserList(param, loginUser.UserId, true)
 
 	for key, user := range users {
 		users[key].Dept.DeptName = user.DeptName
@@ -98,16 +98,19 @@ func (*UserController) Detail(ctx *gin.Context) {
 }
 
 // 新增用户
-func (*UserController) Add(ctx *gin.Context) {
+func (*UserController) Create(ctx *gin.Context) {
 
-	var param dto.AddUserRequest
+	// 设置业务类型，操作日志获取
+	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_INSERT)
+
+	var param dto.CreateUserRequest
 
 	if err := ctx.ShouldBindJSON(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
 
-	if err := validator.AddUserValidator(param); err != nil {
+	if err := validator.CreateUserValidator(param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -149,14 +152,14 @@ func (*UserController) Add(ctx *gin.Context) {
 		return
 	}
 
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_INSERT)
-
 	response.NewSuccess().Json(ctx)
 }
 
 // 更新用户
 func (*UserController) Update(ctx *gin.Context) {
+
+	// 设置业务类型，操作日志获取
+	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
 
 	var param dto.UpdateUserRequest
 
@@ -201,14 +204,14 @@ func (*UserController) Update(ctx *gin.Context) {
 		return
 	}
 
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
-
 	response.NewSuccess().Json(ctx)
 }
 
 // 删除用户
 func (*UserController) Remove(ctx *gin.Context) {
+
+	// 设置业务类型，操作日志获取
+	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_DELETE)
 
 	userIds, err := utils.StringToIntSlice(ctx.Param("userIds"), ",")
 	if err != nil {
@@ -228,14 +231,14 @@ func (*UserController) Remove(ctx *gin.Context) {
 		return
 	}
 
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_DELETE)
-
 	response.NewSuccess().Json(ctx)
 }
 
 // 更改用户状态
 func (*UserController) ChangeStatus(ctx *gin.Context) {
+
+	// 设置业务类型，操作日志获取
+	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
 
 	var param dto.UpdateUserRequest
 
@@ -260,14 +263,14 @@ func (*UserController) ChangeStatus(ctx *gin.Context) {
 		return
 	}
 
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
-
 	response.NewSuccess().Json(ctx)
 }
 
 // 重置用户密码
 func (*UserController) ResetPwd(ctx *gin.Context) {
+
+	// 设置业务类型，操作日志获取
+	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
 
 	var param dto.UpdateUserRequest
 
@@ -291,9 +294,6 @@ func (*UserController) ResetPwd(ctx *gin.Context) {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
-
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
 
 	response.NewSuccess().Json(ctx)
 }
@@ -346,6 +346,9 @@ func (*UserController) AuthRole(ctx *gin.Context) {
 // 用户授权角色
 func (*UserController) AddAuthRole(ctx *gin.Context) {
 
+	// 设置业务类型，操作日志获取
+	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
+
 	var param dto.AddUserAuthRoleRequest
 
 	if err := ctx.ShouldBindQuery(&param); err != nil {
@@ -364,10 +367,28 @@ func (*UserController) AddAuthRole(ctx *gin.Context) {
 		return
 	}
 
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
-
 	response.NewSuccess().Json(ctx)
+}
+
+// 导出用户模板
+func (*UserController) ImportTemplate(ctx *gin.Context) {
+
+	// TODO
+
+}
+
+// 导入用户数据
+func (*UserController) ImportData(ctx *gin.Context) {
+
+	// TODO
+
+}
+
+// 导出用户数据
+func (*UserController) Export(ctx *gin.Context) {
+
+	// TODO
+
 }
 
 // 个人信息

@@ -5,7 +5,7 @@ import (
 )
 
 type SysConfig struct {
-	ConfigId    int
+	ConfigId    int `gorm:"primaryKey;autoIncrement"`
 	ConfigName  string
 	ConfigKey   string
 	ConfigValue string

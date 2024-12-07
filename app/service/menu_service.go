@@ -50,6 +50,38 @@ func (s *MenuService) GetPermsByUserId(userId int) []string {
 	return perms
 }
 
+// 菜单下拉树列表
+func (s *MenuService) Menuselect() []dto.MenuSeleteTree {
+
+	menus := make([]dto.MenuSeleteTree, 0)
+
+	dal.Gorm.Model(model.SysMenu{}).Order("order_num, menu_id").
+		Select("menu_id as id", "menu_name as label", "parent_id").
+		Where("status = ?", constant.NORMAL_STATUS).
+		Find(&menus)
+
+	return menus
+}
+
+// 菜单下拉列表转树形结构
+func (s *MenuService) MenuSeleteToTree(menus []dto.MenuSeleteTree, parentId int) []dto.MenuSeleteTree {
+
+	tree := make([]dto.MenuSeleteTree, 0)
+
+	for _, menu := range menus {
+		if menu.ParentId == parentId {
+			tree = append(tree, dto.MenuSeleteTree{
+				Id:       menu.Id,
+				Label:    menu.Label,
+				ParentId: menu.ParentId,
+				Children: s.MenuSeleteToTree(menus, menu.Id),
+			})
+		}
+	}
+
+	return tree
+}
+
 // 根据用户id查询拥有的菜单权限（M-目录；C-菜单；F-按钮）
 func (s *MenuService) GetMenuMCListByUserId(userId int) []dto.MenuListResponse {
 

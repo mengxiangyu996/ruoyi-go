@@ -7,7 +7,7 @@ import (
 )
 
 type SysPost struct {
-	PostId     int
+	PostId     int `gorm:"primaryKey;autoIncrement"`
 	PostCode   string
 	PostName   string
 	PostSort   int

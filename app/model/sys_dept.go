@@ -7,7 +7,7 @@ import (
 )
 
 type SysDept struct {
-	DeptId     int
+	DeptId     int `gorm:"primaryKey;autoIncrement"`
 	ParentId   int
 	Ancestors  string
 	DeptName   string

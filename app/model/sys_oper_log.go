@@ -3,7 +3,7 @@ package model
 import "ruoyi-go/framework/datetime"
 
 type SysOperLog struct {
-	OperId        int
+	OperId        int `gorm:"primaryKey;autoIncrement"`
 	Title         string
 	BusinessType  int
 	Method        string

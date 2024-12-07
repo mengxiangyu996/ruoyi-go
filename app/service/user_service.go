@@ -180,7 +180,7 @@ func (s *UserService) AddAuthRole(userId int, roleIds []int) error {
 }
 
 // 获取用户列表
-func (s *UserService) GetUserList(param dto.UserListRequest, userId int) ([]dto.UserListResponse, int) {
+func (s *UserService) GetUserList(param dto.UserListRequest, userId int, isPaging bool) ([]dto.UserListResponse, int) {
 
 	var count int64
 	users := make([]dto.UserListResponse, 0)
@@ -210,7 +210,11 @@ func (s *UserService) GetUserList(param dto.UserListRequest, userId int) ([]dto.
 		query = query.Where("sys_user.create_time BETWEEN ? AND ?", param.BeginTime, param.EndTime)
 	}
 
-	query.Count(&count).Offset((param.PageNum - 1) * param.PageSize).Limit(param.PageSize).Find(&users)
+	if isPaging {
+		query.Count(&count).Offset((param.PageNum - 1) * param.PageSize).Limit(param.PageSize)
+	}
+
+	query.Find(&users)
 
 	return users, int(count)
 }

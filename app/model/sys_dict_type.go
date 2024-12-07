@@ -3,7 +3,7 @@ package model
 import "ruoyi-go/framework/datetime"
 
 type SysDictType struct {
-	DictId     int
+	DictId     int `gorm:"primaryKey;autoIncrement"`
 	DictName   string
 	DictType   string
 	Status     string `gorm:"default:0"`

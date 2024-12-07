@@ -7,7 +7,7 @@ import (
 )
 
 type SysRole struct {
-	RoleId            int
+	RoleId            int `gorm:"primaryKey;autoIncrement"`
 	RoleName          string
 	RoleKey           string
 	RoleSort          int

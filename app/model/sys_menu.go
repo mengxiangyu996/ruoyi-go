@@ -7,7 +7,7 @@ import (
 )
 
 type SysMenu struct {
-	MenuId     int
+	MenuId     int `gorm:"primaryKey;autoIncrement"`
 	MenuName   string
 	ParentId   int
 	OrderNum   int
