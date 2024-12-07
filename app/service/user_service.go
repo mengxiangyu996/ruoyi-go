@@ -124,6 +124,29 @@ func (s *UserService) UpdateUser(param dto.SaveUser, roleIds, postIds []int) err
 	return tx.Commit().Error
 }
 
+// 删除用户
+func (s *UserService) DeleteUser(userIds []int) error {
+
+	tx := dal.Gorm.Begin()
+
+	if err := tx.Model(model.SysUser{}).Where("user_id IN ?", userIds).Delete(&model.SysUser{}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if err := tx.Model(model.SysUserRole{}).Where("user_id IN ?", userIds).Delete(&model.SysUserRole{}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if err := tx.Model(model.SysUserPost{}).Where("user_id IN ?", userIds).Delete(&model.SysUserPost{}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit().Error
+}
+
 // 获取用户列表
 func (s *UserService) GetUserList(param dto.UserListRequest, userId int) ([]dto.UserListResponse, int) {
 

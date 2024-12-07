@@ -1,6 +1,11 @@
 package utils
 
-import "regexp"
+import (
+	"errors"
+	"regexp"
+	"strconv"
+	"strings"
+)
 
 // 正则验证
 // expr 正则表达式
@@ -60,4 +65,25 @@ func Desensitize(content string, start, end int) string {
 	}
 
 	return string(contentRune)
+}
+
+// 字符串转为int数组
+func StringToIntSlice(param, char string) ([]int, error) {
+
+	var intSlice []int
+
+	stringSlice := strings.Split(param, char)
+	
+	for _, str := range stringSlice {
+
+		num, err := strconv.Atoi(str)
+		if err != nil {
+			intSlice = append(intSlice, num)
+			return nil, errors.New(str + "转换失败：" + err.Error())
+		}
+
+		intSlice = append(intSlice, num)
+	}
+
+	return intSlice, nil
 }

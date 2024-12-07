@@ -56,7 +56,8 @@ func Register(server *gin.Engine) {
 	// 已授权并且需要记录操作日志
 	api = server.Group("/api", middleware.AuthMiddleware(), middleware.OperLogMiddleware())
 	{
-		api.POST("/system/user", middleware.HasPerm("system:user:add"), (&systemcontroller.UserController{}).Add)    // 新增用户
-		api.PUT("/system/user", middleware.HasPerm("system:user:edit"), (&systemcontroller.UserController{}).Update) // 更新用户
+		api.POST("/system/user", middleware.HasPerm("system:user:add"), (&systemcontroller.UserController{}).Add)                  // 新增用户
+		api.PUT("/system/user", middleware.HasPerm("system:user:edit"), (&systemcontroller.UserController{}).Update)               // 更新用户
+		api.DELETE("/system/user/:userIds", middleware.HasPerm("system:user:remove"), (&systemcontroller.UserController{}).Remove) // 删除用户
 	}
 }

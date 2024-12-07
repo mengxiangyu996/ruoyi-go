@@ -195,7 +195,7 @@ func (*UserController) Update(ctx *gin.Context) {
 		Sex:         param.Sex,
 		Status:      param.Status,
 		Remark:      param.Remark,
-		CreateBy:    loginUser.UserName,
+		UpdateBy:    loginUser.UserName,
 	}, param.RoleIds, param.PostIds); err != nil {
 		response.NewError().SetMsg("更新用户失败").Json(ctx)
 		return
@@ -203,6 +203,33 @@ func (*UserController) Update(ctx *gin.Context) {
 
 	// 设置业务类型，操作日志获取
 	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_EDIT)
+
+	response.NewSuccess().Json(ctx)
+}
+
+// 删除用户
+func (*UserController) Remove(ctx *gin.Context) {
+
+	userIds, err := utils.StringToIntSlice(ctx.Param("userIds"), ",")
+	if err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	loginUser, _ := token.GetLoginUser(ctx)
+
+	if err = validator.RemoveUserValidator(userIds, loginUser.UserId); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	if err := (&service.UserService{}).DeleteUser(userIds); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	// 设置业务类型，操作日志获取
+	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_DEL)
 
 	response.NewSuccess().Json(ctx)
 }
