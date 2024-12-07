@@ -27,15 +27,6 @@ func AuthMiddleware() gin.HandlerFunc {
 			token.RefreshToken(ctx, loginUser.UserTokenResponse)
 		}
 
-		ctx.Set("userId", loginUser.UserId)
-		ctx.Set("nickName", loginUser.NickName)
-
-		// 超级管理员跳过后续验证
-		if loginUser.UserId == 1 {
-			ctx.Next()
-			return
-		}
-
 		if loginUser.Status != constant.NORMAL_STATUS {
 			response.NewError().SetCode(601).SetMsg("用户被禁用").Json(ctx)
 			ctx.Abort()

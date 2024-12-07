@@ -18,6 +18,10 @@ func HasPerm(perm string) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
 		loginUser, _ := token.GetLoginUser(ctx)
+		if loginUser.UserId == 1 {
+			ctx.Next()
+			return
+		}
 
 		if hasPerm := (&service.UserService{}).UserHasPerm(loginUser.UserId, perm); !hasPerm {
 			response.NewError().SetCode(601).SetMsg("权限不足").Json(ctx)
