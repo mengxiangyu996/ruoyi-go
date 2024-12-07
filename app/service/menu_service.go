@@ -90,9 +90,9 @@ func (s *MenuService) GetMenuMCListByUserId(userId int) []dto.MenuListResponse {
 	query := dal.Gorm.Model(model.SysMenu{}).
 		Select("sys_menu.*").
 		Order("sys_menu.parent_id, sys_menu.order_num").
-		Joins("LEFT JOIN sys_role_menu ON sys_menu.menu_id = sys_role_menu.menu_id").
-		Joins("LEFT JOIN sys_role ON sys_role_menu.role_id = sys_role.role_id").
-		Joins("LEFT JOIN sys_user_role ON sys_role.role_id = sys_user_role.role_id").
+		Joins("JOIN sys_role_menu ON sys_menu.menu_id = sys_role_menu.menu_id").
+		Joins("JOIN sys_role ON sys_role_menu.role_id = sys_role.role_id").
+		Joins("JOIN sys_user_role ON sys_role.role_id = sys_user_role.role_id").
 		Where("sys_menu.status = ? AND sys_role.status = ? AND sys_menu.menu_type IN ?", constant.NORMAL_STATUS, constant.NORMAL_STATUS, []string{"M", "C"})
 
 	if userId > 1 {
