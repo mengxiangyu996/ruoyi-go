@@ -6,6 +6,7 @@ import (
 	"ruoyi-go/app/service"
 	"ruoyi-go/app/token"
 	"ruoyi-go/common/password"
+	"ruoyi-go/common/types/constant"
 	"ruoyi-go/common/utils"
 	"ruoyi-go/framework/response"
 	"strconv"
@@ -111,7 +112,7 @@ func (*UserController) Add(ctx *gin.Context) {
 		return
 	}
 
-	// loginUser, _ := token.GetLoginUser(ctx)
+	loginUser, _ := token.GetLoginUser(ctx)
 
 	if user := (&service.UserService{}).GetUserByUsername(param.UserName); user.UserId > 0 {
 		response.NewError().SetMsg("用户名称已存在").Json(ctx)
@@ -132,21 +133,76 @@ func (*UserController) Add(ctx *gin.Context) {
 		}
 	}
 
-	// if err := (&service.UserService{}).CreateUser(dto.SaveUser{
-	// 	DeptId:      param.DeptId,
-	// 	UserName:    param.UserName,
-	// 	NickName:    param.NickName,
-	// 	Email:       param.Email,
-	// 	Phonenumber: param.Phonenumber,
-	// 	Sex:         param.Sex,
-	// 	Password:    password.Generate(param.Password),
-	// 	Status:      param.Status,
-	// 	Remark:      param.Remark,
-	// 	CreateBy:    loginUser.UserName,
-	// }, param.RoleIds, param.PostIds); err != nil {
-	// 	response.NewError().SetMsg("新增用户失败").Json(ctx)
-	// 	return
-	// }
+	if err := (&service.UserService{}).CreateUser(dto.SaveUser{
+		DeptId:      param.DeptId,
+		UserName:    param.UserName,
+		NickName:    param.NickName,
+		Email:       param.Email,
+		Phonenumber: param.Phonenumber,
+		Sex:         param.Sex,
+		Password:    password.Generate(param.Password),
+		Status:      param.Status,
+		Remark:      param.Remark,
+		CreateBy:    loginUser.UserName,
+	}, param.RoleIds, param.PostIds); err != nil {
+		response.NewError().SetMsg("新增用户失败").Json(ctx)
+		return
+	}
+
+	// 设置业务类型，操作日志获取
+	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_ADD)
+
+	response.NewSuccess().Json(ctx)
+}
+
+// 更新用户
+func (*UserController) Update(ctx *gin.Context) {
+
+	var param dto.UpdateUserRequest
+
+	if err := ctx.ShouldBindJSON(&param); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	if err := validator.UpdateUserValidator(param); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	loginUser, _ := token.GetLoginUser(ctx)
+
+	if param.Email != "" {
+		if user := (&service.UserService{}).GetUserByEmail(param.Email); user.UserId > 0 && user.UserId != param.UserId {
+			response.NewError().SetMsg("邮箱账号已存在").Json(ctx)
+			return
+		}
+	}
+
+	if param.Phonenumber != "" {
+		if user := (&service.UserService{}).GetUserByPhonenumber(param.Phonenumber); user.UserId > 0 && user.UserId != param.UserId {
+			response.NewError().SetMsg("手机号码已存在").Json(ctx)
+			return
+		}
+	}
+
+	if err := (&service.UserService{}).UpdateUser(dto.SaveUser{
+		UserId:      param.UserId,
+		DeptId:      param.DeptId,
+		NickName:    param.NickName,
+		Email:       param.Email,
+		Phonenumber: param.Phonenumber,
+		Sex:         param.Sex,
+		Status:      param.Status,
+		Remark:      param.Remark,
+		CreateBy:    loginUser.UserName,
+	}, param.RoleIds, param.PostIds); err != nil {
+		response.NewError().SetMsg("更新用户失败").Json(ctx)
+		return
+	}
+
+	// 设置业务类型，操作日志获取
+	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_EDIT)
 
 	response.NewSuccess().Json(ctx)
 }
@@ -186,7 +242,7 @@ func (*UserController) GetProfile(ctx *gin.Context) {
 // 修改个人信息
 func (*UserController) UpdateProfile(ctx *gin.Context) {
 
-	var param dto.UpdateProfile
+	var param dto.UpdateProfileRequest
 
 	if err := ctx.ShouldBindJSON(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
@@ -206,7 +262,7 @@ func (*UserController) UpdateProfile(ctx *gin.Context) {
 		Email:       param.Email,
 		Phonenumber: param.Phonenumber,
 		Sex:         param.Sex,
-	}); err != nil {
+	}, nil, nil); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -217,7 +273,7 @@ func (*UserController) UpdateProfile(ctx *gin.Context) {
 // 修改个人密码
 func (*UserController) UserProfileUpdatePwd(ctx *gin.Context) {
 
-	var param dto.UserProfileUpdatePwd
+	var param dto.UserProfileUpdatePwdRequest
 
 	if err := ctx.ShouldBindQuery(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
@@ -240,7 +296,7 @@ func (*UserController) UserProfileUpdatePwd(ctx *gin.Context) {
 	if err := (&service.UserService{}).UpdateUser(dto.SaveUser{
 		UserId:   user.UserId,
 		Password: password.Generate(param.NewPassword),
-	}); err != nil {
+	}, nil, nil); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}

@@ -16,6 +16,7 @@ func (s *UserService) CreateUser(param dto.SaveUser, roleIds, postIds []int) err
 
 	user := model.SysUser{
 		DeptId:      param.DeptId,
+		UserName:    param.UserName,
 		NickName:    param.NickName,
 		UserType:    param.UserType,
 		Email:       param.Email,
@@ -63,9 +64,11 @@ func (s *UserService) CreateUser(param dto.SaveUser, roleIds, postIds []int) err
 }
 
 // 更新用户
-func (s *UserService) UpdateUser(param dto.SaveUser) error {
+func (s *UserService) UpdateUser(param dto.SaveUser, roleIds, postIds []int) error {
 
-	return dal.Gorm.Model(model.SysUser{}).Where("user_id = ?", param.UserId).Updates(&model.SysUser{
+	tx := dal.Gorm.Begin()
+
+	if err := tx.Model(model.SysUser{}).Where("user_id = ?", param.UserId).Updates(&model.SysUser{
 		DeptId:      param.DeptId,
 		NickName:    param.NickName,
 		UserType:    param.UserType,
@@ -79,7 +82,46 @@ func (s *UserService) UpdateUser(param dto.SaveUser) error {
 		Status:      param.Status,
 		UpdateBy:    param.UpdateBy,
 		Remark:      param.Remark,
-	}).Error
+	}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// 清理角色和岗位旧数据
+	if err := tx.Model(model.SysUserRole{}).Where("user_id = ?", param.UserId).Delete(&model.SysUserRole{}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	if err := tx.Model(model.SysUserPost{}).Where("user_id = ?", param.UserId).Delete(&model.SysUserPost{}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if len(roleIds) > 0 {
+		for _, roleId := range roleIds {
+			if err := tx.Model(model.SysUserRole{}).Create(&model.SysUserRole{
+				UserId: param.UserId,
+				RoleId: roleId,
+			}).Error; err != nil {
+				tx.Rollback()
+				return err
+			}
+		}
+	}
+
+	if len(postIds) > 0 {
+		for _, postId := range postIds {
+			if err := tx.Model(model.SysUserPost{}).Create(&model.SysUserPost{
+				UserId: param.UserId,
+				PostId: postId,
+			}).Error; err != nil {
+				tx.Rollback()
+				return err
+			}
+		}
+	}
+
+	return tx.Commit().Error
 }
 
 // 获取用户列表

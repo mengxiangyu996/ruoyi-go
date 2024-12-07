@@ -45,5 +45,12 @@ const REQUEST_TIME = "requestTime"
 // 请求的操作标题key
 const REQUEST_TITLE = "businessTitle"
 
-// 请求的操作类型key
+// 请求的操作类型key（操作日志需要）
 const REQUEST_BUSINESS_TYPE = "businessType"
+
+// 请求的操作类型（具体类型）（操作日志需要）
+const (
+	REQUEST_BUSINESS_TYPE_ADD  = 1 // 新增
+	REQUEST_BUSINESS_TYPE_EDIT = 1 // 修改
+	REQUEST_BUSINESS_TYPE_DEL  = 1 // 删除
+)

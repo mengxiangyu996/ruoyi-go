@@ -91,7 +91,7 @@ func (*AuthController) Login(ctx *gin.Context) {
 		UserId:    user.UserId,
 		LoginIP:   ctx.ClientIP(),
 		LoginDate: datetime.Datetime{Time: time.Now()},
-	})
+	}, nil, nil)
 
 	response.NewSuccess().SetData("token", token).Json(ctx)
 }
