@@ -8,7 +8,6 @@
 
 ## 后端运行
 
-    ```
     # 克隆项目
     git clone https://github.com/mengxiangyu996/ruoyi-go.git
 
@@ -23,7 +22,6 @@
 
     # 启动服务
     go run main.go
-    ```
 
 ## 内置功能
 
