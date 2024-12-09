@@ -12,8 +12,8 @@ type SysRole struct {
 	RoleKey           string
 	RoleSort          int
 	DataScope         string `gorm:"default:1"`
-	MenuCheckStrictly int    `gorm:"default:1"`
-	DeptCheckStrictly int    `gorm:"default:1"`
+	MenuCheckStrictly *int   `gorm:"default:1"`
+	DeptCheckStrictly *int   `gorm:"default:1"`
 	Status            string `gorm:"default:0"`
 	CreateBy          string
 	CreateTime        datetime.Datetime `gorm:"autoCreateTime"`

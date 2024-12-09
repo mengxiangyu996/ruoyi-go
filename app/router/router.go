@@ -38,10 +38,13 @@ func Register(server *gin.Engine) {
 		api.GET("/system/user/:userId", middleware.HasPerm("system:user:query"), (&systemcontroller.UserController{}).Detail)            // 根据用户编号获取详细信息
 		api.GET("/system/user/authRole/:userId", middleware.HasPerm("system:user:query"), (&systemcontroller.UserController{}).AuthRole) // 根据用户编号获取详细信息
 
-		api.GET("/system/role/list", middleware.HasPerm("system:role:list"), (&systemcontroller.RoleController{}).List) // 获取角色列表
+		api.GET("/system/role/list", middleware.HasPerm("system:role:list"), (&systemcontroller.RoleController{}).List)                  // 获取角色列表
+		api.GET("/system/role/:roleId", middleware.HasPerm("system:role:query"), (&systemcontroller.RoleController{}).Detail)            // 获取角色详情
+		api.GET("/system/role/deptTree/:roleId", middleware.HasPerm("system:role:query"), (&systemcontroller.RoleController{}).DeptTree) // 获取部门树
 
 		api.GET("/system/menu/list", middleware.HasPerm("system:menu:list"), (&systemcontroller.MenuController{}).List) // 获取菜单列表
 		api.GET("/system/menu/treeselect", (&systemcontroller.MenuController{}).Treeselect)                             // 获取菜单下拉树列表
+		api.GET("/system/menu/roleMenuTreeselect/:roleId", (&systemcontroller.MenuController{}).RoleMenuTreeselect)     // 加载对应角色菜单列表树
 
 		api.GET("/system/dept/list", middleware.HasPerm("system:dept:list"), (&systemcontroller.DeptController{}).List) // 获取部门列表
 		api.GET("/system/post/list", middleware.HasPerm("system:post:list"), (&systemcontroller.PostController{}).List) // 获取岗位列表
@@ -67,6 +70,10 @@ func Register(server *gin.Engine) {
 		api.PUT("/system/user/resetPwd", middleware.HasPerm("system:user:edit"), (&systemcontroller.UserController{}).ResetPwd)         // 重置用密码
 		api.PUT("/system/user/authRole", middleware.HasPerm("system:user:edit"), (&systemcontroller.UserController{}).AddAuthRole)      // 用户授权角色
 
-		api.POST("/system/role", middleware.HasPerm("system:role:add"), (&systemcontroller.RoleController{}).Create) // 新增角色
+		api.POST("/system/role", middleware.HasPerm("system:role:add"), (&systemcontroller.RoleController{}).Create)                    // 新增角色
+		api.PUT("/system/role", middleware.HasPerm("system:role:edit"), (&systemcontroller.RoleController{}).Update)                    // 更新角色
+		api.DELETE("/system/role/:roleIds", middleware.HasPerm("system:role:remove"), (&systemcontroller.RoleController{}).Remove)      // 删除角色
+		api.PUT("/system/role/changeStatus", middleware.HasPerm("system:role:edit"), (&systemcontroller.RoleController{}).ChangeStatus) // 修改角色状态
+		api.PUT("/system/role/dataScope", middleware.HasPerm("system:role:edit"), (&systemcontroller.RoleController{}).DataScope)       // 分配数据权限
 	}
 }

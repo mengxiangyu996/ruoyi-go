@@ -51,7 +51,7 @@ func (*UserController) List(ctx *gin.Context) {
 	response.NewSuccess().SetPageData(users, total).Json(ctx)
 }
 
-// 获取用户详情
+// 用户详情
 func (*UserController) Detail(ctx *gin.Context) {
 
 	userId, _ := strconv.Atoi(ctx.Param("userId"))

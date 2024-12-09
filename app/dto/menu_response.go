@@ -52,11 +52,3 @@ type MenuMetaResponse struct {
 	Link    string `json:"link"`
 	NoCache bool   `json:"noCache"`
 }
-
-// 菜单下拉树列表
-type MenuSeleteTree struct {
-	Id       int              `json:"id"`
-	Label    string           `json:"label"`
-	Children []MenuSeleteTree `json:"children" gorm:"-"`
-	ParentId int              `json:"-"`
-}

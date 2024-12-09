@@ -57,3 +57,48 @@ func (s *DeptService) GetUserDeptTree(userId int) []dto.DeptTreeResponse {
 
 	return depts
 }
+
+// 根据角色id获取部门id集合
+func (s *DeptService) GetDeptIdsByRoleId(roleId int) []int {
+
+	deptIds := make([]int, 0)
+
+	dal.Gorm.Model(model.SysRoleDept{}).
+		Joins("JOIN sys_dept ON sys_dept.dept_id = sys_role_dept.dept_id").
+		Where("sys_dept.status = ? AND sys_role_dept.role_id = ?", constant.NORMAL_STATUS, roleId).
+		Pluck("sys_dept.dept_id", &deptIds)
+
+	return deptIds
+}
+
+// 部门下拉树列表
+func (s *DeptService) DeptSelect() []dto.SeleteTree {
+
+	depts := make([]dto.SeleteTree, 0)
+
+	dal.Gorm.Model(model.SysDept{}).Order("order_num, dept_id").
+		Select("dept_id as id", "dept_name as label", "parent_id").
+		Where("status = ?", constant.NORMAL_STATUS).
+		Find(&depts)
+
+	return depts
+}
+
+// 部门下拉列表转树形结构
+func (s *DeptService) DeptSeleteToTree(depts []dto.SeleteTree, parentId int) []dto.SeleteTree {
+
+	tree := make([]dto.SeleteTree, 0)
+
+	for _, dept := range depts {
+		if dept.ParentId == parentId {
+			tree = append(tree, dto.SeleteTree{
+				Id:       dept.Id,
+				Label:    dept.Label,
+				ParentId: dept.ParentId,
+				Children: s.DeptSeleteToTree(depts, dept.Id),
+			})
+		}
+	}
+
+	return tree
+}

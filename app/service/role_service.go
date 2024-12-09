@@ -10,7 +10,7 @@ import (
 type RoleService struct{}
 
 // 新增角色
-func (s *RoleService) CreateRole(param dto.SaveRoleRequest, menuIds []int) error {
+func (s *RoleService) CreateRole(param dto.SaveRole, menuIds []int) error {
 
 	tx := dal.Gorm.Begin()
 
@@ -40,6 +40,88 @@ func (s *RoleService) CreateRole(param dto.SaveRoleRequest, menuIds []int) error
 				return err
 			}
 		}
+	}
+
+	return tx.Commit().Error
+}
+
+// 更新角色
+func (s *RoleService) UpdateRole(param dto.SaveRole, menuIds, deptIds []int) error {
+
+	tx := dal.Gorm.Begin()
+
+	if err := tx.Model(model.SysRole{}).Where("role_id = ?", param.RoleId).Updates(&model.SysRole{
+		RoleName:          param.RoleName,
+		RoleKey:           param.RoleKey,
+		RoleSort:          param.RoleSort,
+		DataScope:         param.DataScope,
+		MenuCheckStrictly: param.MenuCheckStrictly,
+		DeptCheckStrictly: param.DeptCheckStrictly,
+		Status:            param.Status,
+		UpdateBy:          param.UpdateBy,
+		Remark:            param.Remark,
+	}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if menuIds != nil {
+		if err := tx.Model(model.SysRoleMenu{}).Where("role_id = ?", param.RoleId).Delete(&model.SysRoleMenu{}).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+	if len(menuIds) > 0 {
+		for _, menuId := range menuIds {
+			if err := tx.Model(model.SysRoleMenu{}).Create(&model.SysRoleMenu{
+				RoleId: param.RoleId,
+				MenuId: menuId,
+			}).Error; err != nil {
+				tx.Rollback()
+				return err
+			}
+		}
+	}
+
+	if deptIds != nil {
+		if err := tx.Model(model.SysRoleDept{}).Where("role_id = ?", param.RoleId).Delete(&model.SysRoleDept{}).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+	if len(deptIds) > 0 {
+		for _, deptId := range deptIds {
+			if err := tx.Model(model.SysRoleDept{}).Create(&model.SysRoleDept{
+				RoleId: param.RoleId,
+				DeptId: deptId,
+			}).Error; err != nil {
+				tx.Rollback()
+				return err
+			}
+		}
+	}
+
+	return tx.Commit().Error
+}
+
+// 删除角色
+func (s *RoleService) DeleteRole(roleIds []int) error {
+
+	tx := dal.Gorm.Begin()
+
+	if err := tx.Model(model.SysRole{}).Where("role_id IN ?", roleIds).Delete(&model.SysRole{}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if err := tx.Model(model.SysRoleMenu{}).Where("role_id IN ?", roleIds).Delete(&model.SysRoleMenu{}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if err := tx.Model(model.SysRoleDept{}).Where("role_id IN ?", roleIds).Delete(&model.SysRoleDept{}).Error; err != nil {
+		tx.Rollback()
+		return err
 	}
 
 	return tx.Commit().Error
@@ -76,6 +158,16 @@ func (s *RoleService) GetRoleList(param dto.RoleListRequest, isPaging bool) ([]d
 	query.Find(&roles)
 
 	return roles, int(count)
+}
+
+// 获取角色详情
+func (s *RoleService) GetRoleByRoleId(roleId int) dto.RoleDetailResponse {
+
+	var role dto.RoleDetailResponse
+
+	dal.Gorm.Model(model.SysRole{}).Where("role_id = ?", roleId).Last(&role)
+
+	return role
 }
 
 // 根据用户id查询角色列表

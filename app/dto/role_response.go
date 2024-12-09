@@ -1,6 +1,8 @@
 package dto
 
-import "ruoyi-go/framework/datetime"
+import (
+	"ruoyi-go/framework/datetime"
+)
 
 // 角色列表
 type RoleListResponse struct {

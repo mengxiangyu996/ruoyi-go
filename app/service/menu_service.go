@@ -50,10 +50,23 @@ func (s *MenuService) GetPermsByUserId(userId int) []string {
 	return perms
 }
 
-// 菜单下拉树列表
-func (s *MenuService) Menuselect() []dto.MenuSeleteTree {
+// 根据角色id查询拥有的菜单id集合
+func (s *MenuService) GetMenuIdsByRoleId(roleId int) []int {
 
-	menus := make([]dto.MenuSeleteTree, 0)
+	menuIds := make([]int, 0)
+
+	dal.Gorm.Model(model.SysRoleMenu{}).
+		Joins("JOIN sys_menu ON sys_menu.menu_id = sys_role_menu.menu_id").
+		Where("sys_menu.status = ? AND sys_role_menu.role_id = ?", constant.NORMAL_STATUS, roleId).
+		Pluck("sys_menu.menu_id", &menuIds)
+
+	return menuIds
+}
+
+// 菜单下拉树列表
+func (s *MenuService) MenuSelect() []dto.SeleteTree {
+
+	menus := make([]dto.SeleteTree, 0)
 
 	dal.Gorm.Model(model.SysMenu{}).Order("order_num, menu_id").
 		Select("menu_id as id", "menu_name as label", "parent_id").
@@ -64,13 +77,13 @@ func (s *MenuService) Menuselect() []dto.MenuSeleteTree {
 }
 
 // 菜单下拉列表转树形结构
-func (s *MenuService) MenuSeleteToTree(menus []dto.MenuSeleteTree, parentId int) []dto.MenuSeleteTree {
+func (s *MenuService) MenuSeleteToTree(menus []dto.SeleteTree, parentId int) []dto.SeleteTree {
 
-	tree := make([]dto.MenuSeleteTree, 0)
+	tree := make([]dto.SeleteTree, 0)
 
 	for _, menu := range menus {
 		if menu.ParentId == parentId {
-			tree = append(tree, dto.MenuSeleteTree{
+			tree = append(tree, dto.SeleteTree{
 				Id:       menu.Id,
 				Label:    menu.Label,
 				ParentId: menu.ParentId,

@@ -87,21 +87,12 @@ func (s *UserService) UpdateUser(param dto.SaveUser, roleIds, postIds []int) err
 		return err
 	}
 
-	// 清理角色和岗位旧数据
 	if roleIds != nil {
 		if err := tx.Model(model.SysUserRole{}).Where("user_id = ?", param.UserId).Delete(&model.SysUserRole{}).Error; err != nil {
 			tx.Rollback()
 			return err
 		}
 	}
-
-	if postIds != nil {
-		if err := tx.Model(model.SysUserPost{}).Where("user_id = ?", param.UserId).Delete(&model.SysUserPost{}).Error; err != nil {
-			tx.Rollback()
-			return err
-		}
-	}
-
 	if len(roleIds) > 0 {
 		for _, roleId := range roleIds {
 			if err := tx.Model(model.SysUserRole{}).Create(&model.SysUserRole{
@@ -114,6 +105,12 @@ func (s *UserService) UpdateUser(param dto.SaveUser, roleIds, postIds []int) err
 		}
 	}
 
+	if postIds != nil {
+		if err := tx.Model(model.SysUserPost{}).Where("user_id = ?", param.UserId).Delete(&model.SysUserPost{}).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
 	if len(postIds) > 0 {
 		for _, postId := range postIds {
 			if err := tx.Model(model.SysUserPost{}).Create(&model.SysUserPost{

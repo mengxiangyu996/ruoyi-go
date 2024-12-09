@@ -1,14 +1,14 @@
 package dto
 
 // 保存角色
-type SaveRoleRequest struct {
+type SaveRole struct {
 	RoleId            int    `json:"roleId"`
 	RoleName          string `json:"roleName"`
 	RoleKey           string `json:"roleKey"`
 	RoleSort          int    `json:"roleSort"`
 	DataScope         string `json:"dataScope"`
-	MenuCheckStrictly int    `json:"menuCheckStrictly"`
-	DeptCheckStrictly int    `json:"deptCheckStrictly"`
+	MenuCheckStrictly *int   `json:"menuCheckStrictly"`
+	DeptCheckStrictly *int   `json:"deptCheckStrictly"`
 	Status            string `json:"status"`
 	CreateBy          string `json:"createBy"`
 	UpdateBy          string `json:"updateBy"`
@@ -36,4 +36,20 @@ type CreateRoleRequest struct {
 	Remark            string `json:"remark"`
 	MenuIds           []int  `json:"menuIds"`
 	CreateBy          string `json:"createBy"`
+}
+
+// 更新角色
+type UpdateRoleRequest struct {
+	RoleId            int    `json:"roleId"`
+	RoleName          string `json:"roleName"`
+	RoleKey           string `json:"roleKey"`
+	RoleSort          int    `json:"roleSort"`
+	DataScope         string `json:"dataScope"`
+	MenuCheckStrictly bool   `json:"menuCheckStrictly"`
+	DeptCheckStrictly bool   `json:"deptCheckStrictly"`
+	Status            string `json:"status"`
+	Remark            string `json:"remark"`
+	MenuIds           []int  `json:"menuIds"`
+	DeptIds           []int  `json:"deptIds"`
+	UpdateBy          string `json:"updateBy"`
 }
