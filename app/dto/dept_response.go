@@ -6,6 +6,7 @@ import "ruoyi-go/framework/datetime"
 type DeptListResponse struct {
 	DeptId     int               `json:"deptId"`
 	ParentId   int               `json:"parentId"`
+	Ancestors  string            `json:"ancestors"`
 	DeptName   string            `json:"deptName"`
 	OrderNum   int               `json:"orderNum"`
 	Status     string            `json:"status"`

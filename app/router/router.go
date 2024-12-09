@@ -49,7 +49,10 @@ func Register(server *gin.Engine) {
 		api.GET("/system/menu/roleMenuTreeselect/:roleId", (&systemcontroller.MenuController{}).RoleMenuTreeselect)           // 加载对应角色菜单列表树
 		api.GET("/system/menu/:menuId", middleware.HasPerm("system:menu:query"), (&systemcontroller.MenuController{}).Detail) // 获取菜单详情
 
-		api.GET("/system/dept/list", middleware.HasPerm("system:dept:list"), (&systemcontroller.DeptController{}).List) // 获取部门列表
+		api.GET("/system/dept/list", middleware.HasPerm("system:dept:list"), (&systemcontroller.DeptController{}).List)                        // 获取部门列表
+		api.GET("/system/dept/list/exclude/:deptId", middleware.HasPerm("system:dept:list"), (&systemcontroller.DeptController{}).ListExclude) // 查询部门列表（排除节点）
+		api.GET("/system/dept/:deptId", middleware.HasPerm("system:dept:query"), (&systemcontroller.DeptController{}).Detail)                  // 获取部门详情
+
 		api.GET("/system/post/list", middleware.HasPerm("system:post:list"), (&systemcontroller.PostController{}).List) // 获取岗位列表
 
 		api.GET("/system/dict/list", middleware.HasPerm("system:dict:list"), (&systemcontroller.DictTypeController{}).List) // 获取字典类型列表
@@ -82,8 +85,12 @@ func Register(server *gin.Engine) {
 		api.PUT("/system/role/authUser/cancel", middleware.HasPerm("system:role:edit"), (&systemcontroller.RoleController{}).RoleAuthUserCancel)       // 取消授权用户
 		api.PUT("/system/role/authUser/cancelAll", middleware.HasPerm("system:role:edit"), (&systemcontroller.RoleController{}).RoleAuthUserCancelAll) // 批量取消授权用户
 
-		api.POST("/system/menu", middleware.HasPerm("system:menu:list"), (&systemcontroller.MenuController{}).Create)             // 新增菜单
+		api.POST("/system/menu", middleware.HasPerm("system:menu:add"), (&systemcontroller.MenuController{}).Create)              // 新增菜单
 		api.PUT("/system/menu", middleware.HasPerm("system:menu:edit"), (&systemcontroller.MenuController{}).Update)              // 更新菜单
 		api.DELETE("/system/menu/:menuId", middleware.HasPerm("system:menu:remove"), (&systemcontroller.MenuController{}).Remove) // 删除菜单
+
+		api.POST("/system/dept", middleware.HasPerm("system:dept:add"), (&systemcontroller.DeptController{}).Create)              // 新增部门
+		api.PUT("/system/dept", middleware.HasPerm("system:dept:edit"), (&systemcontroller.DeptController{}).Update)              // 更新部门
+		api.DELETE("/system/dept/:deptId", middleware.HasPerm("system:dept:remove"), (&systemcontroller.DeptController{}).Remove) // 删除部门
 	}
 }

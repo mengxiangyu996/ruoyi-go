@@ -374,3 +374,13 @@ func (s *UserService) GetUserListByRoleId(param dto.RoleAuthUserAllocatedListReq
 
 	return users, int(count)
 }
+
+// 根据部门id查询是否存在用户
+func (s *UserService) UserHasDeptByDeptId(deptId int) bool {
+
+	var count int64
+
+	dal.Gorm.Model(model.SysUser{}).Where("dept_id = ?", deptId).Count(&count)
+
+	return count > 0
+}
