@@ -10,6 +10,55 @@ import (
 
 type MenuService struct{}
 
+// 新增菜单
+func (s *MenuService) CreateMenu(param dto.SaveMenu) error {
+
+	return dal.Gorm.Model(model.SysMenu{}).Create(&model.SysMenu{
+		MenuName:  param.MenuName,
+		ParentId:  param.ParentId,
+		OrderNum:  param.OrderNum,
+		Path:      param.Path,
+		Component: param.Component,
+		Query:     param.Query,
+		RouteName: param.RouteName,
+		IsFrame:   param.IsFrame,
+		IsCache:   param.IsCache,
+		MenuType:  param.MenuType,
+		Visible:   param.Visible,
+		Perms:     param.Perms,
+		Icon:      param.Icon,
+		Status:    param.Status,
+		CreateBy:  param.CreateBy,
+	}).Error
+}
+
+// 更新菜单
+func (s *MenuService) UpdateMenu(param dto.SaveMenu) error {
+
+	return dal.Gorm.Model(model.SysMenu{}).Where("menu_id = ?", param.MenuId).Updates(&model.SysMenu{
+		MenuName:  param.MenuName,
+		ParentId:  param.ParentId,
+		OrderNum:  param.OrderNum,
+		Path:      param.Path,
+		Component: param.Component,
+		Query:     param.Query,
+		RouteName: param.RouteName,
+		IsFrame:   param.IsFrame,
+		IsCache:   param.IsCache,
+		MenuType:  param.MenuType,
+		Visible:   param.Visible,
+		Perms:     param.Perms,
+		Icon:      param.Icon,
+		Status:    param.Status,
+		CreateBy:  param.CreateBy,
+	}).Error
+}
+
+// 删除菜单
+func (s *MenuService) DeleteMenu(menuId int) error {
+	return dal.Gorm.Model(model.SysMenu{}).Where("menu_id = ?", menuId).Delete(&model.SysMenu{}).Error
+}
+
 // 菜单列表
 func (s *MenuService) GetMenuList(param dto.MenuListRequest) []dto.MenuListResponse {
 
@@ -28,6 +77,46 @@ func (s *MenuService) GetMenuList(param dto.MenuListRequest) []dto.MenuListRespo
 	query.Find(&menus)
 
 	return menus
+}
+
+// 根据菜单id查询菜单
+func (s *MenuService) GetMenuByMenuId(menuId int) dto.MenuDetailResponse {
+
+	var menu dto.MenuDetailResponse
+
+	dal.Gorm.Model(model.SysMenu{}).Where("menu_id = ?", menuId).Last(&menu)
+
+	return menu
+}
+
+// 根据菜单名称查询菜单
+func (s *MenuService) GetMenuByMenuName(menuName string) dto.MenuDetailResponse {
+
+	var menu dto.MenuDetailResponse
+
+	dal.Gorm.Model(model.SysMenu{}).Where("menu_name = ?", menuName).Last(&menu)
+
+	return menu
+}
+
+// 查询是否存在下级菜单
+func (s *MenuService) MenuHasChildren(menuId int) bool {
+
+	var count int64
+
+	dal.Gorm.Model(model.SysMenu{}).Where("parent_id = ?", menuId).Count(&count)
+
+	return count > 0
+}
+
+// 查询菜单是否已分配到权限
+func (s *MenuService) MenuExistRole(menuId int) bool {
+
+	var count int64
+
+	dal.Gorm.Model(model.SysRoleMenu{}).Where("menu_id = ?", menuId).Count(&count)
+
+	return count > 0
 }
 
 // 根据用户id查询菜单权限perms
@@ -101,15 +190,15 @@ func (s *MenuService) GetMenuMCListByUserId(userId int) []dto.MenuListResponse {
 	menus := make([]dto.MenuListResponse, 0)
 
 	query := dal.Gorm.Model(model.SysMenu{}).
-		Select("sys_menu.*").
+		Distinct("sys_menu.*").
 		Order("sys_menu.parent_id, sys_menu.order_num").
-		Joins("JOIN sys_role_menu ON sys_menu.menu_id = sys_role_menu.menu_id").
-		Joins("JOIN sys_role ON sys_role_menu.role_id = sys_role.role_id").
-		Joins("JOIN sys_user_role ON sys_role.role_id = sys_user_role.role_id").
-		Where("sys_menu.status = ? AND sys_role.status = ? AND sys_menu.menu_type IN ?", constant.NORMAL_STATUS, constant.NORMAL_STATUS, []string{"M", "C"})
+		Joins("LEFT JOIN sys_role_menu ON sys_menu.menu_id = sys_role_menu.menu_id").
+		Joins("LEFT JOIN sys_role ON sys_role_menu.role_id = sys_role.role_id").
+		Joins("LEFT JOIN sys_user_role ON sys_role.role_id = sys_user_role.role_id").
+		Where("sys_menu.status = ? AND sys_menu.menu_type IN ?", constant.NORMAL_STATUS, []string{"M", "C"})
 
 	if userId > 1 {
-		query = query.Where("sys_user_role.user_id = ?", userId)
+		query = query.Where("sys_user_role.user_id = ? AND sys_role.status = ?", userId, constant.NORMAL_STATUS)
 	}
 
 	query.Find(&menus)
@@ -225,7 +314,7 @@ func (s *MenuService) GetRoutePath(menu dto.MenuListTreeResponse) string {
 	}
 
 	// 非外链并且是一级目录（类型为目录）
-	if menu.ParentId == 0 && menu.MenuType == constant.MENU_TYPE_DIRECTORY && menu.IsFrame == constant.IS_MENU_INNER_LINK {
+	if menu.ParentId == 0 && menu.MenuType == constant.MENU_TYPE_DIRECTORY && menu.IsFrame == constant.MENU_NO_FRAME {
 		routePath = "/" + routePath
 	} else if s.IsMenuFrame(menu) {
 		// 非外链并且是一级目录（类型为菜单）
@@ -253,12 +342,12 @@ func (s *MenuService) GetComponent(menu dto.MenuListTreeResponse) string {
 
 // 是否为菜单内部跳转
 func (s *MenuService) IsMenuFrame(menu dto.MenuListTreeResponse) bool {
-	return menu.ParentId == 0 && constant.MENU_TYPE_MENU == menu.MenuType && menu.IsFrame == constant.IS_MENU_INNER_LINK
+	return menu.ParentId == 0 && constant.MENU_TYPE_MENU == menu.MenuType && menu.IsFrame == constant.MENU_NO_FRAME
 }
 
 // 是否为内链组件
 func (s *MenuService) IsInnerLink(menu dto.MenuListTreeResponse) bool {
-	return menu.IsFrame == constant.IS_MENU_INNER_LINK && strings.HasPrefix(menu.Path, "http")
+	return menu.IsFrame == constant.MENU_NO_FRAME && strings.HasPrefix(menu.Path, "http")
 }
 
 // 是否为parent_view组件

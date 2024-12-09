@@ -44,15 +44,16 @@ func Register(server *gin.Engine) {
 		api.GET("/system/role/authUser/allocatedList", middleware.HasPerm("system:role:list"), (&systemcontroller.RoleController{}).RoleAuthUserAllocatedList)     // 查询已分配用户角色列表
 		api.GET("/system/role/authUser/unallocatedList", middleware.HasPerm("system:role:list"), (&systemcontroller.RoleController{}).RoleAuthUserUnallocatedList) // 查询未分配用户角色列表
 
-		api.GET("/system/menu/list", middleware.HasPerm("system:menu:list"), (&systemcontroller.MenuController{}).List) // 获取菜单列表
-		api.GET("/system/menu/treeselect", (&systemcontroller.MenuController{}).Treeselect)                             // 获取菜单下拉树列表
-		api.GET("/system/menu/roleMenuTreeselect/:roleId", (&systemcontroller.MenuController{}).RoleMenuTreeselect)     // 加载对应角色菜单列表树
+		api.GET("/system/menu/list", middleware.HasPerm("system:menu:list"), (&systemcontroller.MenuController{}).List)       // 获取菜单列表
+		api.GET("/system/menu/treeselect", (&systemcontroller.MenuController{}).Treeselect)                                   // 获取菜单下拉树列表
+		api.GET("/system/menu/roleMenuTreeselect/:roleId", (&systemcontroller.MenuController{}).RoleMenuTreeselect)           // 加载对应角色菜单列表树
+		api.GET("/system/menu/:menuId", middleware.HasPerm("system:menu:query"), (&systemcontroller.MenuController{}).Detail) // 获取菜单详情
 
 		api.GET("/system/dept/list", middleware.HasPerm("system:dept:list"), (&systemcontroller.DeptController{}).List) // 获取部门列表
 		api.GET("/system/post/list", middleware.HasPerm("system:post:list"), (&systemcontroller.PostController{}).List) // 获取岗位列表
 
-		api.GET("/system/dict/type/list", middleware.HasPerm("system:dict:list"), (&systemcontroller.DictTypeController{}).List) // 获取字典类型列表
-		api.GET("/system/dict/data/type/:dictType", (&systemcontroller.DictDataController{}).Type)                               // 根据字典类型查询字典数据
+		api.GET("/system/dict/list", middleware.HasPerm("system:dict:list"), (&systemcontroller.DictTypeController{}).List) // 获取字典类型列表
+		api.GET("/system/dict/data/type/:dictType", (&systemcontroller.DictDataController{}).Type)                          // 根据字典类型查询字典数据
 
 		api.GET("/system/config/list", middleware.HasPerm("system:config:list"), (&systemcontroller.ConfigController{}).List) // 获取参数配置列表
 		api.GET("/system/config/configKey/:configKey", (&systemcontroller.ConfigController{}).ConfigKey)                      // 根据参数键名查询参数值
@@ -80,5 +81,9 @@ func Register(server *gin.Engine) {
 		api.PUT("/system/role/authUser/selectAll", middleware.HasPerm("system:role:edit"), (&systemcontroller.RoleController{}).RoleAuthUserSelectAll) // 批量选择用户授权
 		api.PUT("/system/role/authUser/cancel", middleware.HasPerm("system:role:edit"), (&systemcontroller.RoleController{}).RoleAuthUserCancel)       // 取消授权用户
 		api.PUT("/system/role/authUser/cancelAll", middleware.HasPerm("system:role:edit"), (&systemcontroller.RoleController{}).RoleAuthUserCancelAll) // 批量取消授权用户
+
+		api.POST("/system/menu", middleware.HasPerm("system:menu:list"), (&systemcontroller.MenuController{}).Create)             // 新增菜单
+		api.PUT("/system/menu", middleware.HasPerm("system:menu:edit"), (&systemcontroller.MenuController{}).Update)              // 更新菜单
+		api.DELETE("/system/menu/:menuId", middleware.HasPerm("system:menu:remove"), (&systemcontroller.MenuController{}).Remove) // 删除菜单
 	}
 }

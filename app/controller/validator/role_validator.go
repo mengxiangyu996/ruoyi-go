@@ -6,7 +6,7 @@ import (
 	"ruoyi-go/common/utils"
 )
 
-// 新增角色验证
+// 添加角色验证
 func CreateRoleValidator(param dto.CreateRoleRequest) error {
 
 	if param.RoleName == "" {

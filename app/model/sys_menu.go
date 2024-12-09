@@ -15,8 +15,8 @@ type SysMenu struct {
 	Component  string
 	Query      string
 	RouteName  string
-	IsFrame    int `gorm:"default:1"`
-	IsCache    int
+	IsFrame    *int `gorm:"default:1"`
+	IsCache    *int
 	MenuType   string
 	Visible    string `gorm:"default:0"`
 	Perms      string

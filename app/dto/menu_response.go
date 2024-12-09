@@ -52,3 +52,22 @@ type MenuMetaResponse struct {
 	Link    string `json:"link"`
 	NoCache bool   `json:"noCache"`
 }
+
+// 菜单详情
+type MenuDetailResponse struct {
+	MenuId    int    `json:"menuId"`
+	MenuName  string `json:"menuName"`
+	ParentId  int    `json:"parentId"`
+	OrderNum  int    `json:"orderNum"`
+	Path      string `json:"path"`
+	Component string `json:"component"`
+	Query     string `json:"query"`
+	RouteName string `json:"routeName"`
+	IsFrame   int    `json:"isFrame"`
+	IsCache   int    `json:"isCache"`
+	MenuType  string `json:"menuType"`
+	Visible   string `json:"visible"`
+	Perms     string `json:"perms"`
+	Icon      string `json:"icon"`
+	Status    string `json:"status"`
+}

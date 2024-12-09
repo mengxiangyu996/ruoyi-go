@@ -15,11 +15,11 @@ const IS_DEFAULT_YES = "Y"
 // 是否系统默认（否）
 const IS_DEFAULT_NO = "N"
 
-// 是否菜单外链
-const IS_MENU_OUTER_LINK = "0"
+// 是否菜单外链（是）
+const MENU_YES_FRAME = 0
 
 // 是否菜单外链（否）
-const IS_MENU_INNER_LINK = 1
+const MENU_NO_FRAME = 1
 
 // 菜单类型（目录）
 const MENU_TYPE_DIRECTORY = "M"
