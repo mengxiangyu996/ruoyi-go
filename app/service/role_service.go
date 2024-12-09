@@ -170,6 +170,29 @@ func (s *RoleService) GetRoleByRoleId(roleId int) dto.RoleDetailResponse {
 	return role
 }
 
+// 批量授权用户
+func (s *RoleService) AuthUserSelectAll(roleId int, userIds []int) error {
+
+	tx := dal.Gorm.Begin()
+
+	for _, userId := range userIds {
+		if err := tx.Model(model.SysUserRole{}).Create(&model.SysUserRole{
+			UserId: userId,
+			RoleId: roleId,
+		}).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	return tx.Commit().Error
+}
+
+// 批量授权用户
+func (s *RoleService) AuthUserDelete(roleId int, userIds []int) error {
+	return dal.Gorm.Model(model.SysUserRole{}).Where("role_id = ? AND user_id in ?", roleId, userIds).Delete(&model.SysUserRole{}).Error
+}
+
 // 根据用户id查询角色列表
 func (s *RoleService) GetRoleListByUserId(userId int) []dto.RoleListResponse {
 

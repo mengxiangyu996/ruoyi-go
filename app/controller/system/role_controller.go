@@ -259,6 +259,115 @@ func (*RoleController) DataScope(ctx *gin.Context) {
 	response.NewSuccess().Json(ctx)
 }
 
+// 查询已分配用户角色列表
+func (*RoleController) RoleAuthUserAllocatedList(ctx *gin.Context) {
+
+	var param dto.RoleAuthUserAllocatedListRequest
+
+	if err := ctx.ShouldBindQuery(&param); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	loginUser, _ := token.GetLoginUser(ctx)
+
+	users, total := (&service.UserService{}).GetUserListByRoleId(param, loginUser.UserId, true)
+
+	response.NewSuccess().SetPageData(users, total).Json(ctx)
+}
+
+// 查询未分配用户角色列表
+func (*RoleController) RoleAuthUserUnallocatedList(ctx *gin.Context) {
+
+	var param dto.RoleAuthUserAllocatedListRequest
+
+	if err := ctx.ShouldBindQuery(&param); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	loginUser, _ := token.GetLoginUser(ctx)
+
+	users, total := (&service.UserService{}).GetUserListByRoleId(param, loginUser.UserId, false)
+
+	response.NewSuccess().SetPageData(users, total).Json(ctx)
+}
+
+// 批量选择用户授权
+func (*RoleController) RoleAuthUserSelectAll(ctx *gin.Context) {
+
+	// 设置业务类型，操作日志获取
+	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
+
+	var param dto.RoleAuthUserSelectAllRequest
+
+	if err := ctx.ShouldBindQuery(&param); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	userIds, err := utils.StringToIntSlice(param.UserIds, ",")
+	if err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	if err = (&service.RoleService{}).AuthUserSelectAll(param.RoleId, userIds); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	response.NewSuccess().Json(ctx)
+}
+
+// 取消授权用户
+func (*RoleController) RoleAuthUserCancel(ctx *gin.Context) {
+
+	// 设置业务类型，操作日志获取
+	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
+
+	var param dto.RoleAuthUserCancelRequest
+
+	if err := ctx.ShouldBindJSON(&param); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	if err := (&service.RoleService{}).AuthUserDelete(param.RoleId, []int{param.UserId}); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	response.NewSuccess().Json(ctx)
+}
+
+// 批量取消授权用户
+func (*RoleController) RoleAuthUserCancelAll(ctx *gin.Context) {
+
+	// 设置业务类型，操作日志获取
+	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
+
+	var param dto.RoleAuthUserCancelAllRequest
+
+	if err := ctx.ShouldBindQuery(&param); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	userIds, err := utils.StringToIntSlice(param.UserIds, ",")
+	if err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	if err := (&service.RoleService{}).AuthUserDelete(param.RoleId, userIds); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	response.NewSuccess().Json(ctx)
+}
+
 // 导出角色数据
 func (*RoleController) Export(ctx *gin.Context) {
 

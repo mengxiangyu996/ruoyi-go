@@ -53,3 +53,29 @@ type UpdateRoleRequest struct {
 	DeptIds           []int  `json:"deptIds"`
 	UpdateBy          string `json:"updateBy"`
 }
+
+// 查询已分配用户角色列表
+type RoleAuthUserAllocatedListRequest struct {
+	PageRequest
+	RoleId      int    `query:"roleId" form:"roleId"`
+	UserName    string `query:"userName" form:"userName"`
+	Phonenumber string `query:"phonenumber" form:"phonenumber"`
+}
+
+// 批量选择用户授权
+type RoleAuthUserSelectAllRequest struct {
+	RoleId  int    `query:"roleId" form:"roleId"`
+	UserIds string `query:"userIds" form:"userIds"`
+}
+
+// 取消用户授权
+type RoleAuthUserCancelRequest struct {
+	RoleId int `json:"roleId,string"`
+	UserId int `json:"userId"`
+}
+
+// 批量取消用户授权
+type RoleAuthUserCancelAllRequest struct {
+	RoleId  int    `query:"roleId" form:"roleId"`
+	UserIds string `query:"userIds" form:"userIds"`
+}

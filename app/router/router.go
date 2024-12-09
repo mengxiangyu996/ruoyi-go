@@ -38,9 +38,11 @@ func Register(server *gin.Engine) {
 		api.GET("/system/user/:userId", middleware.HasPerm("system:user:query"), (&systemcontroller.UserController{}).Detail)            // 根据用户编号获取详细信息
 		api.GET("/system/user/authRole/:userId", middleware.HasPerm("system:user:query"), (&systemcontroller.UserController{}).AuthRole) // 根据用户编号获取详细信息
 
-		api.GET("/system/role/list", middleware.HasPerm("system:role:list"), (&systemcontroller.RoleController{}).List)                  // 获取角色列表
-		api.GET("/system/role/:roleId", middleware.HasPerm("system:role:query"), (&systemcontroller.RoleController{}).Detail)            // 获取角色详情
-		api.GET("/system/role/deptTree/:roleId", middleware.HasPerm("system:role:query"), (&systemcontroller.RoleController{}).DeptTree) // 获取部门树
+		api.GET("/system/role/list", middleware.HasPerm("system:role:list"), (&systemcontroller.RoleController{}).List)                                            // 获取角色列表
+		api.GET("/system/role/:roleId", middleware.HasPerm("system:role:query"), (&systemcontroller.RoleController{}).Detail)                                      // 获取角色详情
+		api.GET("/system/role/deptTree/:roleId", middleware.HasPerm("system:role:query"), (&systemcontroller.RoleController{}).DeptTree)                           // 获取部门树
+		api.GET("/system/role/authUser/allocatedList", middleware.HasPerm("system:role:list"), (&systemcontroller.RoleController{}).RoleAuthUserAllocatedList)     // 查询已分配用户角色列表
+		api.GET("/system/role/authUser/unallocatedList", middleware.HasPerm("system:role:list"), (&systemcontroller.RoleController{}).RoleAuthUserUnallocatedList) // 查询未分配用户角色列表
 
 		api.GET("/system/menu/list", middleware.HasPerm("system:menu:list"), (&systemcontroller.MenuController{}).List) // 获取菜单列表
 		api.GET("/system/menu/treeselect", (&systemcontroller.MenuController{}).Treeselect)                             // 获取菜单下拉树列表
@@ -70,10 +72,13 @@ func Register(server *gin.Engine) {
 		api.PUT("/system/user/resetPwd", middleware.HasPerm("system:user:edit"), (&systemcontroller.UserController{}).ResetPwd)         // 重置用密码
 		api.PUT("/system/user/authRole", middleware.HasPerm("system:user:edit"), (&systemcontroller.UserController{}).AddAuthRole)      // 用户授权角色
 
-		api.POST("/system/role", middleware.HasPerm("system:role:add"), (&systemcontroller.RoleController{}).Create)                    // 新增角色
-		api.PUT("/system/role", middleware.HasPerm("system:role:edit"), (&systemcontroller.RoleController{}).Update)                    // 更新角色
-		api.DELETE("/system/role/:roleIds", middleware.HasPerm("system:role:remove"), (&systemcontroller.RoleController{}).Remove)      // 删除角色
-		api.PUT("/system/role/changeStatus", middleware.HasPerm("system:role:edit"), (&systemcontroller.RoleController{}).ChangeStatus) // 修改角色状态
-		api.PUT("/system/role/dataScope", middleware.HasPerm("system:role:edit"), (&systemcontroller.RoleController{}).DataScope)       // 分配数据权限
+		api.POST("/system/role", middleware.HasPerm("system:role:add"), (&systemcontroller.RoleController{}).Create)                                   // 新增角色
+		api.PUT("/system/role", middleware.HasPerm("system:role:edit"), (&systemcontroller.RoleController{}).Update)                                   // 更新角色
+		api.DELETE("/system/role/:roleIds", middleware.HasPerm("system:role:remove"), (&systemcontroller.RoleController{}).Remove)                     // 删除角色
+		api.PUT("/system/role/changeStatus", middleware.HasPerm("system:role:edit"), (&systemcontroller.RoleController{}).ChangeStatus)                // 修改角色状态
+		api.PUT("/system/role/dataScope", middleware.HasPerm("system:role:edit"), (&systemcontroller.RoleController{}).DataScope)                      // 分配数据权限
+		api.PUT("/system/role/authUser/selectAll", middleware.HasPerm("system:role:edit"), (&systemcontroller.RoleController{}).RoleAuthUserSelectAll) // 批量选择用户授权
+		api.PUT("/system/role/authUser/cancel", middleware.HasPerm("system:role:edit"), (&systemcontroller.RoleController{}).RoleAuthUserCancel)       // 取消授权用户
+		api.PUT("/system/role/authUser/cancelAll", middleware.HasPerm("system:role:edit"), (&systemcontroller.RoleController{}).RoleAuthUserCancelAll) // 批量取消授权用户
 	}
 }

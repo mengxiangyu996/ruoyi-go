@@ -20,6 +20,7 @@ type UserListResponse struct {
 	DeptId      int               `json:"deptId"`
 	UserName    string            `json:"userName"`
 	NickName    string            `json:"nickName"`
+	Email       string            `json:"email"`
 	Phonenumber string            `json:"phonenumber"`
 	Status      string            `json:"status"`
 	CreateTime  datetime.Datetime `json:"createTime"`

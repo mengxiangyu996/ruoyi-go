@@ -340,3 +340,37 @@ func (s *UserService) UserHasPerm(userId int, perm string) bool {
 
 	return count > 0
 }
+
+// 根据角色id查询已分配角色的用户列表
+//
+// allcated：true-已分配；false-未分配
+func (s *UserService) GetUserListByRoleId(param dto.RoleAuthUserAllocatedListRequest, userId int, isAllocation bool) ([]dto.UserListResponse, int) {
+
+	var count int64
+	users := make([]dto.UserListResponse, 0)
+
+	query := dal.Gorm.Model(model.SysUser{}).
+		Select("sys_user.*", "sys_dept.dept_name", "sys_dept.leader").
+		Joins("LEFT JOIN sys_dept ON sys_user.dept_id = sys_dept.dept_id").
+		Scopes(GetDataScope("sys_dept", userId, "sys_user"))
+
+	if isAllocation {
+		query.Joins("JOIN sys_user_role ON sys_user_role.user_id = sys_user.user_id").
+			Where("sys_user_role.role_id = ?", param.RoleId)
+	} else {
+		query.Joins("LEFT JOIN sys_user_role ON sys_user_role.user_id = sys_user.user_id").
+			Where("sys_user_role.user_id IS NULL")
+	}
+
+	if param.UserName != "" {
+		query = query.Where("sys_user.user_name LIKE ?", "%"+param.UserName+"%")
+	}
+
+	if param.Phonenumber != "" {
+		query = query.Where("sys_user.phonenumber LIKE ?", "%"+param.Phonenumber+"%")
+	}
+
+	query.Count(&count).Offset((param.PageNum - 1) * param.PageSize).Limit(param.PageSize).Find(&users)
+
+	return users, int(count)
+}
