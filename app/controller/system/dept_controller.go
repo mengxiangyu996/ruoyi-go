@@ -88,9 +88,17 @@ func (*DeptController) Create(ctx *gin.Context) {
 
 	loginUser, _ := token.GetLoginUser(ctx)
 
+	// 拼接ancestors，获取上级的祖级列表
+	parentDept := (&service.DeptService{}).GetDeptByDeptId(param.ParentId)
+	if parentDept.Status == constant.EXCEPTION_STATUS {
+		response.NewError().SetMsg("部门停用，不允许新增").Json(ctx)
+		return
+	}
+	ancestors := parentDept.Ancestors + "," + strconv.Itoa(parentDept.DeptId)
+
 	if err := (&service.DeptService{}).CreateDept(dto.SaveDept{
 		ParentId:  param.ParentId,
-		Ancestors: "",
+		Ancestors: ancestors,
 		DeptName:  param.DeptName,
 		OrderNum:  param.OrderNum,
 		Leader:    param.Leader,
@@ -129,12 +137,25 @@ func (*DeptController) Update(ctx *gin.Context) {
 		return
 	}
 
+	if dept := (&service.DeptService{}).GetDeptByDeptId(param.DeptId); dept.ParentId != param.ParentId && (&service.DeptService{}).DeptHasChildren(param.DeptId) {
+		response.NewError().SetMsg("存在子级部门，无法直接修改所属部门").Json(ctx)
+		return
+	}
+
 	loginUser, _ := token.GetLoginUser(ctx)
+
+	// 拼接ancestors，获取上级的祖级列表
+	parentDept := (&service.DeptService{}).GetDeptByDeptId(param.ParentId)
+	if parentDept.Status == constant.EXCEPTION_STATUS {
+		response.NewError().SetMsg("部门停用，不允许新增").Json(ctx)
+		return
+	}
+	ancestors := parentDept.Ancestors + "," + strconv.Itoa(parentDept.DeptId)
 
 	if err := (&service.DeptService{}).UpdateDept(dto.SaveDept{
 		DeptId:    param.DeptId,
 		ParentId:  param.ParentId,
-		Ancestors: "",
+		Ancestors: ancestors,
 		DeptName:  param.DeptName,
 		OrderNum:  param.OrderNum,
 		Leader:    param.Leader,
