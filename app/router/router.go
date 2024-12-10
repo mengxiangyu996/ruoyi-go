@@ -56,8 +56,13 @@ func Register(server *gin.Engine) {
 		api.GET("/system/post/list", middleware.HasPerm("system:post:list"), (&systemcontroller.PostController{}).List)       // 获取岗位列表
 		api.GET("/system/post/:postId", middleware.HasPerm("system:post:query"), (&systemcontroller.PostController{}).Detail) // 获取岗位详情
 
-		api.GET("/system/dict/list", middleware.HasPerm("system:dict:list"), (&systemcontroller.DictTypeController{}).List) // 获取字典类型列表
-		api.GET("/system/dict/data/type/:dictType", (&systemcontroller.DictDataController{}).Type)                          // 根据字典类型查询字典数据
+		api.GET("/system/dict/list", middleware.HasPerm("system:dict:list"), (&systemcontroller.DictTypeController{}).List)            // 获取字典类型列表
+		api.GET("/system/dict/type/:dictId", middleware.HasPerm("system:dict:query"), (&systemcontroller.DictTypeController{}).Detail) // 获取字典类型详情
+		api.GET("/system/dict/type/optionselect", (&systemcontroller.DictTypeController{}).Optionselect)                               // 获取字典选择框列表
+
+		api.GET("/system/dict/data/list", middleware.HasPerm("system:dict:list"), (&systemcontroller.DictDataController{}).List)         // 获取字典数据列表
+		api.GET("/system/dict/data/:dictCode", middleware.HasPerm("system:dict:query"), (&systemcontroller.DictDataController{}).Detail) // 获取字典数据详情
+		api.GET("/system/dict/data/type/:dictType", (&systemcontroller.DictDataController{}).Type)                                       // 根据字典类型查询字典数据
 
 		api.GET("/system/config/list", middleware.HasPerm("system:config:list"), (&systemcontroller.ConfigController{}).List) // 获取参数配置列表
 		api.GET("/system/config/configKey/:configKey", (&systemcontroller.ConfigController{}).ConfigKey)                      // 根据参数键名查询参数值
@@ -97,5 +102,13 @@ func Register(server *gin.Engine) {
 		api.POST("/system/post", middleware.HasPerm("system:post:add"), (&systemcontroller.PostController{}).Create)               // 新增岗位
 		api.PUT("/system/post", middleware.HasPerm("system:post:edit"), (&systemcontroller.PostController{}).Update)               // 更新岗位
 		api.DELETE("/system/post/:postIds", middleware.HasPerm("system:post:remove"), (&systemcontroller.PostController{}).Remove) // 删除岗位
+
+		api.POST("/system/dict/type", middleware.HasPerm("system:dict:add"), (&systemcontroller.DictTypeController{}).Create)               // 新增字典类型
+		api.PUT("/system/dict/type", middleware.HasPerm("system:dict:edit"), (&systemcontroller.DictTypeController{}).Update)               // 更新字典类型
+		api.DELETE("/system/dict/type/:dictIds", middleware.HasPerm("system:dict:remove"), (&systemcontroller.DictTypeController{}).Remove) // 删除字典类型
+
+		api.POST("/system/dict/data", middleware.HasPerm("system:dict:add"), (&systemcontroller.DictDataController{}).Create)                 // 新增字典数据
+		api.PUT("/system/dict/data", middleware.HasPerm("system:dict:edit"), (&systemcontroller.DictDataController{}).Update)                 // 更新字典数据
+		api.DELETE("/system/dict/data/:dictCodes", middleware.HasPerm("system:dict:remove"), (&systemcontroller.DictDataController{}).Remove) // 删除字典数据
 	}
 }
