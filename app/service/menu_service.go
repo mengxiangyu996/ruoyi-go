@@ -28,6 +28,7 @@ func (s *MenuService) CreateMenu(param dto.SaveMenu) error {
 		Perms:     param.Perms,
 		Icon:      param.Icon,
 		Status:    param.Status,
+		Remark:    param.Remark,
 		CreateBy:  param.CreateBy,
 	}).Error
 }
@@ -50,7 +51,8 @@ func (s *MenuService) UpdateMenu(param dto.SaveMenu) error {
 		Perms:     param.Perms,
 		Icon:      param.Icon,
 		Status:    param.Status,
-		CreateBy:  param.CreateBy,
+		UpdateBy:  param.UpdateBy,
+		Remark:    param.Remark,
 	}).Error
 }
 

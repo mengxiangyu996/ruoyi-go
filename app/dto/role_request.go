@@ -35,7 +35,6 @@ type CreateRoleRequest struct {
 	Status            string `json:"status"`
 	Remark            string `json:"remark"`
 	MenuIds           []int  `json:"menuIds"`
-	CreateBy          string `json:"createBy"`
 }
 
 // 更新角色
@@ -51,7 +50,6 @@ type UpdateRoleRequest struct {
 	Remark            string `json:"remark"`
 	MenuIds           []int  `json:"menuIds"`
 	DeptIds           []int  `json:"deptIds"`
-	UpdateBy          string `json:"updateBy"`
 }
 
 // 查询已分配用户角色列表

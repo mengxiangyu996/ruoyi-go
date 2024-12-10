@@ -82,7 +82,7 @@ func (*DeptController) Create(ctx *gin.Context) {
 	}
 
 	if dept := (&service.DeptService{}).GetDeptByDeptName(param.DeptName); dept.DeptId > 0 {
-		response.NewError().SetMsg("新增" + param.DeptName + "失败，部门名称已存在").Json(ctx)
+		response.NewError().SetMsg("新增部门" + param.DeptName + "失败，部门名称已存在").Json(ctx)
 		return
 	}
 
@@ -133,7 +133,7 @@ func (*DeptController) Update(ctx *gin.Context) {
 	}
 
 	if dept := (&service.DeptService{}).GetDeptByDeptName(param.DeptName); dept.DeptId > 0 && dept.DeptId != param.DeptId {
-		response.NewError().SetMsg("修改" + param.DeptName + "失败，部门名称已存在").Json(ctx)
+		response.NewError().SetMsg("修改部门" + param.DeptName + "失败，部门名称已存在").Json(ctx)
 		return
 	}
 

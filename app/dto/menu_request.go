@@ -44,7 +44,6 @@ type CreateMenuRequest struct {
 	Perms     string `json:"perms"`
 	Icon      string `json:"icon"`
 	Status    string `json:"status"`
-	CreateBy  string `json:"createBy"`
 }
 
 // 更新菜单
@@ -64,5 +63,4 @@ type UpdateMenuRequest struct {
 	Perms     string `json:"perms"`
 	Icon      string `json:"icon"`
 	Status    string `json:"status"`
-	UpdateBy  string `json:"updateBy"`
 }

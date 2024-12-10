@@ -80,7 +80,7 @@ func (*MenuController) Create(ctx *gin.Context) {
 	}
 
 	if menu := (&service.MenuService{}).GetMenuByMenuName(param.MenuName); menu.MenuId > 0 {
-		response.NewError().SetMsg("新增" + param.MenuName + "失败，菜单名称已存在").Json(ctx)
+		response.NewError().SetMsg("新增菜单" + param.MenuName + "失败，菜单名称已存在").Json(ctx)
 		return
 	}
 
@@ -129,7 +129,7 @@ func (*MenuController) Update(ctx *gin.Context) {
 	}
 
 	if menu := (&service.MenuService{}).GetMenuByMenuName(param.MenuName); menu.MenuId > 0 && menu.MenuId != param.MenuId {
-		response.NewError().SetMsg("修改" + param.MenuName + "失败，菜单名称已存在").Json(ctx)
+		response.NewError().SetMsg("修改菜单" + param.MenuName + "失败，菜单名称已存在").Json(ctx)
 		return
 	}
 

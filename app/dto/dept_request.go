@@ -30,7 +30,6 @@ type CreateDeptRequest struct {
 	Phone    string `json:"phone"`
 	Email    string `json:"email"`
 	Status   string `json:"status"`
-	CreateBy string `json:"createBy"`
 }
 
 // 更新部门
@@ -44,5 +43,4 @@ type UpdateDeptRequest struct {
 	Phone     string `json:"phone"`
 	Email     string `json:"email"`
 	Status    string `json:"status"`
-	UpdateBy  string `json:"updateBy"`
 }

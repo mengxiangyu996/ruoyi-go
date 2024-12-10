@@ -53,7 +53,8 @@ func Register(server *gin.Engine) {
 		api.GET("/system/dept/list/exclude/:deptId", middleware.HasPerm("system:dept:list"), (&systemcontroller.DeptController{}).ListExclude) // 查询部门列表（排除节点）
 		api.GET("/system/dept/:deptId", middleware.HasPerm("system:dept:query"), (&systemcontroller.DeptController{}).Detail)                  // 获取部门详情
 
-		api.GET("/system/post/list", middleware.HasPerm("system:post:list"), (&systemcontroller.PostController{}).List) // 获取岗位列表
+		api.GET("/system/post/list", middleware.HasPerm("system:post:list"), (&systemcontroller.PostController{}).List)       // 获取岗位列表
+		api.GET("/system/post/:postId", middleware.HasPerm("system:post:query"), (&systemcontroller.PostController{}).Detail) // 获取岗位详情
 
 		api.GET("/system/dict/list", middleware.HasPerm("system:dict:list"), (&systemcontroller.DictTypeController{}).List) // 获取字典类型列表
 		api.GET("/system/dict/data/type/:dictType", (&systemcontroller.DictDataController{}).Type)                          // 根据字典类型查询字典数据
@@ -92,5 +93,9 @@ func Register(server *gin.Engine) {
 		api.POST("/system/dept", middleware.HasPerm("system:dept:add"), (&systemcontroller.DeptController{}).Create)              // 新增部门
 		api.PUT("/system/dept", middleware.HasPerm("system:dept:edit"), (&systemcontroller.DeptController{}).Update)              // 更新部门
 		api.DELETE("/system/dept/:deptId", middleware.HasPerm("system:dept:remove"), (&systemcontroller.DeptController{}).Remove) // 删除部门
+
+		api.POST("/system/post", middleware.HasPerm("system:post:add"), (&systemcontroller.PostController{}).Create)               // 新增岗位
+		api.PUT("/system/post", middleware.HasPerm("system:post:edit"), (&systemcontroller.PostController{}).Update)               // 更新岗位
+		api.DELETE("/system/post/:postIds", middleware.HasPerm("system:post:remove"), (&systemcontroller.PostController{}).Remove) // 删除岗位
 	}
 }

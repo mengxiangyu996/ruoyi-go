@@ -118,20 +118,20 @@ func (*UserController) Create(ctx *gin.Context) {
 	loginUser, _ := token.GetLoginUser(ctx)
 
 	if user := (&service.UserService{}).GetUserByUsername(param.UserName); user.UserId > 0 {
-		response.NewError().SetMsg("用户名称已存在").Json(ctx)
+		response.NewError().SetMsg("新增用户" + param.UserName + "失败，用户名已存在").Json(ctx)
 		return
 	}
 
 	if param.Email != "" {
 		if user := (&service.UserService{}).GetUserByEmail(param.Email); user.UserId > 0 {
-			response.NewError().SetMsg("邮箱账号已存在").Json(ctx)
+			response.NewError().SetMsg("新增用户" + param.UserName + "失败，邮箱已存在").Json(ctx)
 			return
 		}
 	}
 
 	if param.Phonenumber != "" {
 		if user := (&service.UserService{}).GetUserByPhonenumber(param.Phonenumber); user.UserId > 0 {
-			response.NewError().SetMsg("手机号码已存在").Json(ctx)
+			response.NewError().SetMsg("新增用户" + param.UserName + "失败，手机号已存在").Json(ctx)
 			return
 		}
 	}
@@ -177,14 +177,14 @@ func (*UserController) Update(ctx *gin.Context) {
 
 	if param.Email != "" {
 		if user := (&service.UserService{}).GetUserByEmail(param.Email); user.UserId > 0 && user.UserId != param.UserId {
-			response.NewError().SetMsg("邮箱账号已存在").Json(ctx)
+			response.NewError().SetMsg("修改用户" + param.UserName + "失败，邮箱已存在").Json(ctx)
 			return
 		}
 	}
 
 	if param.Phonenumber != "" {
 		if user := (&service.UserService{}).GetUserByPhonenumber(param.Phonenumber); user.UserId > 0 && user.UserId != param.UserId {
-			response.NewError().SetMsg("手机号码已存在").Json(ctx)
+			response.NewError().SetMsg("修改用户" + param.UserName + "失败，手机号已存在").Json(ctx)
 			return
 		}
 	}

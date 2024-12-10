@@ -61,12 +61,12 @@ func (*RoleController) Create(ctx *gin.Context) {
 	loginUser, _ := token.GetLoginUser(ctx)
 
 	if role := (&service.RoleService{}).GetRoleByRoleName(param.RoleName); role.RoleId > 0 {
-		response.NewError().SetMsg("角色名称已存在").Json(ctx)
+		response.NewError().SetMsg("新增角色" + param.RoleName + "失败，角色名已存在").Json(ctx)
 		return
 	}
 
 	if role := (&service.RoleService{}).GetRoleByRoleKey(param.RoleKey); role.RoleId > 0 {
-		response.NewError().SetMsg("权限字符已存在").Json(ctx)
+		response.NewError().SetMsg("新增角色" + param.RoleName + "失败，权限字符已存在").Json(ctx)
 		return
 	}
 
@@ -116,12 +116,12 @@ func (*RoleController) Update(ctx *gin.Context) {
 	loginUser, _ := token.GetLoginUser(ctx)
 
 	if role := (&service.RoleService{}).GetRoleByRoleName(param.RoleName); role.RoleId > 0 && role.RoleId != param.RoleId {
-		response.NewError().SetMsg("角色名称已存在").Json(ctx)
+		response.NewError().SetMsg("修改角色" + param.RoleName + "失败，角色名已存在").Json(ctx)
 		return
 	}
 
 	if role := (&service.RoleService{}).GetRoleByRoleKey(param.RoleKey); role.RoleId > 0 && role.RoleId != param.RoleId {
-		response.NewError().SetMsg("权限字符已存在").Json(ctx)
+		response.NewError().SetMsg("修改角色" + param.RoleName + "失败，权限字符已存在").Json(ctx)
 		return
 	}
 
