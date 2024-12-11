@@ -174,7 +174,7 @@ func (*RoleController) Remove(ctx *gin.Context) {
 		}
 	}
 
-	if err := (&service.RoleService{}).DeleteRole(roleIds); err != nil {
+	if err = (&service.RoleService{}).DeleteRole(roleIds); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}

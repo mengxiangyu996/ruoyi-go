@@ -8,6 +8,17 @@ import (
 
 type OperLogService struct{}
 
+// 删除操作日志
+func (s *OperLogService) DeleteOperLog(operIds []int) error {
+
+	if len(operIds) > 0 {
+		return dal.Gorm.Model(model.SysOperLog{}).Where("oper_id IN ?", operIds).Delete(&model.SysOperLog{}).Error
+	}
+
+	// 为解决 WHERE conditions required 错误，添加 Where("oper_id > ?", 0) 这个条件
+	return dal.Gorm.Model(model.SysOperLog{}).Where("oper_id > ?", 0).Delete(&model.SysOperLog{}).Error
+}
+
 // 操作日志列表
 func (s *OperLogService) GetOperLogList(param dto.OperLogListRequest) ([]dto.OperLogListResponse, int) {
 

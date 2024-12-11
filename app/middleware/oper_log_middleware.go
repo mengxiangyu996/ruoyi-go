@@ -61,7 +61,7 @@ func OperLogMiddleware() gin.HandlerFunc {
 		ipaddress := ipaddress.GetAddress(ctx.ClientIP(), ctx.Request.UserAgent())
 
 		sysOperLog := dto.SaveOperLogRequest{
-			Title:         ctx.Request.URL.Path,
+			Title:         ctx.FullPath(),
 			BusinessType:  0,
 			Method:        ctx.HandlerName(),
 			RequestMethod: ctx.Request.Method,

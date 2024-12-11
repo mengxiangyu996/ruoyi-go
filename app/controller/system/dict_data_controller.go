@@ -125,9 +125,13 @@ func (*DictDataController) Remove(ctx *gin.Context) {
 	// 设置业务类型，操作日志获取
 	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_DELETE)
 
-	dictCodes, _ := utils.StringToIntSlice(ctx.Param("dictCodes"), ",")
+	dictCodes, err := utils.StringToIntSlice(ctx.Param("dictCodes"), ",")
+	if err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
 
-	if err := (&service.DictDataService{}).DeleteDictData(dictCodes); err != nil {
+	if err = (&service.DictDataService{}).DeleteDictData(dictCodes); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}

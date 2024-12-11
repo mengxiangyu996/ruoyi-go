@@ -64,8 +64,9 @@ func Register(server *gin.Engine) {
 		api.GET("/system/dict/data/:dictCode", middleware.HasPerm("system:dict:query"), (&systemcontroller.DictDataController{}).Detail) // 获取字典数据详情
 		api.GET("/system/dict/data/type/:dictType", (&systemcontroller.DictDataController{}).Type)                                       // 根据字典类型查询字典数据
 
-		api.GET("/system/config/list", middleware.HasPerm("system:config:list"), (&systemcontroller.ConfigController{}).List) // 获取参数配置列表
-		api.GET("/system/config/configKey/:configKey", (&systemcontroller.ConfigController{}).ConfigKey)                      // 根据参数键名查询参数值
+		api.GET("/system/config/list", middleware.HasPerm("system:config:list"), (&systemcontroller.ConfigController{}).List)         // 获取参数配置列表
+		api.GET("/system/config/:configId", middleware.HasPerm("system:config:query"), (&systemcontroller.ConfigController{}).Detail) // 获取参数配置详情
+		api.GET("/system/config/configKey/:configKey", (&systemcontroller.ConfigController{}).ConfigKey)                              // 根据参数键名查询参数值
 
 		// 日志管理
 		api.GET("/monitor/operlog/list", middleware.HasPerm("monitor:logininfor:list"), (&monitorcontroller.OperlogController{}).List)    // 获取操作日志列表
@@ -110,5 +111,16 @@ func Register(server *gin.Engine) {
 		api.POST("/system/dict/data", middleware.HasPerm("system:dict:add"), (&systemcontroller.DictDataController{}).Create)                 // 新增字典数据
 		api.PUT("/system/dict/data", middleware.HasPerm("system:dict:edit"), (&systemcontroller.DictDataController{}).Update)                 // 更新字典数据
 		api.DELETE("/system/dict/data/:dictCodes", middleware.HasPerm("system:dict:remove"), (&systemcontroller.DictDataController{}).Remove) // 删除字典数据
+
+		api.POST("/system/config", middleware.HasPerm("system:config:add"), (&systemcontroller.ConfigController{}).Create)                 // 新增参数配置
+		api.PUT("/system/config", middleware.HasPerm("system:config:edit"), (&systemcontroller.ConfigController{}).Update)                 // 更新参数配置
+		api.DELETE("/system/config/:configIds", middleware.HasPerm("system:config:remove"), (&systemcontroller.ConfigController{}).Remove) // 删除参数配置
+
+		api.DELETE("/monitor/logininfor/:infoIds", middleware.HasPerm("monitor:logininfor:remove"), (&monitorcontroller.LogininforController{}).Remove)      // 删除登录日志
+		api.DELETE("/monitor/logininfor/clean", middleware.HasPerm("monitor:logininfor:remove"), (&monitorcontroller.LogininforController{}).Clean)          // 清空登录日志
+		api.GET("/monitor/logininfor/unlock/:userName", middleware.HasPerm("monitor:logininfor:unlock"), (&monitorcontroller.LogininforController{}).Unlock) // 账户解锁
+
+		api.DELETE("/monitor/operlog/:operIds", middleware.HasPerm("monitor:operlog:remove"), (&monitorcontroller.OperlogController{}).Remove) // 删除操作日志
+		api.DELETE("/monitor/operlog/clean", middleware.HasPerm("monitor:operlog:remove"), (&monitorcontroller.OperlogController{}).Clean)     // 清空操作日志
 	}
 }

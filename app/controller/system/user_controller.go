@@ -226,7 +226,7 @@ func (*UserController) Remove(ctx *gin.Context) {
 		return
 	}
 
-	if err := (&service.UserService{}).DeleteUser(userIds); err != nil {
+	if err = (&service.UserService{}).DeleteUser(userIds); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}

@@ -20,4 +20,5 @@ type ConfigDetailResponse struct {
 	ConfigKey   string `json:"configKey"`
 	ConfigValue string `json:"configValue"`
 	ConfigType  string `json:"configType"`
+	Remark      string `json:"remark"`
 }

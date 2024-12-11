@@ -4,6 +4,8 @@ import (
 	"regexp"
 	"ruoyi-go/app/dto"
 	"ruoyi-go/app/service"
+	"ruoyi-go/common/types/constant"
+	"ruoyi-go/common/utils"
 	"ruoyi-go/framework/response"
 	"strings"
 
@@ -12,7 +14,7 @@ import (
 
 type OperlogController struct{}
 
-// 操作记录列表
+// 操作日志列表
 func (*OperlogController) List(ctx *gin.Context) {
 
 	var param dto.OperLogListRequest
@@ -37,4 +39,38 @@ func (*OperlogController) List(ctx *gin.Context) {
 	operLogs, total := (&service.OperLogService{}).GetOperLogList(param)
 
 	response.NewSuccess().SetPageData(operLogs, total).Json(ctx)
+}
+
+// 删除操作日志
+func (*OperlogController) Remove(ctx *gin.Context) {
+
+	// 设置业务类型，操作日志获取
+	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_DELETE)
+
+	operIds, err := utils.StringToIntSlice(ctx.Param("operIds"), ",")
+	if err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	if err = (&service.OperLogService{}).DeleteOperLog(operIds); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	response.NewSuccess().Json(ctx)
+}
+
+// 清空操作日志
+func (*OperlogController) Clean(ctx *gin.Context) {
+
+	// 设置业务类型，操作日志获取
+	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_DELETE)
+
+	if err := (&service.OperLogService{}).DeleteOperLog(nil); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	response.NewSuccess().Json(ctx)
 }

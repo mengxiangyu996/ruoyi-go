@@ -3,14 +3,44 @@ package service
 import (
 	"ruoyi-go/app/dto"
 	"ruoyi-go/app/model"
-	"ruoyi-go/common/types/constant"
 	"ruoyi-go/framework/dal"
 )
 
 type ConfigService struct{}
 
+// 创建参数
+func (s *ConfigService) CreateConfig(param dto.SaveConfig) error {
+
+	return dal.Gorm.Model(model.SysConfig{}).Create(&model.SysConfig{
+		ConfigName:  param.ConfigName,
+		ConfigKey:   param.ConfigKey,
+		ConfigValue: param.ConfigValue,
+		ConfigType:  param.ConfigType,
+		CreateBy:    param.CreateBy,
+		Remark:      param.Remark,
+	}).Error
+}
+
+// 更新参数
+func (s *ConfigService) UpdateConfig(param dto.SaveConfig) error {
+
+	return dal.Gorm.Model(model.SysConfig{}).Where("config_id = ?", param.ConfigId).Updates(&model.SysConfig{
+		ConfigName:  param.ConfigName,
+		ConfigKey:   param.ConfigKey,
+		ConfigValue: param.ConfigValue,
+		ConfigType:  param.ConfigType,
+		UpdateBy:    param.UpdateBy,
+		Remark:      param.Remark,
+	}).Error
+}
+
+// 删除参数
+func (s *ConfigService) DeleteConfig(configIds []int) error {
+	return dal.Gorm.Model(model.SysConfig{}).Where("config_id IN ?", configIds).Delete(&model.SysConfig{}).Error
+}
+
 // 获取参数列表
-func (*ConfigService) GetConfigList(param dto.ConfigListRequest) ([]dto.ConfigListResponse, int) {
+func (s *ConfigService) GetConfigList(param dto.ConfigListRequest) ([]dto.ConfigListResponse, int) {
 
 	var count int64
 	configs := make([]dto.ConfigListResponse, 0)
@@ -38,12 +68,22 @@ func (*ConfigService) GetConfigList(param dto.ConfigListRequest) ([]dto.ConfigLi
 	return configs, int(count)
 }
 
-// 根据参数ey获取参数值
-func (*ConfigService) GetConfigByConfigKey(configKey string) dto.ConfigDetailResponse {
+// 获取参数详情
+func (s *ConfigService) GetConfigByConfigId(configId int) dto.ConfigDetailResponse {
 
 	var config dto.ConfigDetailResponse
 
-	dal.Gorm.Model(model.SysConfig{}).Where("status = ? AND config_key = ?", constant.NORMAL_STATUS, configKey).First(&config)
+	dal.Gorm.Model(model.SysConfig{}).Where("config_id = ?", configId).Last(&config)
+
+	return config
+}
+
+// 根据参数key获取参数值
+func (s *ConfigService) GetConfigByConfigKey(configKey string) dto.ConfigDetailResponse {
+
+	var config dto.ConfigDetailResponse
+
+	dal.Gorm.Model(model.SysConfig{}).Where("config_key = ?", configKey).Last(&config)
 
 	return config
 }

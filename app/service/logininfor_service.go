@@ -8,6 +8,17 @@ import (
 
 type LogininforService struct{}
 
+// 删除登录日志
+func (s *LogininforService) DeleteLogininfor(infoIds []int) error {
+
+	if len(infoIds) > 0 {
+		return dal.Gorm.Model(model.SysLogininfor{}).Where("info_id IN ?", infoIds).Delete(&model.SysLogininfor{}).Error
+	}
+
+	// 为解决 WHERE conditions required 错误，添加 Where("info_id > ?", 0) 这个条件
+	return dal.Gorm.Model(model.SysLogininfor{}).Where("info_id > ?", 0).Delete(&model.SysLogininfor{}).Error
+}
+
 // 获取登录日志列表
 func (s *LogininforService) GetLogininforList(param dto.LogininforListRequest) ([]dto.LogininforListResponse, int) {
 
