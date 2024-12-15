@@ -1,12 +1,14 @@
 package systemcontroller
 
 import (
+	"io/ioutil"
 	"ruoyi-go/app/controller/validator"
 	"ruoyi-go/app/dto"
 	"ruoyi-go/app/service"
 	"ruoyi-go/app/token"
 	"ruoyi-go/common/password"
 	"ruoyi-go/common/types/constant"
+	"ruoyi-go/common/upload"
 	"ruoyi-go/common/utils"
 	"ruoyi-go/framework/response"
 	"strconv"
@@ -486,4 +488,57 @@ func (*UserController) UserProfileUpdatePwd(ctx *gin.Context) {
 	}
 
 	response.NewSuccess().Json(ctx)
+}
+
+// 上传头像
+func (*UserController) UserProfileUpdateAvatar(ctx *gin.Context) {
+
+	fileHeader, err := ctx.FormFile("avatarfile")
+	if err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	file, err := fileHeader.Open()
+	if err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	fileContent, err := ioutil.ReadAll(file)
+	if err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	fileResult, err := upload.New(
+		upload.SetLimitType([]string{
+			"image/jpeg",
+			"image/png",
+			"image/svg+xml",
+		}),
+	).SetFile(&upload.File{
+		FileName:    fileHeader.Filename,
+		FileType:    fileHeader.Header.Get("Content-Type"),
+		FileHeader:  fileHeader.Header,
+		FileContent: fileContent,
+	}).Save()
+	if err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	loginUser, _ := token.GetLoginUser(ctx)
+
+	imgUrl := "/" + fileResult.UrlPath + fileResult.RandomName
+
+	if err = (&service.UserService{}).UpdateUser(dto.SaveUser{
+		UserId: loginUser.UserId,
+		Avatar: imgUrl,
+	}, nil, nil); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	response.NewSuccess().SetData("imgUrl", imgUrl).Json(ctx)
 }

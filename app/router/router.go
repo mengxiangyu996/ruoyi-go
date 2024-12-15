@@ -28,9 +28,10 @@ func Register(server *gin.Engine) {
 		api.GET("/getRouters", (&controller.AuthController{}).GetRouters) // 获取路由信息
 
 		// 系统管理
-		api.GET("/system/user/profile", (&systemcontroller.UserController{}).GetProfile)                     // 个人信息
-		api.PUT("/system/user/profile", (&systemcontroller.UserController{}).UpdateProfile)                  // 修改用户
-		api.PUT("/system/user/profile/updatePwd", (&systemcontroller.UserController{}).UserProfileUpdatePwd) // 重置密码
+		api.GET("/system/user/profile", (&systemcontroller.UserController{}).GetProfile)                      // 个人信息
+		api.PUT("/system/user/profile", (&systemcontroller.UserController{}).UpdateProfile)                   // 修改用户
+		api.PUT("/system/user/profile/updatePwd", (&systemcontroller.UserController{}).UserProfileUpdatePwd)  // 重置密码
+		api.POST("/system/user/profile/avatar", (&systemcontroller.UserController{}).UserProfileUpdateAvatar) // 更新头像
 
 		api.GET("/system/user/deptTree", middleware.HasPerm("system:user:list"), (&systemcontroller.UserController{}).DeptTree)          // 获取部门树列表
 		api.GET("/system/user/list", middleware.HasPerm("system:user:list"), (&systemcontroller.UserController{}).List)                  // 获取用户列表

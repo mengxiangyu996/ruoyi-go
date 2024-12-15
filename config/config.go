@@ -18,7 +18,7 @@ type Config struct {
 		// 域名
 		Domain string `yaml:"domain"`
 		// 启用SSL
-		Ssl bool `yaml:"ssl"`
+		SSL bool `yaml:"ssl"`
 		// 公共资源路径
 		PublicPath string `yaml:"publicPath"`
 		// 文件上传路径
