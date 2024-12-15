@@ -45,13 +45,13 @@ type File struct {
 
 // 返回结果
 type Result struct {
-	FileName   string `json:"fileName"`
-	RandomName string `json:"randomName"`
-	FileSize   int    `json:"fileSize"`
-	FileType   string `json:"fileType"`
-	SavePath   string `json:"savePath"`
-	UrlPath    string `json:"urlPath"`
-	Url        string `json:"url"`
+	OriginalName string `json:"originalName"`
+	FileName     string `json:"fileName"`
+	FileSize     int    `json:"fileSize"`
+	FileType     string `json:"fileType"`
+	SavePath     string `json:"savePath"`
+	UrlPath      string `json:"urlPath"`
+	Url          string `json:"url"`
 }
 
 // 初始化上传对象
@@ -186,13 +186,13 @@ func (u *Upload) Save() (*Result, error) {
 	}
 
 	return &Result{
-		FileName:   u.File.FileName,
-		RandomName: randomName,
-		FileSize:   u.File.FileSize,
-		FileType:   u.File.FileType,
-		SavePath:   u.Config.SavePath,
-		UrlPath:    u.Config.UrlPath,
-		Url:        domain + "/" + u.Config.UrlPath + randomName,
+		OriginalName: u.File.FileName,
+		FileName:     randomName,
+		FileSize:     u.File.FileSize,
+		FileType:     u.File.FileType,
+		SavePath:     u.Config.SavePath,
+		UrlPath:      u.Config.UrlPath,
+		Url:          domain + "/" + u.Config.UrlPath + randomName,
 	}, err
 }
 

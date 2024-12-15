@@ -530,7 +530,7 @@ func (*UserController) UserProfileUpdateAvatar(ctx *gin.Context) {
 
 	loginUser, _ := token.GetLoginUser(ctx)
 
-	imgUrl := "/" + fileResult.UrlPath + fileResult.RandomName
+	imgUrl := "/" + fileResult.UrlPath + fileResult.FileName
 
 	if err = (&service.UserService{}).UpdateUser(dto.SaveUser{
 		UserId: loginUser.UserId,
