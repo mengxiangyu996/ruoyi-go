@@ -4,7 +4,8 @@
 ## 平台简介
 
 * 本仓库为后端技术栈 [Gin](https://gin-gonic.com/zh-cn/docs) + [Gorm](https://gorm.io/zh_CN/docs/index.html) 的 `golang` 版本。
-* 配套前端代码仓库地址 [RuoYi-Vue3](https://github.com/yangzongzhuan/RuoYi-Vue3)
+* 配套前端代码仓库地址 [RuoYi-Vue3](https://github.com/yangzongzhuan/RuoYi-Vue3) 或者使用 [RuoYi-Vue3-ts](https://github.com/zzh948498/RuoYi-Vue3-ts)
+* 其他生态组件请访问 **[若依官网](http://ruoyi.vip/)**
 
 ## 后端运行
 
@@ -34,3 +35,7 @@
 7.  参数管理：对系统动态配置常用参数。
 8.  操作日志：系统正常操作日志记录和查询；系统异常信息日志记录和查询。
 9.  登录日志：系统登录日志记录查询包含登录异常。
+
+## 特别感谢
+- [RuoYi-Vue3](https://github.com/yangzongzhuan/RuoYi-Vue3)
+- [RuoYi-Vue3-ts](https://github.com/zzh948498/RuoYi-Vue3-ts)
