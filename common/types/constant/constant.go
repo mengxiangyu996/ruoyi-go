@@ -39,9 +39,6 @@ const PARENT_VIEW_COMPONENT = "ParentView"
 // InnerLink组件标识
 const INNER_LINK_COMPONENT = "InnerLink"
 
-// 请求时间，用于记录请求耗时
-const REQUEST_TIME = "requestTime"
-
 // 请求的操作标题key
 const REQUEST_TITLE = "businessTitle"
 

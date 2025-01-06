@@ -32,7 +32,6 @@ func OperLogMiddleware() gin.HandlerFunc {
 
 		// 记录请求时间，用于获取请求耗时
 		requestStartTime := time.Now()
-		ctx.Set(constant.REQUEST_TIME, requestStartTime)
 
 		// 因读取请求体后，请求体的数据流会被消耗完毕，未避免EOF错误，需要缓存请求体，并且每次使用后需要重新赋值给ctx.Request.Body
 		bodyBytes, _ := ctx.GetRawData()
