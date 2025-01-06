@@ -39,7 +39,7 @@ const PARENT_VIEW_COMPONENT = "ParentView"
 // InnerLink组件标识
 const INNER_LINK_COMPONENT = "InnerLink"
 
-// 请求的操作标题key
+// 请求的操作标题key（操作日志需要）
 const REQUEST_TITLE = "businessTitle"
 
 // 请求的操作类型key（操作日志需要）
