@@ -4,7 +4,7 @@
 ## 平台简介
 
 * 本仓库为后端技术栈 [Gin](https://gin-gonic.com/zh-cn/docs) + [Gorm](https://gorm.io/zh_CN/docs/index.html) 的 `golang` 版本。
-* 配套前端代码仓库地址 [RuoYi-Vue3](https://github.com/yangzongzhuan/RuoYi-Vue3) 或者使用 [RuoYi-Vue3-ts](https://github.com/zzh948498/RuoYi-Vue3-ts)
+* 配套前端代码仓库地址 [RuoYi-Vue3](https://github.com/yangzongzhuan/RuoYi-Vue3) 或使用 [RuoYi-Vue3-ts](https://github.com/zzh948498/RuoYi-Vue3-ts)
 * 其他生态组件请访问 **[若依官网](http://ruoyi.vip/)**
 
 ## 后端运行
@@ -24,6 +24,25 @@
     # 启动服务
     go run main.go
 
+## 前端运行
+
+    # 调整 .env 文件
+    VUE_APP_BASE_API = '/dev-api' 改为 VITE_APP_BASE_API = '/api'
+
+    # 调整 vite.config.js 文件
+    server: {
+      port: 8000,
+      open: false,
+      proxy: {
+        // https://cn.vitejs.dev/config/#server-proxy
+        '/api': {
+          target: 'http://localhost:3000',
+          changeOrigin: true,
+          rewrite: (p) => p.replace(/^\/api/, '/api')
+        }
+      }
+    },
+
 ## 后端打包
 
     # 打包
@@ -41,6 +60,8 @@
 8.  操作日志：系统正常操作日志记录和查询；系统异常信息日志记录和查询。
 9.  登录日志：系统登录日志记录查询包含登录异常。
 
-## 特别感谢
+## 特别感谢（排名不分先后）
+- [Gin](https://github.com/gin-gonic/gin)
+- [Gorm](https://github.com/go-gorm/gorm)
 - [RuoYi-Vue3](https://github.com/yangzongzhuan/RuoYi-Vue3)
 - [RuoYi-Vue3-ts](https://github.com/zzh948498/RuoYi-Vue3-ts)
