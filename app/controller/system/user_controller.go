@@ -2,6 +2,7 @@ package systemcontroller
 
 import (
 	"io/ioutil"
+	"os"
 	"ruoyi-go/app/controller/validator"
 	"ruoyi-go/app/dto"
 	"ruoyi-go/app/service"
@@ -10,11 +11,15 @@ import (
 	"ruoyi-go/common/types/constant"
 	"ruoyi-go/common/upload"
 	"ruoyi-go/common/utils"
+	"ruoyi-go/config"
 	"ruoyi-go/framework/response"
 	"strconv"
 	"strings"
+	"time"
 
+	"gitee.com/hanshuangjianke/go-excel/excel"
 	"github.com/gin-gonic/gin"
+	excelize "github.com/xuri/excelize/v2"
 )
 
 type UserController struct{}
@@ -372,25 +377,203 @@ func (*UserController) AddAuthRole(ctx *gin.Context) {
 	response.NewSuccess().Json(ctx)
 }
 
-// 导出用户模板
+// 导入用户模板
 func (*UserController) ImportTemplate(ctx *gin.Context) {
 
-	// TODO
+	list := make([]dto.UserImportRequest, 0)
 
+	list = append(list, dto.UserImportRequest{
+		DeptId:      1,
+		UserName:    "example",
+		NickName:    "模板",
+		Email:       "example@example.com",
+		Phonenumber: "12345678901",
+		Sex:         "1",
+		Status:      "0",
+	})
+
+	file, err := excel.NormalDynamicExport("Sheet1", "", "", false, false, list, nil)
+
+	if err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	excel.DownLoadExcel("user_template_"+time.Now().Format("20060102150405"), ctx.Writer, file)
 }
 
 // 导入用户数据
 func (*UserController) ImportData(ctx *gin.Context) {
 
-	// TODO
+	// 设置业务类型，操作日志获取
+	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_IMPORT)
 
+	file, err := ctx.FormFile("file")
+	if err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	fileName := config.Data.Ruoyi.UploadPath + file.Filename
+
+	// 临时保存文件
+	ctx.SaveUploadedFile(file, fileName)
+	defer os.Remove(fileName)
+
+	// 是否更新已经存在的用户数据
+	updateSupport, _ := strconv.ParseBool(ctx.Query("updateSupport"))
+
+	excelFile, err := excelize.OpenFile(fileName)
+	if err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	list := make([]dto.UserImportRequest, 0)
+
+	if err = excel.ImportExcel(excelFile, &list, 0, 1); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	if len(list) <= 0 {
+		response.NewError().SetMsg("导入用户数据不能为空").Json(ctx)
+		return
+	}
+
+	loginUser, _ := token.GetLoginUser(ctx)
+
+	var successNum, failNum int
+	var failMsg []string
+
+	for _, item := range list {
+		user := (&service.UserService{}).GetUserByUsername(item.UserName)
+
+		// 插入新用户
+		if user.UserId <= 0 {
+			if err = validator.ImportUserValidator(dto.CreateUserRequest{
+				DeptId:      item.DeptId,
+				UserName:    item.UserName,
+				NickName:    item.NickName,
+				Email:       item.Email,
+				Phonenumber: item.Phonenumber,
+				Sex:         item.Sex,
+				Status:      item.Status,
+			}); err != nil {
+				failNum = failNum + 1
+				failMsg = append(failMsg, strconv.Itoa(failNum)+"、账号 "+item.UserName+" 新增失败："+err.Error())
+				continue
+			}
+			if err = (&service.UserService{}).CreateUser(dto.SaveUser{
+				DeptId:      item.DeptId,
+				UserName:    item.UserName,
+				NickName:    item.NickName,
+				Email:       item.Email,
+				Phonenumber: item.Phonenumber,
+				Sex:         item.Sex,
+				Password:    password.Generate((&service.ConfigService{}).GetConfigByConfigKey("sys.user.initPassword").ConfigValue),
+				Status:      item.Status,
+				CreateBy:    loginUser.UserName,
+			}, nil, nil); err != nil {
+				failNum = failNum + 1
+				failMsg = append(failMsg, strconv.Itoa(failNum)+"、账号 "+item.UserName+" 新增失败："+err.Error())
+				continue
+			}
+			successNum = successNum + 1
+			continue
+		} else if updateSupport {
+			if err = validator.UpdateUserValidator(dto.UpdateUserRequest{
+				UserId:      user.UserId,
+				DeptId:      item.DeptId,
+				NickName:    item.NickName,
+				Email:       item.Email,
+				Phonenumber: item.Phonenumber,
+				Sex:         item.Sex,
+				Status:      item.Status,
+			}); err != nil {
+				failNum = failNum + 1
+				failMsg = append(failMsg, strconv.Itoa(failNum)+"、账号 "+item.UserName+" 更新失败："+err.Error())
+				continue
+			}
+			// 更新已经存在的用户
+			if err = (&service.UserService{}).UpdateUser(dto.SaveUser{
+				UserId:      user.UserId,
+				DeptId:      item.DeptId,
+				NickName:    item.NickName,
+				Email:       item.Email,
+				Phonenumber: item.Phonenumber,
+				Sex:         item.Sex,
+				Status:      item.Status,
+				UpdateBy:    loginUser.UserName,
+			}, nil, nil); err != nil {
+				failNum = failNum + 1
+				failMsg = append(failMsg, strconv.Itoa(failNum)+"、账号 "+item.UserName+" 更新失败："+err.Error())
+				continue
+			}
+			successNum = successNum + 1
+			// successMsg = append(successMsg, strconv.Itoa(successNum)+"、账号 "+item.UserName+" 更新成功")
+			continue
+		} else {
+			failNum = failNum + 1
+			failMsg = append(failMsg, strconv.Itoa(failNum)+"、账号 "+item.UserName+" 已存在")
+		}
+	}
+
+	if failNum > 0 {
+		response.NewError().SetMsg("导入失败，共 " + strconv.Itoa(failNum) + " 条数据错误，错误如下：" + strings.Join(failMsg, "<br/>")).Json(ctx)
+	} else {
+		response.NewSuccess().SetMsg("导入成功，共 " + strconv.Itoa(successNum) + " 条数据").Json(ctx)
+	}
 }
 
 // 导出用户数据
 func (*UserController) Export(ctx *gin.Context) {
 
-	// TODO
+	// 设置业务类型，操作日志获取
+	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_EXPORT)
 
+	var param dto.UserListRequest
+
+	if err := ctx.ShouldBind(&param); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	loginUser, _ := token.GetLoginUser(ctx)
+
+	list := make([]dto.UserExportResponse, 0)
+
+	users, _ := (&service.UserService{}).GetUserList(param, loginUser.UserId, false)
+	for _, user := range users {
+
+		loginDate := user.LoginDate.Format("2006-01-02 15:04:05")
+		if user.LoginDate.IsZero() {
+			loginDate = ""
+		}
+
+		list = append(list, dto.UserExportResponse{
+			UserId:      user.UserId,
+			UserName:    user.UserName,
+			NickName:    user.NickName,
+			Email:       user.Email,
+			Phonenumber: user.Phonenumber,
+			Sex:         user.Sex,
+			Status:      user.Status,
+			LoginIp:     user.LoginIp,
+			LoginDate:   loginDate,
+			DeptName:    user.DeptName,
+			DeptLeader:  user.Leader,
+		})
+	}
+
+	file, err := excel.NormalDynamicExport("Sheet1", "", "", false, false, list, nil)
+
+	if err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	excel.DownLoadExcel("user_"+time.Now().Format("20060102150405"), ctx.Writer, file)
 }
 
 // 个人信息

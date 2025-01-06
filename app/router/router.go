@@ -83,6 +83,9 @@ func Register(server *gin.Engine) {
 		api.PUT("/system/user/changeStatus", middleware.HasPerm("system:user:edit"), (&systemcontroller.UserController{}).ChangeStatus) // 修改用户状态
 		api.PUT("/system/user/resetPwd", middleware.HasPerm("system:user:edit"), (&systemcontroller.UserController{}).ResetPwd)         // 重置用密码
 		api.PUT("/system/user/authRole", middleware.HasPerm("system:user:edit"), (&systemcontroller.UserController{}).AddAuthRole)      // 用户授权角色
+		api.POST("/system/user/export", middleware.HasPerm("system:user:export"), (&systemcontroller.UserController{}).Export)          // 数据导出
+		api.POST("/system/user/importData", middleware.HasPerm("system:user:import"), (&systemcontroller.UserController{}).ImportData)  // 数据导入
+		api.POST("/system/user/importTemplate", (&systemcontroller.UserController{}).ImportTemplate)                                    // 导入模板
 
 		api.POST("/system/role", middleware.HasPerm("system:role:add"), (&systemcontroller.RoleController{}).Create)                                   // 新增角色
 		api.PUT("/system/role", middleware.HasPerm("system:role:edit"), (&systemcontroller.RoleController{}).Update)                                   // 更新角色
@@ -92,6 +95,7 @@ func Register(server *gin.Engine) {
 		api.PUT("/system/role/authUser/selectAll", middleware.HasPerm("system:role:edit"), (&systemcontroller.RoleController{}).RoleAuthUserSelectAll) // 批量选择用户授权
 		api.PUT("/system/role/authUser/cancel", middleware.HasPerm("system:role:edit"), (&systemcontroller.RoleController{}).RoleAuthUserCancel)       // 取消授权用户
 		api.PUT("/system/role/authUser/cancelAll", middleware.HasPerm("system:role:edit"), (&systemcontroller.RoleController{}).RoleAuthUserCancelAll) // 批量取消授权用户
+		api.POST("/system/role/export", middleware.HasPerm("system:role:export"), (&systemcontroller.RoleController{}).Export)                         // 数据导出
 
 		api.POST("/system/menu", middleware.HasPerm("system:menu:add"), (&systemcontroller.MenuController{}).Create)              // 新增菜单
 		api.PUT("/system/menu", middleware.HasPerm("system:menu:edit"), (&systemcontroller.MenuController{}).Update)              // 更新菜单
@@ -104,24 +108,30 @@ func Register(server *gin.Engine) {
 		api.POST("/system/post", middleware.HasPerm("system:post:add"), (&systemcontroller.PostController{}).Create)               // 新增岗位
 		api.PUT("/system/post", middleware.HasPerm("system:post:edit"), (&systemcontroller.PostController{}).Update)               // 更新岗位
 		api.DELETE("/system/post/:postIds", middleware.HasPerm("system:post:remove"), (&systemcontroller.PostController{}).Remove) // 删除岗位
+		api.POST("/system/post/export", middleware.HasPerm("system:post:export"), (&systemcontroller.PostController{}).Export)     // 数据导出
 
 		api.POST("/system/dict/type", middleware.HasPerm("system:dict:add"), (&systemcontroller.DictTypeController{}).Create)               // 新增字典类型
 		api.PUT("/system/dict/type", middleware.HasPerm("system:dict:edit"), (&systemcontroller.DictTypeController{}).Update)               // 更新字典类型
 		api.DELETE("/system/dict/type/:dictIds", middleware.HasPerm("system:dict:remove"), (&systemcontroller.DictTypeController{}).Remove) // 删除字典类型
+		api.POST("/system/dict/type/export", middleware.HasPerm("system:dict:export"), (&systemcontroller.DictTypeController{}).Export)     // 数据导出
 
 		api.POST("/system/dict/data", middleware.HasPerm("system:dict:add"), (&systemcontroller.DictDataController{}).Create)                 // 新增字典数据
 		api.PUT("/system/dict/data", middleware.HasPerm("system:dict:edit"), (&systemcontroller.DictDataController{}).Update)                 // 更新字典数据
 		api.DELETE("/system/dict/data/:dictCodes", middleware.HasPerm("system:dict:remove"), (&systemcontroller.DictDataController{}).Remove) // 删除字典数据
+		api.POST("/system/dict/data/export", middleware.HasPerm("system:dict:export"), (&systemcontroller.DictDataController{}).Export)       // 数据导出
 
 		api.POST("/system/config", middleware.HasPerm("system:config:add"), (&systemcontroller.ConfigController{}).Create)                 // 新增参数配置
 		api.PUT("/system/config", middleware.HasPerm("system:config:edit"), (&systemcontroller.ConfigController{}).Update)                 // 更新参数配置
 		api.DELETE("/system/config/:configIds", middleware.HasPerm("system:config:remove"), (&systemcontroller.ConfigController{}).Remove) // 删除参数配置
+		api.POST("/system/config/export", middleware.HasPerm("system:config:export"), (&systemcontroller.ConfigController{}).Export)       // 数据导出
 
 		api.DELETE("/monitor/logininfor/:infoIds", middleware.HasPerm("monitor:logininfor:remove"), (&monitorcontroller.LogininforController{}).Remove)      // 删除登录日志
 		api.DELETE("/monitor/logininfor/clean", middleware.HasPerm("monitor:logininfor:remove"), (&monitorcontroller.LogininforController{}).Clean)          // 清空登录日志
 		api.GET("/monitor/logininfor/unlock/:userName", middleware.HasPerm("monitor:logininfor:unlock"), (&monitorcontroller.LogininforController{}).Unlock) // 账户解锁
+		api.POST("/monitor/logininfor/export", middleware.HasPerm("monitor:logininfor:export"), (&monitorcontroller.LogininforController{}).Export)          // 数据导出
 
 		api.DELETE("/monitor/operlog/:operIds", middleware.HasPerm("monitor:operlog:remove"), (&monitorcontroller.OperlogController{}).Remove) // 删除操作日志
 		api.DELETE("/monitor/operlog/clean", middleware.HasPerm("monitor:operlog:remove"), (&monitorcontroller.OperlogController{}).Clean)     // 清空操作日志
+		api.POST("/monitor/operlog/export", middleware.HasPerm("monitor:operlog:export"), (&monitorcontroller.OperlogController{}).Export)     // 数据导出
 	}
 }

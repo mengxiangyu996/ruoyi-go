@@ -49,3 +49,22 @@ type DictDataDetailResponse struct {
 	Status    string `json:"status"`
 	Default   bool   `json:"default" gorm:"-"`
 }
+
+// 字典类型导出
+type DictTypeExportResponse struct {
+	DictId   int    `excel:"name:字典主键;"`
+	DictName string `excel:"name:字典名称;"`
+	DictType string `excel:"name:字典类型;"`
+	Status   string `excel:"name:状态;replace:0_正常,1_停用;"`
+}
+
+// 字典数据导出
+type DictDataExportResponse struct {
+	DictCode  int    `excel:"name:字典编码;"`
+	DictSort  int    `excel:"name:字典排序;"`
+	DictLabel string `excel:"name:字典标签;"`
+	DictValue string `excel:"name:字典键值;"`
+	DictType  string `excel:"name:字典类型;"`
+	IsDefault string `excel:"name:是否默认;replace:Y_是,N_否;"`
+	Status    string `excel:"name:状态;replace:0_正常,1_停用;"`
+}

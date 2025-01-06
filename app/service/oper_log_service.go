@@ -20,7 +20,7 @@ func (s *OperLogService) DeleteOperLog(operIds []int) error {
 }
 
 // 操作日志列表
-func (s *OperLogService) GetOperLogList(param dto.OperLogListRequest) ([]dto.OperLogListResponse, int) {
+func (s *OperLogService) GetOperLogList(param dto.OperLogListRequest, isPaging bool) ([]dto.OperLogListResponse, int) {
 
 	var count int64
 	operLogs := make([]dto.OperLogListResponse, 0)
@@ -51,7 +51,11 @@ func (s *OperLogService) GetOperLogList(param dto.OperLogListRequest) ([]dto.Ope
 		query = query.Where("oper_time BETWEEN ? AND ?", param.BeginTime, param.EndTime)
 	}
 
-	query.Count(&count).Offset((param.PageNum - 1) * param.PageSize).Limit(param.PageSize).Find(&operLogs)
+	if isPaging {
+		query.Count(&count).Offset((param.PageNum - 1) * param.PageSize).Limit(param.PageSize)
+	}
+	
+	query.Find(&operLogs)
 
 	return operLogs, int(count)
 }

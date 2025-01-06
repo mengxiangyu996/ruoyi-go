@@ -40,7 +40,7 @@ func (s *ConfigService) DeleteConfig(configIds []int) error {
 }
 
 // 获取参数列表
-func (s *ConfigService) GetConfigList(param dto.ConfigListRequest) ([]dto.ConfigListResponse, int) {
+func (s *ConfigService) GetConfigList(param dto.ConfigListRequest, isPaging bool) ([]dto.ConfigListResponse, int) {
 
 	var count int64
 	configs := make([]dto.ConfigListResponse, 0)
@@ -63,7 +63,11 @@ func (s *ConfigService) GetConfigList(param dto.ConfigListRequest) ([]dto.Config
 		query = query.Where("create_time BETWEEN ? AND ?", param.BeginTime, param.EndTime)
 	}
 
-	query.Count(&count).Offset((param.PageNum - 1) * param.PageSize).Limit(param.PageSize).Find(&configs)
+	if isPaging {
+		query.Count(&count).Offset((param.PageNum - 1) * param.PageSize).Limit(param.PageSize)
+	}
+
+	query.Find(&configs)
 
 	return configs, int(count)
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// 判断api权限是否存在
+// 验证用户是否具备某权限
 //
 // 为了实现@PreAuthorize("@ss.hasPermi('system:user:list')")注解
 //

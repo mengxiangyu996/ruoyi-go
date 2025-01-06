@@ -83,3 +83,14 @@ type UserProfileUpdatePwdRequest struct {
 	OldPassword string `query:"oldPassword" form:"oldPassword"`
 	NewPassword string `query:"newPassword" form:"newPassword"`
 }
+
+// 用户导入
+type UserImportRequest struct {
+	DeptId      int    `excel:"name:部门编号;"`
+	UserName    string `excel:"name:登录名称;"`
+	NickName    string `excel:"name:用户名称;"`
+	Email       string `excel:"name:用户邮箱;"`
+	Phonenumber string `excel:"name:手机号码;"`
+	Sex         string `excel:"name:用户性别;replace:0_男,1_女,2_未知;"`
+	Status      string `excel:"name:帐号状态;replace:0_正常,1_停用;"`
+}

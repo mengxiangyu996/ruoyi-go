@@ -20,7 +20,7 @@ func (s *LogininforService) DeleteLogininfor(infoIds []int) error {
 }
 
 // 获取登录日志列表
-func (s *LogininforService) GetLogininforList(param dto.LogininforListRequest) ([]dto.LogininforListResponse, int) {
+func (s *LogininforService) GetLogininforList(param dto.LogininforListRequest, isPaging bool) ([]dto.LogininforListResponse, int) {
 
 	var count int64
 	logininfos := make([]dto.LogininforListResponse, 0)
@@ -43,7 +43,11 @@ func (s *LogininforService) GetLogininforList(param dto.LogininforListRequest) (
 		query = query.Where("login_time BETWEEN ? AND ?", param.BeginTime, param.EndTime)
 	}
 
-	query.Count(&count).Offset((param.PageNum - 1) * param.PageSize).Limit(param.PageSize).Find(&logininfos)
+	if isPaging {
+		query.Count(&count).Offset((param.PageNum - 1) * param.PageSize).Limit(param.PageSize)
+	}
+
+	query.Find(&logininfos)
 
 	return logininfos, int(count)
 }

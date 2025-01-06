@@ -128,3 +128,25 @@ func ResetUserPwdValidator(param dto.UpdateUserRequest) error {
 
 	return nil
 }
+
+// 导入用户验证
+func ImportUserValidator(param dto.CreateUserRequest) error {
+
+	if param.NickName == "" {
+		return errors.New("请输入用户昵称")
+	}
+
+	if param.UserName == "" {
+		return errors.New("请输入用户名称")
+	}
+
+	if param.Phonenumber != "" && !utils.CheckRegex(regexp.PHONE, param.Phonenumber) {
+		return errors.New("手机号码格式错误")
+	}
+
+	if param.Email != "" && !utils.CheckRegex(regexp.EMAIL, param.Email) {
+		return errors.New("邮箱账号格式错误")
+	}
+
+	return nil
+}

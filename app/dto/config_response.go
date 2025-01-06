@@ -22,3 +22,12 @@ type ConfigDetailResponse struct {
 	ConfigType  string `json:"configType"`
 	Remark      string `json:"remark"`
 }
+
+// 参数导出
+type ConfigExportResponse struct {
+	ConfigId    int    `excel:"name:参数主键;"`
+	ConfigName  string `excel:"name:参数名称;"`
+	ConfigKey   string `excel:"name:参数键名;"`
+	ConfigValue string `excel:"name:参数键值;"`
+	ConfigType  string `excel:"name:系统内置;replace:Y_是,N_否;"`
+}

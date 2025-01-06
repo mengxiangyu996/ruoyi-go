@@ -9,7 +9,9 @@ import (
 	"ruoyi-go/common/utils"
 	"ruoyi-go/framework/response"
 	"strconv"
+	"time"
 
+	"gitee.com/hanshuangjianke/go-excel/excel"
 	"github.com/gin-gonic/gin"
 )
 
@@ -368,9 +370,39 @@ func (*RoleController) RoleAuthUserCancelAll(ctx *gin.Context) {
 	response.NewSuccess().Json(ctx)
 }
 
-// 导出角色数据
+// 数据导出
 func (*RoleController) Export(ctx *gin.Context) {
 
-	// TODO
+	// 设置业务类型，操作日志获取
+	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_EXPORT)
 
+	var param dto.RoleListRequest
+
+	if err := ctx.ShouldBind(&param); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	list := make([]dto.RoleExportResponse, 0)
+
+	roles, _ := (&service.RoleService{}).GetRoleList(param, false)
+	for _, role := range roles {
+		list = append(list, dto.RoleExportResponse{
+			RoleId:    role.RoleId,
+			RoleName:  role.RoleName,
+			RoleKey:   role.RoleKey,
+			RoleSort:  role.RoleSort,
+			DataScope: role.DataScope,
+			Status:    role.Status,
+		})
+	}
+
+	file, err := excel.NormalDynamicExport("Sheet1", "", "", false, false, list, nil)
+
+	if err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	excel.DownLoadExcel("role_"+time.Now().Format("20060102150405"), ctx.Writer, file)
 }

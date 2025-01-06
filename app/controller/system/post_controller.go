@@ -9,7 +9,9 @@ import (
 	"ruoyi-go/common/utils"
 	"ruoyi-go/framework/response"
 	"strconv"
+	"time"
 
+	"gitee.com/hanshuangjianke/go-excel/excel"
 	"github.com/gin-gonic/gin"
 )
 
@@ -149,4 +151,40 @@ func (*PostController) Remove(ctx *gin.Context) {
 	}
 
 	response.NewSuccess().Json(ctx)
+}
+
+// 数据导出
+func (*PostController) Export(ctx *gin.Context) {
+
+	// 设置业务类型，操作日志获取
+	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_EXPORT)
+
+	var param dto.PostListRequest
+
+	if err := ctx.ShouldBind(&param); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	list := make([]dto.PostExportResponse, 0)
+
+	posts, _ := (&service.PostService{}).GetPostList(param, false)
+	for _, post := range posts {
+		list = append(list, dto.PostExportResponse{
+			PostId:   post.PostId,
+			PostCode: post.PostCode,
+			PostName: post.PostName,
+			PostSort: post.PostSort,
+			Status:   post.Status,
+		})
+	}
+
+	file, err := excel.NormalDynamicExport("Sheet1", "", "", false, false, list, nil)
+
+	if err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	excel.DownLoadExcel("post_"+time.Now().Format("20060102150405"), ctx.Writer, file)
 }

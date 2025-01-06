@@ -9,7 +9,9 @@ import (
 	"ruoyi-go/common/utils"
 	"ruoyi-go/framework/response"
 	"strconv"
+	"time"
 
+	"gitee.com/hanshuangjianke/go-excel/excel"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,7 +27,7 @@ func (*ConfigController) List(ctx *gin.Context) {
 		return
 	}
 
-	configs, total := (&service.ConfigService{}).GetConfigList(param)
+	configs, total := (&service.ConfigService{}).GetConfigList(param, true)
 
 	response.NewSuccess().SetPageData(configs, total).Json(ctx)
 }
@@ -149,4 +151,40 @@ func (*ConfigController) ConfigKey(ctx *gin.Context) {
 	config := (&service.ConfigService{}).GetConfigByConfigKey(configKey)
 
 	response.NewSuccess().SetMsg(config.ConfigValue).Json(ctx)
+}
+
+// 数据导出
+func (*ConfigController) Export(ctx *gin.Context) {
+
+	// 设置业务类型，操作日志获取
+	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_EXPORT)
+
+	var param dto.ConfigListRequest
+
+	if err := ctx.ShouldBind(&param); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	list := make([]dto.ConfigExportResponse, 0)
+
+	configs, _ := (&service.ConfigService{}).GetConfigList(param, false)
+	for _, config := range configs {
+		list = append(list, dto.ConfigExportResponse{
+			ConfigId:    config.ConfigId,
+			ConfigName:  config.ConfigName,
+			ConfigKey:   config.ConfigKey,
+			ConfigValue: config.ConfigValue,
+			ConfigType:  config.ConfigType,
+		})
+	}
+
+	file, err := excel.NormalDynamicExport("Sheet1", "", "", false, false, list, nil)
+
+	if err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	excel.DownLoadExcel("config_"+time.Now().Format("20060102150405"), ctx.Writer, file)
 }

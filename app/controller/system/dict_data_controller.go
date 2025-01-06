@@ -9,7 +9,9 @@ import (
 	"ruoyi-go/common/utils"
 	"ruoyi-go/framework/response"
 	"strconv"
+	"time"
 
+	"gitee.com/hanshuangjianke/go-excel/excel"
 	"github.com/gin-gonic/gin"
 )
 
@@ -151,4 +153,42 @@ func (*DictDataController) Type(ctx *gin.Context) {
 	}
 
 	response.NewSuccess().SetData("data", dictDatas).Json(ctx)
+}
+
+// 数据导出
+func (*DictDataController) Export(ctx *gin.Context) {
+
+	// 设置业务类型，操作日志获取
+	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_EXPORT)
+
+	var param dto.DictDataListRequest
+
+	if err := ctx.ShouldBind(&param); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	list := make([]dto.DictDataExportResponse, 0)
+
+	dictDatas, _ := (&service.DictDataService{}).GetDictDataList(param, false)
+	for _, dictData := range dictDatas {
+		list = append(list, dto.DictDataExportResponse{
+			DictCode:  dictData.DictCode,
+			DictSort:  dictData.DictSort,
+			DictLabel: dictData.DictLabel,
+			DictValue: dictData.DictValue,
+			DictType:  dictData.DictType,
+			IsDefault: dictData.IsDefault,
+			Status:    dictData.Status,
+		})
+	}
+
+	file, err := excel.NormalDynamicExport("Sheet1", "", "", false, false, list, nil)
+
+	if err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	excel.DownLoadExcel("data_"+time.Now().Format("20060102150405"), ctx.Writer, file)
 }

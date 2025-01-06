@@ -7,8 +7,11 @@ import (
 	"ruoyi-go/common/types/constant"
 	"ruoyi-go/common/utils"
 	"ruoyi-go/framework/response"
+	"strconv"
 	"strings"
+	"time"
 
+	"gitee.com/hanshuangjianke/go-excel/excel"
 	"github.com/gin-gonic/gin"
 )
 
@@ -36,7 +39,7 @@ func (*OperlogController) List(ctx *gin.Context) {
 	}
 	param.OrderByColumn = strings.ToLower(regexp.MustCompile("([A-Z])").ReplaceAllString(param.OrderByColumn, "_${1}"))
 
-	operLogs, total := (&service.OperLogService{}).GetOperLogList(param)
+	operLogs, total := (&service.OperLogService{}).GetOperLogList(param, true)
 
 	response.NewSuccess().SetPageData(operLogs, total).Json(ctx)
 }
@@ -65,7 +68,7 @@ func (*OperlogController) Remove(ctx *gin.Context) {
 func (*OperlogController) Clean(ctx *gin.Context) {
 
 	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_DELETE)
+	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_CLEAN)
 
 	if err := (&service.OperLogService{}).DeleteOperLog(nil); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
@@ -73,4 +76,63 @@ func (*OperlogController) Clean(ctx *gin.Context) {
 	}
 
 	response.NewSuccess().Json(ctx)
+}
+
+// 数据导出
+func (*OperlogController) Export(ctx *gin.Context) {
+
+	// 设置业务类型，操作日志获取
+	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_EXPORT)
+
+	var param dto.OperLogListRequest
+
+	if err := ctx.ShouldBind(&param); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	// 排序规则默认为倒序（DESC）
+	param.OrderRule = "DESC"
+	if strings.HasPrefix(param.IsAsc, "asc") {
+		param.OrderRule = ""
+	}
+
+	// 排序字段小驼峰转蛇形
+	if param.OrderByColumn == "" {
+		param.OrderByColumn = "operTime"
+	}
+	param.OrderByColumn = strings.ToLower(regexp.MustCompile("([A-Z])").ReplaceAllString(param.OrderByColumn, "_${1}"))
+
+	list := make([]dto.OperLogExportResponse, 0)
+
+	operLogs, _ := (&service.OperLogService{}).GetOperLogList(param, false)
+	for _, operLog := range operLogs {
+		list = append(list, dto.OperLogExportResponse{
+			OperId:        operLog.OperId,
+			Title:         operLog.Title,
+			BusinessType:  operLog.BusinessType,
+			Method:        operLog.Method,
+			RequestMethod: operLog.RequestMethod,
+			OperName:      operLog.OperName,
+			DeptName:      operLog.DeptName,
+			OperUrl:       operLog.OperUrl,
+			OperIp:        operLog.OperIp,
+			OperLocation:  operLog.OperLocation,
+			OperParam:     operLog.OperParam,
+			JsonResult:    operLog.JsonResult,
+			Status:        operLog.Status,
+			ErrorMsg:      operLog.ErrorMsg,
+			OperTime:      operLog.OperTime.Format("2006-01-02 15:04:05"),
+			CostTime:      strconv.Itoa(operLog.CostTime) + "毫秒",
+		})
+	}
+
+	file, err := excel.NormalDynamicExport("Sheet1", "", "", false, false, list, nil)
+
+	if err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	excel.DownLoadExcel("operlog_"+time.Now().Format("20060102150405"), ctx.Writer, file)
 }
