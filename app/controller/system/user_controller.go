@@ -393,7 +393,6 @@ func (*UserController) ImportTemplate(ctx *gin.Context) {
 	})
 
 	file, err := excel.NormalDynamicExport("Sheet1", "", "", false, false, list, nil)
-
 	if err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
@@ -521,9 +520,10 @@ func (*UserController) ImportData(ctx *gin.Context) {
 
 	if failNum > 0 {
 		response.NewError().SetMsg("导入失败，共 " + strconv.Itoa(failNum) + " 条数据错误，错误如下：" + strings.Join(failMsg, "<br/>")).Json(ctx)
-	} else {
-		response.NewSuccess().SetMsg("导入成功，共 " + strconv.Itoa(successNum) + " 条数据").Json(ctx)
+		return
 	}
+
+	response.NewSuccess().SetMsg("导入成功，共 " + strconv.Itoa(successNum) + " 条数据").Json(ctx)
 }
 
 // 导出用户数据
@@ -567,7 +567,6 @@ func (*UserController) Export(ctx *gin.Context) {
 	}
 
 	file, err := excel.NormalDynamicExport("Sheet1", "", "", false, false, list, nil)
-
 	if err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return

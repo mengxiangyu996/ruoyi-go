@@ -180,7 +180,6 @@ func (*PostController) Export(ctx *gin.Context) {
 	}
 
 	file, err := excel.NormalDynamicExport("Sheet1", "", "", false, false, list, nil)
-
 	if err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
