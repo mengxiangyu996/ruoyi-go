@@ -1,7 +1,7 @@
 @echo off
 setlocal
 
-set APP=%cd%\ruoyi-go.exe
+set APP=%cd%\main.exe
 
 :: 使用说明
 :menu
@@ -42,9 +42,9 @@ if "%choice%"=="1" (
 
 :: 程序状态
 :status
-tasklist /FI "IMAGENAME eq ruoyi-go.exe" | find /I "ruoyi-go.exe" >nul
+tasklist /FI "IMAGENAME eq main.exe" | find /I "main.exe" >nul
 if %errorlevel%==0 (
-    for /f "tokens=2" %%i in ('tasklist /FI "IMAGENAME eq ruoyi-go.exe"') do (
+    for /f "tokens=2" %%i in ('tasklist /FI "IMAGENAME eq main.exe"') do (
         echo %APP% is running, pid is %%i
     )
 ) else (
@@ -54,7 +54,7 @@ exit /b
 
 :: 启动程序
 :start
-tasklist /FI "IMAGENAME eq ruoyi-go.exe" | find /I "ruoyi-go.exe" >nul
+tasklist /FI "IMAGENAME eq main.exe" | find /I "main.exe" >nul
 if %errorlevel%==0 (
     echo %APP% is already running
 ) else (
@@ -65,9 +65,9 @@ exit /b
 
 :: 停止程序
 :stop
-tasklist /FI "IMAGENAME eq ruoyi-go.exe" | find /I "ruoyi-go.exe" >nul
+tasklist /FI "IMAGENAME eq main.exe" | find /I "main.exe" >nul
 if %errorlevel%==0 (
-    for /f "tokens=2" %%i in ('tasklist /FI "IMAGENAME eq ruoyi-go.exe"') do (
+    for /f "tokens=2" %%i in ('tasklist /FI "IMAGENAME eq main.exe"') do (
         taskkill /PID %%i /F
         echo %APP% stop success
     )
