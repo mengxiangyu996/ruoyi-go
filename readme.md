@@ -9,6 +9,8 @@
 
 ## 后端运行
 
+> **提示：** 运行前请先安装好 `go` 环境，版本 `1.20` 以上。
+
     # 克隆项目
     git clone https://github.com/mengxiangyu996/ruoyi-go.git
 
