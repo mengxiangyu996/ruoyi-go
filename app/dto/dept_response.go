@@ -35,8 +35,8 @@ type DeptDetailResponse struct {
 
 // 部门树（用户管理树形）
 type DeptTreeResponse struct {
-	Id       int                 `json:"id"`
-	Label    string              `json:"label"`
-	Children []*DeptTreeResponse `json:"children" gorm:"-"`
-	ParentId int                 `json:"-"`
+	Id       int                `json:"id"`
+	Label    string             `json:"label"`
+	Children []DeptTreeResponse `json:"children" gorm:"-"`
+	ParentId int                `json:"-"`
 }

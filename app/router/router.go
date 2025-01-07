@@ -16,6 +16,7 @@ func Register(server *gin.Engine) {
 	api := server.Group("/api")
 	{
 		api.GET("/captchaImage", (&controller.AuthController{}).CaptchaImage)                       // 获取验证码
+		api.POST("/register", (&controller.AuthController{}).Register)                              // 注册
 		api.POST("/login", middleware.LogininforMiddleware(), (&controller.AuthController{}).Login) // 登录
 		api.POST("/logout", (&controller.AuthController{}).Logout)                                  // 退出登录
 

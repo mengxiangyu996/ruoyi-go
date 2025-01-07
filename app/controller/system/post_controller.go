@@ -22,7 +22,7 @@ func (*PostController) List(ctx *gin.Context) {
 
 	var param dto.PostListRequest
 
-	if err := ctx.ShouldBindQuery(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -50,7 +50,7 @@ func (*PostController) Create(ctx *gin.Context) {
 
 	var param dto.CreatePostRequest
 
-	if err := ctx.ShouldBindJSON(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -93,7 +93,7 @@ func (*PostController) Update(ctx *gin.Context) {
 
 	var param dto.UpdatePostRequest
 
-	if err := ctx.ShouldBindJSON(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}

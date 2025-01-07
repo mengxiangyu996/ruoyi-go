@@ -22,7 +22,7 @@ func (*DictTypeController) List(ctx *gin.Context) {
 
 	var param dto.DictTypeListRequest
 
-	if err := ctx.ShouldBindQuery(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -50,7 +50,7 @@ func (*DictTypeController) Create(ctx *gin.Context) {
 
 	var param dto.CreateDictTypeRequest
 
-	if err := ctx.ShouldBindJSON(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -87,7 +87,7 @@ func (*DictTypeController) Update(ctx *gin.Context) {
 
 	var param dto.UpdateDictTypeRequest
 
-	if err := ctx.ShouldBindJSON(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}

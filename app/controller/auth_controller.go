@@ -33,7 +33,56 @@ func (*AuthController) CaptchaImage(ctx *gin.Context) {
 
 	b64s = strings.Replace(b64s, "data:image/png;base64,", "", 1)
 
-	response.NewSuccess().SetData("uuid", id).SetData("img", b64s).SetData("captchaEnabled", true).Json(ctx)
+	config := (&service.ConfigService{}).GetConfigByConfigKey("sys.account.captchaEnabled")
+
+	response.NewSuccess().SetData("uuid", id).SetData("img", b64s).SetData("captchaEnabled", config.ConfigValue == "true").Json(ctx)
+}
+
+// 注册
+func (*AuthController) Register(ctx *gin.Context) {
+
+	if config := (&service.ConfigService{}).GetConfigByConfigKey("sys.account.registerUser"); config.ConfigValue != "true" {
+		response.NewError().SetMsg("当前系统没有开启注册功能").Json(ctx)
+		return
+	}
+
+	var param dto.RegisterRequest
+
+	if err := ctx.ShouldBind(&param); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	if err := validator.RegisterValidator(param); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	if config := (&service.ConfigService{}).GetConfigByConfigKey("sys.account.captchaEnabled"); config.ConfigValue == "true" {
+		if !captcha.NewCaptcha().Verify(param.Uuid, param.Code) {
+			response.NewError().SetMsg("验证码错误").Json(ctx)
+			return
+		}
+	}
+
+	if user := (&service.UserService{}).GetUserByUsername(param.Username); user.UserId > 0 {
+		response.NewError().SetMsg("保存用户" + param.Username + "注册账号已存在").Json(ctx)
+		return
+	}
+
+	if err := (&service.UserService{}).CreateUser(dto.SaveUser{
+		UserName: param.Username,
+		NickName: param.Username,
+		Password: password.Generate(param.Password),
+		Status:   "0",
+		Remark:   "注册用户",
+		CreateBy: "注册用户",
+	}, nil, nil); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	response.NewSuccess().Json(ctx)
 }
 
 // 登录
@@ -41,19 +90,21 @@ func (*AuthController) Login(ctx *gin.Context) {
 
 	var param dto.LoginRequest
 
-	if err := ctx.ShouldBindJSON(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetCode(400).SetMsg(err.Error()).Json(ctx)
 		return
 	}
 
-	if err := validator.LoginValidator(&param); err != nil {
+	if err := validator.LoginValidator(param); err != nil {
 		response.NewError().SetCode(400).SetMsg(err.Error()).Json(ctx)
 		return
 	}
 
-	if !captcha.NewCaptcha().Verify(param.Uuid, param.Code) {
-		response.NewError().SetMsg("验证码错误").Json(ctx)
-		return
+	if config := (&service.ConfigService{}).GetConfigByConfigKey("sys.account.captchaEnabled"); config.ConfigValue == "true" {
+		if !captcha.NewCaptcha().Verify(param.Uuid, param.Code) {
+			response.NewError().SetMsg("验证码错误").Json(ctx)
+			return
+		}
 	}
 
 	user := (&service.UserService{}).GetUserByUsername(param.Username)

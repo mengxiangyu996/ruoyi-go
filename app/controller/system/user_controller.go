@@ -39,7 +39,7 @@ func (*UserController) List(ctx *gin.Context) {
 
 	var param dto.UserListRequest
 
-	if err := ctx.ShouldBindQuery(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -108,7 +108,7 @@ func (*UserController) Create(ctx *gin.Context) {
 
 	var param dto.CreateUserRequest
 
-	if err := ctx.ShouldBindJSON(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -164,7 +164,7 @@ func (*UserController) Update(ctx *gin.Context) {
 
 	var param dto.UpdateUserRequest
 
-	if err := ctx.ShouldBindJSON(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -239,7 +239,7 @@ func (*UserController) ChangeStatus(ctx *gin.Context) {
 
 	var param dto.UpdateUserRequest
 
-	if err := ctx.ShouldBindJSON(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -269,7 +269,7 @@ func (*UserController) ResetPwd(ctx *gin.Context) {
 
 	var param dto.UpdateUserRequest
 
-	if err := ctx.ShouldBindJSON(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -344,7 +344,7 @@ func (*UserController) AddAuthRole(ctx *gin.Context) {
 
 	var param dto.AddUserAuthRoleRequest
 
-	if err := ctx.ShouldBindQuery(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -594,7 +594,7 @@ func (*UserController) UpdateProfile(ctx *gin.Context) {
 
 	var param dto.UpdateProfileRequest
 
-	if err := ctx.ShouldBindJSON(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -623,7 +623,7 @@ func (*UserController) UserProfileUpdatePwd(ctx *gin.Context) {
 
 	var param dto.UserProfileUpdatePwdRequest
 
-	if err := ctx.ShouldBindQuery(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}

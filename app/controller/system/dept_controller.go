@@ -21,7 +21,7 @@ func (*DeptController) List(ctx *gin.Context) {
 
 	var param dto.DeptListRequest
 
-	if err := ctx.ShouldBindQuery(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -67,7 +67,7 @@ func (*DeptController) Create(ctx *gin.Context) {
 
 	var param dto.CreateDeptRequest
 
-	if err := ctx.ShouldBindJSON(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -116,7 +116,7 @@ func (*DeptController) Update(ctx *gin.Context) {
 
 	var param dto.UpdateDeptRequest
 
-	if err := ctx.ShouldBindJSON(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}

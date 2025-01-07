@@ -22,7 +22,7 @@ func (*ConfigController) List(ctx *gin.Context) {
 
 	var param dto.ConfigListRequest
 
-	if err := ctx.ShouldBindQuery(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -50,7 +50,7 @@ func (*ConfigController) Create(ctx *gin.Context) {
 
 	var param dto.CreateConfigRequest
 
-	if err := ctx.ShouldBindJSON(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -88,7 +88,7 @@ func (*ConfigController) Update(ctx *gin.Context) {
 
 	var param dto.UpdateConfigRequest
 
-	if err := ctx.ShouldBindJSON(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}

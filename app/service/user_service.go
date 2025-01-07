@@ -296,21 +296,21 @@ func (s *UserService) GetUserByPhonenumber(phonenumber string) dto.UserTokenResp
 }
 
 // 部门列表转树形
-func (s *UserService) DeptListToTree(depts []dto.DeptTreeResponse) []*dto.DeptTreeResponse {
+func (s *UserService) DeptListToTree(depts []dto.DeptTreeResponse) []dto.DeptTreeResponse {
 
-	treeMap := make(map[int]*dto.DeptTreeResponse)
+	treeMap := make(map[int]dto.DeptTreeResponse)
 
 	// 构建查找表
 	for _, dept := range depts {
-		treeMap[dept.Id] = &dto.DeptTreeResponse{
+		treeMap[dept.Id] = dto.DeptTreeResponse{
 			Id:       dept.Id,
 			Label:    dept.Label,
 			ParentId: dept.ParentId,
-			Children: make([]*dto.DeptTreeResponse, 0), // 初始化子节点切片
+			Children: make([]dto.DeptTreeResponse, 0), // 初始化子节点切片
 		}
 	}
 
-	tree := make([]*dto.DeptTreeResponse, 0)
+	tree := make([]dto.DeptTreeResponse, 0)
 
 	for _, dept := range treeMap {
 		if _, exists := treeMap[dept.ParentId]; !exists {

@@ -24,7 +24,7 @@ func (*LogininforController) List(ctx *gin.Context) {
 
 	var param dto.LogininforListRequest
 
-	if err := ctx.ShouldBindQuery(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}

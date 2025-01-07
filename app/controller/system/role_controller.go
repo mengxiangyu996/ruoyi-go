@@ -22,7 +22,7 @@ func (*RoleController) List(ctx *gin.Context) {
 
 	var param dto.RoleListRequest
 
-	if err := ctx.ShouldBindQuery(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -50,7 +50,7 @@ func (*RoleController) Create(ctx *gin.Context) {
 
 	var param dto.CreateRoleRequest
 
-	if err := ctx.ShouldBindJSON(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -103,7 +103,7 @@ func (*RoleController) Update(ctx *gin.Context) {
 
 	var param dto.UpdateRoleRequest
 
-	if err := ctx.ShouldBindJSON(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -186,7 +186,7 @@ func (*RoleController) ChangeStatus(ctx *gin.Context) {
 
 	var param dto.UpdateRoleRequest
 
-	if err := ctx.ShouldBindJSON(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -228,7 +228,7 @@ func (*RoleController) DataScope(ctx *gin.Context) {
 
 	var param dto.UpdateRoleRequest
 
-	if err := ctx.ShouldBindJSON(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -256,7 +256,7 @@ func (*RoleController) RoleAuthUserAllocatedList(ctx *gin.Context) {
 
 	var param dto.RoleAuthUserAllocatedListRequest
 
-	if err := ctx.ShouldBindQuery(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -271,7 +271,7 @@ func (*RoleController) RoleAuthUserUnallocatedList(ctx *gin.Context) {
 
 	var param dto.RoleAuthUserAllocatedListRequest
 
-	if err := ctx.ShouldBindQuery(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -289,7 +289,7 @@ func (*RoleController) RoleAuthUserSelectAll(ctx *gin.Context) {
 
 	var param dto.RoleAuthUserSelectAllRequest
 
-	if err := ctx.ShouldBindQuery(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -316,7 +316,7 @@ func (*RoleController) RoleAuthUserCancel(ctx *gin.Context) {
 
 	var param dto.RoleAuthUserCancelRequest
 
-	if err := ctx.ShouldBindJSON(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -337,7 +337,7 @@ func (*RoleController) RoleAuthUserCancelAll(ctx *gin.Context) {
 
 	var param dto.RoleAuthUserCancelAllRequest
 
-	if err := ctx.ShouldBindQuery(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}

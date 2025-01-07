@@ -19,7 +19,7 @@ func (*MenuController) List(ctx *gin.Context) {
 
 	var param dto.MenuListRequest
 
-	if err := ctx.ShouldBindQuery(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -69,7 +69,7 @@ func (*MenuController) Create(ctx *gin.Context) {
 
 	var param dto.CreateMenuRequest
 
-	if err := ctx.ShouldBindJSON(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -116,7 +116,7 @@ func (*MenuController) Update(ctx *gin.Context) {
 
 	var param dto.UpdateMenuRequest
 
-	if err := ctx.ShouldBindJSON(&param); err != nil {
+	if err := ctx.ShouldBind(&param); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}

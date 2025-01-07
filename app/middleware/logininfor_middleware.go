@@ -33,7 +33,7 @@ func LogininforMiddleware() gin.HandlerFunc {
 
 		var param dto.LoginRequest
 
-		if err := ctx.ShouldBindJSON(&param); err != nil {
+		if err := ctx.ShouldBind(&param); err != nil {
 			response.NewError().SetCode(400).SetMsg(err.Error()).Json(ctx)
 			ctx.Abort()
 			return
