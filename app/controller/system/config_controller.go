@@ -187,3 +187,9 @@ func (*ConfigController) Export(ctx *gin.Context) {
 
 	excel.DownLoadExcel("config_"+time.Now().Format("20060102150405"), ctx.Writer, file)
 }
+
+// 刷新缓存
+func (*ConfigController) RefreshCache(ctx *gin.Context) {
+
+	response.NewError().SetMsg("未启用缓存，无需刷新").Json(ctx)
+}

@@ -69,5 +69,6 @@
 ## 特别感谢（排名不分先后）
 - [Gin](https://github.com/gin-gonic/gin)
 - [Gorm](https://github.com/go-gorm/gorm)
+- [Redis](https://github.com/redis/go-redis)
 - [RuoYi-Vue3](https://github.com/yangzongzhuan/RuoYi-Vue3)
 - [RuoYi-Vue3-ts](https://github.com/zzh948498/RuoYi-Vue3-ts)

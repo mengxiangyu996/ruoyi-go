@@ -110,20 +110,22 @@ func Register(server *gin.Engine) {
 		api.DELETE("/system/post/:postIds", middleware.HasPerm("system:post:remove"), (&systemcontroller.PostController{}).Remove) // 删除岗位
 		api.POST("/system/post/export", middleware.HasPerm("system:post:export"), (&systemcontroller.PostController{}).Export)     // 数据导出
 
-		api.POST("/system/dict/type", middleware.HasPerm("system:dict:add"), (&systemcontroller.DictTypeController{}).Create)               // 新增字典类型
-		api.PUT("/system/dict/type", middleware.HasPerm("system:dict:edit"), (&systemcontroller.DictTypeController{}).Update)               // 更新字典类型
-		api.DELETE("/system/dict/type/:dictIds", middleware.HasPerm("system:dict:remove"), (&systemcontroller.DictTypeController{}).Remove) // 删除字典类型
-		api.POST("/system/dict/type/export", middleware.HasPerm("system:dict:export"), (&systemcontroller.DictTypeController{}).Export)     // 数据导出
+		api.POST("/system/dict/type", middleware.HasPerm("system:dict:add"), (&systemcontroller.DictTypeController{}).Create)                         // 新增字典类型
+		api.PUT("/system/dict/type", middleware.HasPerm("system:dict:edit"), (&systemcontroller.DictTypeController{}).Update)                         // 更新字典类型
+		api.DELETE("/system/dict/type/:dictIds", middleware.HasPerm("system:dict:remove"), (&systemcontroller.DictTypeController{}).Remove)           // 删除字典类型
+		api.POST("/system/dict/type/export", middleware.HasPerm("system:dict:export"), (&systemcontroller.DictTypeController{}).Export)               // 数据导出
+		api.DELETE("/system/dict/type/refreshCache", middleware.HasPerm("system:dict:remove"), (&systemcontroller.DictTypeController{}).RefreshCache) // 刷新缓存
 
 		api.POST("/system/dict/data", middleware.HasPerm("system:dict:add"), (&systemcontroller.DictDataController{}).Create)                 // 新增字典数据
 		api.PUT("/system/dict/data", middleware.HasPerm("system:dict:edit"), (&systemcontroller.DictDataController{}).Update)                 // 更新字典数据
 		api.DELETE("/system/dict/data/:dictCodes", middleware.HasPerm("system:dict:remove"), (&systemcontroller.DictDataController{}).Remove) // 删除字典数据
 		api.POST("/system/dict/data/export", middleware.HasPerm("system:dict:export"), (&systemcontroller.DictDataController{}).Export)       // 数据导出
 
-		api.POST("/system/config", middleware.HasPerm("system:config:add"), (&systemcontroller.ConfigController{}).Create)                 // 新增参数配置
-		api.PUT("/system/config", middleware.HasPerm("system:config:edit"), (&systemcontroller.ConfigController{}).Update)                 // 更新参数配置
-		api.DELETE("/system/config/:configIds", middleware.HasPerm("system:config:remove"), (&systemcontroller.ConfigController{}).Remove) // 删除参数配置
-		api.POST("/system/config/export", middleware.HasPerm("system:config:export"), (&systemcontroller.ConfigController{}).Export)       // 数据导出
+		api.POST("/system/config", middleware.HasPerm("system:config:add"), (&systemcontroller.ConfigController{}).Create)                         // 新增参数配置
+		api.PUT("/system/config", middleware.HasPerm("system:config:edit"), (&systemcontroller.ConfigController{}).Update)                         // 更新参数配置
+		api.DELETE("/system/config/:configIds", middleware.HasPerm("system:config:remove"), (&systemcontroller.ConfigController{}).Remove)         // 删除参数配置
+		api.POST("/system/config/export", middleware.HasPerm("system:config:export"), (&systemcontroller.ConfigController{}).Export)               // 数据导出
+		api.DELETE("/system/config/refreshCache", middleware.HasPerm("system:config:remove"), (&systemcontroller.ConfigController{}).RefreshCache) // 刷新缓存
 
 		api.DELETE("/monitor/logininfor/:infoIds", middleware.HasPerm("monitor:logininfor:remove"), (&monitorcontroller.LogininforController{}).Remove)      // 删除登录日志
 		api.DELETE("/monitor/logininfor/clean", middleware.HasPerm("monitor:logininfor:remove"), (&monitorcontroller.LogininforController{}).Clean)          // 清空登录日志
