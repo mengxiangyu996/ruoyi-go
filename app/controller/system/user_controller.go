@@ -3,10 +3,10 @@ package systemcontroller
 import (
 	"io/ioutil"
 	"os"
-	"ruoyi-go/app/controller/validator"
 	"ruoyi-go/app/dto"
 	"ruoyi-go/app/service"
 	"ruoyi-go/app/token"
+	"ruoyi-go/app/validator"
 	"ruoyi-go/common/password"
 	"ruoyi-go/common/types/constant"
 	"ruoyi-go/common/upload"

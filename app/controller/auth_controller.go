@@ -2,10 +2,10 @@ package controller
 
 import (
 	"context"
-	"ruoyi-go/app/controller/validator"
 	"ruoyi-go/app/dto"
 	"ruoyi-go/app/service"
 	"ruoyi-go/app/token"
+	"ruoyi-go/app/validator"
 	"ruoyi-go/common/captcha"
 	"ruoyi-go/common/password"
 	"ruoyi-go/common/types/constant"
