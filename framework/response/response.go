@@ -1,8 +1,6 @@
 package response
 
 import (
-	statusCode "ruoyi-go/common/types/status-code"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,8 +16,8 @@ func NewSuccess() *Response {
 
 	return &Response{
 
-		Code: statusCode.Success,
-		Msg:  statusCode.GetMessage(statusCode.Success),
+		Code: 200,
+		Msg:  "成功",
 		Data: make(map[string]interface{}),
 	}
 }
@@ -29,8 +27,8 @@ func NewError() *Response {
 
 	return &Response{
 
-		Code: statusCode.Error,
-		Msg:  statusCode.GetMessage(statusCode.Error),
+		Code: 500,
+		Msg:  "失败",
 		Data: make(map[string]interface{}),
 	}
 }
@@ -40,18 +38,11 @@ func (r *Response) SetCode(code int) *Response {
 
 	r.Code = code
 
-	r.Msg = statusCode.GetMessage(code)
-
 	return r
 }
 
 // 设置响应信息
 func (r *Response) SetMsg(msg string) *Response {
-
-	if msg == "" {
-		r.Msg = statusCode.GetMessage(r.Code)
-		return r
-	}
 
 	r.Msg = msg
 

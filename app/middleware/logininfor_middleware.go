@@ -9,7 +9,6 @@ import (
 	ipaddress "ruoyi-go/common/ip-address"
 	responsewriter "ruoyi-go/common/response-writer"
 	"ruoyi-go/common/types/constant"
-	statusCode "ruoyi-go/common/types/status-code"
 	"ruoyi-go/framework/datetime"
 	"ruoyi-go/framework/response"
 	"time"
@@ -35,7 +34,7 @@ func LogininforMiddleware() gin.HandlerFunc {
 		var param dto.LoginRequest
 
 		if err := ctx.ShouldBindJSON(&param); err != nil {
-			response.NewError().SetCode(statusCode.BadRequest).SetMsg(err.Error()).Json(ctx)
+			response.NewError().SetCode(400).SetMsg(err.Error()).Json(ctx)
 			ctx.Abort()
 			return
 		}
@@ -63,7 +62,7 @@ func LogininforMiddleware() gin.HandlerFunc {
 		var body response.Response
 		json.Unmarshal(rw.Body.Bytes(), &body)
 
-		if body.Code != statusCode.Success {
+		if body.Code != 200 {
 			logininfor.Status = constant.EXCEPTION_STATUS
 		}
 		logininfor.Msg = body.Msg

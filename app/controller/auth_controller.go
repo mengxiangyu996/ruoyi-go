@@ -11,7 +11,6 @@ import (
 	"ruoyi-go/common/password"
 	"ruoyi-go/common/types/constant"
 	rediskey "ruoyi-go/common/types/redis-key"
-	statusCode "ruoyi-go/common/types/status-code"
 	"ruoyi-go/config"
 	"ruoyi-go/framework/dal"
 	"ruoyi-go/framework/datetime"
@@ -43,12 +42,12 @@ func (*AuthController) Login(ctx *gin.Context) {
 	var param dto.LoginRequest
 
 	if err := ctx.ShouldBindJSON(&param); err != nil {
-		response.NewError().SetCode(statusCode.BadRequest).SetMsg(err.Error()).Json(ctx)
+		response.NewError().SetCode(400).SetMsg(err.Error()).Json(ctx)
 		return
 	}
 
 	if err := validator.LoginValidator(&param); err != nil {
-		response.NewError().SetCode(statusCode.BadRequest).SetMsg(err.Error()).Json(ctx)
+		response.NewError().SetCode(400).SetMsg(err.Error()).Json(ctx)
 		return
 	}
 

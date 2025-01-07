@@ -27,7 +27,6 @@ func Register(server *gin.Engine) {
 		api.GET("/getInfo", (&controller.AuthController{}).GetInfo)       // 获取用户信息
 		api.GET("/getRouters", (&controller.AuthController{}).GetRouters) // 获取路由信息
 
-		// 系统管理
 		api.GET("/system/user/profile", (&systemcontroller.UserController{}).GetProfile)                      // 个人信息
 		api.PUT("/system/user/profile", (&systemcontroller.UserController{}).UpdateProfile)                   // 修改用户
 		api.PUT("/system/user/profile/updatePwd", (&systemcontroller.UserController{}).UserProfileUpdatePwd)  // 重置密码

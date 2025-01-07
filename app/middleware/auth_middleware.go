@@ -4,7 +4,6 @@ import (
 	"ruoyi-go/app/security"
 	"ruoyi-go/app/token"
 	"ruoyi-go/common/types/constant"
-	statusCode "ruoyi-go/common/types/status-code"
 	"ruoyi-go/framework/response"
 	"time"
 
@@ -18,7 +17,7 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		authUser := security.GetAuthUser(ctx)
 		if authUser == nil {
-			response.NewError().SetCode(statusCode.Unauthorized).SetMsg("未登录").Json(ctx)
+			response.NewError().SetCode(401).SetMsg("未登录").Json(ctx)
 			ctx.Abort()
 			return
 		}
@@ -33,19 +32,6 @@ func AuthMiddleware() gin.HandlerFunc {
 			ctx.Abort()
 			return
 		}
-
-		// 去路由权限映射表中查询权限（转为在路由中加入权限中间件方法）
-		// perm := permsmap.HasPerm(ctx.Request.Method + ":" + ctx.FullPath())
-		// if perm != "" {
-		// 	// 获取用户权限
-		// 	perms := (&service.MenuService{}).GetPermsByUserId(authUser.UserId)
-		// 	// 查询用户是否拥有权限
-		// 	if !utils.Contains(perms, perm) {
-		// 		response.NewError().SetCode(601).SetMsg("权限不足").Json(ctx)
-		// 		ctx.Abort()
-		// 		return
-		// 	}
-		// }
 
 		ctx.Next()
 	}
