@@ -72,7 +72,7 @@ func RefreshToken(ctx *gin.Context, user dto.UserTokenResponse) {
 }
 
 // 解析token
-func GetLoginUser(ctx *gin.Context) (*UserTokenResponse, error) {
+func GetAuhtUser(ctx *gin.Context) (*UserTokenResponse, error) {
 
 	tokenKey, err := getUserTokenKey(ctx)
 	if err != nil {

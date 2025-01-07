@@ -1,11 +1,11 @@
 package systemcontroller
 
 import (
-	"io/ioutil"
+	"io"
 	"os"
 	"ruoyi-go/app/dto"
+	"ruoyi-go/app/security"
 	"ruoyi-go/app/service"
-	"ruoyi-go/app/token"
 	"ruoyi-go/app/validator"
 	"ruoyi-go/common/password"
 	"ruoyi-go/common/types/constant"
@@ -27,9 +27,7 @@ type UserController struct{}
 // 获取部门树
 func (*UserController) DeptTree(ctx *gin.Context) {
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
-	depts := (&service.DeptService{}).GetUserDeptTree(loginUser.UserId)
+	depts := (&service.DeptService{}).GetUserDeptTree(security.GetAuthUserId(ctx))
 
 	tree := (&service.UserService{}).DeptListToTree(depts)
 
@@ -46,9 +44,7 @@ func (*UserController) List(ctx *gin.Context) {
 		return
 	}
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
-	users, total := (&service.UserService{}).GetUserList(param, loginUser.UserId, true)
+	users, total := (&service.UserService{}).GetUserList(param, security.GetAuthUserId(ctx), true)
 
 	for key, user := range users {
 		users[key].Dept.DeptName = user.DeptName
@@ -122,8 +118,6 @@ func (*UserController) Create(ctx *gin.Context) {
 		return
 	}
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
 	if user := (&service.UserService{}).GetUserByUsername(param.UserName); user.UserId > 0 {
 		response.NewError().SetMsg("新增用户" + param.UserName + "失败，用户名已存在").Json(ctx)
 		return
@@ -153,7 +147,7 @@ func (*UserController) Create(ctx *gin.Context) {
 		Password:    password.Generate(param.Password),
 		Status:      param.Status,
 		Remark:      param.Remark,
-		CreateBy:    loginUser.UserName,
+		CreateBy:    security.GetAuthUserName(ctx),
 	}, param.RoleIds, param.PostIds); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
@@ -180,8 +174,6 @@ func (*UserController) Update(ctx *gin.Context) {
 		return
 	}
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
 	if param.Email != "" {
 		if user := (&service.UserService{}).GetUserByEmail(param.Email); user.UserId > 0 && user.UserId != param.UserId {
 			response.NewError().SetMsg("修改用户" + param.UserName + "失败，邮箱已存在").Json(ctx)
@@ -205,7 +197,7 @@ func (*UserController) Update(ctx *gin.Context) {
 		Sex:         param.Sex,
 		Status:      param.Status,
 		Remark:      param.Remark,
-		UpdateBy:    loginUser.UserName,
+		UpdateBy:    security.GetAuthUserName(ctx),
 	}, param.RoleIds, param.PostIds); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
@@ -226,9 +218,7 @@ func (*UserController) Remove(ctx *gin.Context) {
 		return
 	}
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
-	if err = validator.RemoveUserValidator(userIds, loginUser.UserId); err != nil {
+	if err = validator.RemoveUserValidator(userIds, security.GetAuthUserId(ctx)); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}
@@ -259,12 +249,10 @@ func (*UserController) ChangeStatus(ctx *gin.Context) {
 		return
 	}
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
 	if err := (&service.UserService{}).UpdateUser(dto.SaveUser{
 		UserId:   param.UserId,
 		Status:   param.Status,
-		UpdateBy: loginUser.UserName,
+		UpdateBy: security.GetAuthUserName(ctx),
 	}, nil, nil); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
@@ -291,12 +279,10 @@ func (*UserController) ResetPwd(ctx *gin.Context) {
 		return
 	}
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
 	if err := (&service.UserService{}).UpdateUser(dto.SaveUser{
 		UserId:   param.UserId,
 		Password: password.Generate(param.Password),
-		UpdateBy: loginUser.UserName,
+		UpdateBy: security.GetAuthUserName(ctx),
 	}, nil, nil); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
@@ -440,10 +426,10 @@ func (*UserController) ImportData(ctx *gin.Context) {
 		return
 	}
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
 	var successNum, failNum int
 	var failMsg []string
+
+	authUserName := security.GetAuthUserName(ctx)
 
 	for _, item := range list {
 		user := (&service.UserService{}).GetUserByUsername(item.UserName)
@@ -472,7 +458,7 @@ func (*UserController) ImportData(ctx *gin.Context) {
 				Sex:         item.Sex,
 				Password:    password.Generate((&service.ConfigService{}).GetConfigByConfigKey("sys.user.initPassword").ConfigValue),
 				Status:      item.Status,
-				CreateBy:    loginUser.UserName,
+				CreateBy:    authUserName,
 			}, nil, nil); err != nil {
 				failNum = failNum + 1
 				failMsg = append(failMsg, strconv.Itoa(failNum)+"、账号 "+item.UserName+" 新增失败："+err.Error())
@@ -503,7 +489,7 @@ func (*UserController) ImportData(ctx *gin.Context) {
 				Phonenumber: item.Phonenumber,
 				Sex:         item.Sex,
 				Status:      item.Status,
-				UpdateBy:    loginUser.UserName,
+				UpdateBy:    authUserName,
 			}, nil, nil); err != nil {
 				failNum = failNum + 1
 				failMsg = append(failMsg, strconv.Itoa(failNum)+"、账号 "+item.UserName+" 更新失败："+err.Error())
@@ -539,11 +525,9 @@ func (*UserController) Export(ctx *gin.Context) {
 		return
 	}
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
 	list := make([]dto.UserExportResponse, 0)
 
-	users, _ := (&service.UserService{}).GetUserList(param, loginUser.UserId, false)
+	users, _ := (&service.UserService{}).GetUserList(param, security.GetAuthUserId(ctx), false)
 	for _, user := range users {
 
 		loginDate := user.LoginDate.Format("2006-01-02 15:04:05")
@@ -578,9 +562,7 @@ func (*UserController) Export(ctx *gin.Context) {
 // 个人信息
 func (*UserController) GetProfile(ctx *gin.Context) {
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
-	user := (&service.UserService{}).GetUserByUserId(loginUser.UserId)
+	user := (&service.UserService{}).GetUserByUserId(security.GetAuthUserId(ctx))
 
 	user.Admin = user.UserId == 1
 
@@ -622,10 +604,8 @@ func (*UserController) UpdateProfile(ctx *gin.Context) {
 		return
 	}
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
 	if err := (&service.UserService{}).UpdateUser(dto.SaveUser{
-		UserId:      loginUser.UserId,
+		UserId:      security.GetAuthUserId(ctx),
 		NickName:    param.NickName,
 		Email:       param.Email,
 		Phonenumber: param.Phonenumber,
@@ -653,9 +633,7 @@ func (*UserController) UserProfileUpdatePwd(ctx *gin.Context) {
 		return
 	}
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
-	user := (&service.UserService{}).GetUserByUserId(loginUser.UserId)
+	user := (&service.UserService{}).GetUserByUserId(security.GetAuthUserId(ctx))
 	if !password.Verify(user.Password, param.OldPassword) {
 		response.NewError().SetMsg("旧密码输入错误").Json(ctx)
 		return
@@ -687,7 +665,7 @@ func (*UserController) UserProfileUpdateAvatar(ctx *gin.Context) {
 		return
 	}
 
-	fileContent, err := ioutil.ReadAll(file)
+	fileContent, err := io.ReadAll(file)
 	if err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
@@ -710,12 +688,10 @@ func (*UserController) UserProfileUpdateAvatar(ctx *gin.Context) {
 		return
 	}
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
 	imgUrl := "/" + fileResult.UrlPath + fileResult.FileName
 
 	if err = (&service.UserService{}).UpdateUser(dto.SaveUser{
-		UserId: loginUser.UserId,
+		UserId: security.GetAuthUserId(ctx),
 		Avatar: imgUrl,
 	}, nil, nil); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)

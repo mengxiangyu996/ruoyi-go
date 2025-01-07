@@ -2,8 +2,8 @@ package systemcontroller
 
 import (
 	"ruoyi-go/app/dto"
+	"ruoyi-go/app/security"
 	"ruoyi-go/app/service"
-	"ruoyi-go/app/token"
 	"ruoyi-go/app/validator"
 	"ruoyi-go/common/types/constant"
 	"ruoyi-go/common/utils"
@@ -60,8 +60,6 @@ func (*RoleController) Create(ctx *gin.Context) {
 		return
 	}
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
 	if role := (&service.RoleService{}).GetRoleByRoleName(param.RoleName); role.RoleId > 0 {
 		response.NewError().SetMsg("新增角色" + param.RoleName + "失败，角色名已存在").Json(ctx)
 		return
@@ -87,7 +85,7 @@ func (*RoleController) Create(ctx *gin.Context) {
 		MenuCheckStrictly: &menuCheckStrictly,
 		DeptCheckStrictly: &deptCheckStrictly,
 		Status:            param.Status,
-		CreateBy:          loginUser.UserName,
+		CreateBy:          security.GetAuthUserName(ctx),
 		Remark:            param.Remark,
 	}, param.MenuIds); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
@@ -115,8 +113,6 @@ func (*RoleController) Update(ctx *gin.Context) {
 		return
 	}
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
 	if role := (&service.RoleService{}).GetRoleByRoleName(param.RoleName); role.RoleId > 0 && role.RoleId != param.RoleId {
 		response.NewError().SetMsg("修改角色" + param.RoleName + "失败，角色名已存在").Json(ctx)
 		return
@@ -143,7 +139,7 @@ func (*RoleController) Update(ctx *gin.Context) {
 		MenuCheckStrictly: &menuCheckStrictly,
 		DeptCheckStrictly: &deptCheckStrictly,
 		Status:            param.Status,
-		UpdateBy:          loginUser.UserName,
+		UpdateBy:          security.GetAuthUserName(ctx),
 		Remark:            param.Remark,
 	}, param.MenuIds, nil); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
@@ -165,9 +161,7 @@ func (*RoleController) Remove(ctx *gin.Context) {
 		return
 	}
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
-	roles := (&service.RoleService{}).GetRoleListByUserId(loginUser.UserId)
+	roles := (&service.RoleService{}).GetRoleListByUserId(security.GetAuthUserId(ctx))
 
 	for _, role := range roles {
 		if err = validator.RemoveRoleValidator(roleIds, role.RoleId, role.RoleName); err != nil {
@@ -202,12 +196,10 @@ func (*RoleController) ChangeStatus(ctx *gin.Context) {
 		return
 	}
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
 	if err := (&service.RoleService{}).UpdateRole(dto.SaveRole{
 		RoleId:   param.RoleId,
 		Status:   param.Status,
-		UpdateBy: loginUser.UserName,
+		UpdateBy: security.GetAuthUserName(ctx),
 	}, nil, nil); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
@@ -241,8 +233,6 @@ func (*RoleController) DataScope(ctx *gin.Context) {
 		return
 	}
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
 	deptCheckStrictly := 0
 	if param.DeptCheckStrictly {
 		deptCheckStrictly = 1
@@ -252,7 +242,7 @@ func (*RoleController) DataScope(ctx *gin.Context) {
 		RoleId:            param.RoleId,
 		DataScope:         param.DataScope,
 		DeptCheckStrictly: &deptCheckStrictly,
-		UpdateBy:          loginUser.UserName,
+		UpdateBy:          security.GetAuthUserName(ctx),
 	}, nil, param.DeptIds); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
@@ -271,9 +261,7 @@ func (*RoleController) RoleAuthUserAllocatedList(ctx *gin.Context) {
 		return
 	}
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
-	users, total := (&service.UserService{}).GetUserListByRoleId(param, loginUser.UserId, true)
+	users, total := (&service.UserService{}).GetUserListByRoleId(param, security.GetAuthUserId(ctx), true)
 
 	response.NewSuccess().SetPageData(users, total).Json(ctx)
 }
@@ -288,9 +276,7 @@ func (*RoleController) RoleAuthUserUnallocatedList(ctx *gin.Context) {
 		return
 	}
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
-	users, total := (&service.UserService{}).GetUserListByRoleId(param, loginUser.UserId, false)
+	users, total := (&service.UserService{}).GetUserListByRoleId(param, security.GetAuthUserId(ctx), false)
 
 	response.NewSuccess().SetPageData(users, total).Json(ctx)
 }

@@ -88,13 +88,13 @@ func UpdateUserValidator(param dto.UpdateUserRequest) error {
 }
 
 // 删除用户验证
-func RemoveUserValidator(userIds []int, loginUserId int) error {
+func RemoveUserValidator(userIds []int, authUserId int) error {
 
 	if utils.Contains(userIds, 1) {
 		return errors.New("超级管理员无法删除")
 	}
 
-	if utils.Contains(userIds, loginUserId) {
+	if utils.Contains(userIds, authUserId) {
 		return errors.New("当前用户无法删除")
 	}
 

@@ -2,8 +2,8 @@ package systemcontroller
 
 import (
 	"ruoyi-go/app/dto"
+	"ruoyi-go/app/security"
 	"ruoyi-go/app/service"
-	"ruoyi-go/app/token"
 	"ruoyi-go/app/validator"
 	"ruoyi-go/common/types/constant"
 	"ruoyi-go/common/utils"
@@ -60,8 +60,6 @@ func (*DictDataController) Create(ctx *gin.Context) {
 		return
 	}
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
 	if err := (&service.DictDataService{}).CreateDictData(dto.SaveDictData{
 		DictSort:  param.DictSort,
 		DictLabel: param.DictLabel,
@@ -71,7 +69,7 @@ func (*DictDataController) Create(ctx *gin.Context) {
 		ListClass: param.ListClass,
 		IsDefault: param.IsDefault,
 		Status:    param.Status,
-		CreateBy:  loginUser.UserName,
+		CreateBy:  security.GetAuthUserName(ctx),
 		Remark:    param.Remark,
 	}); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
@@ -99,8 +97,6 @@ func (*DictDataController) Update(ctx *gin.Context) {
 		return
 	}
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
 	if err := (&service.DictDataService{}).UpdateDictData(dto.SaveDictData{
 		DictCode:  param.DictCode,
 		DictSort:  param.DictSort,
@@ -111,7 +107,7 @@ func (*DictDataController) Update(ctx *gin.Context) {
 		ListClass: param.ListClass,
 		IsDefault: param.IsDefault,
 		Status:    param.Status,
-		UpdateBy:  loginUser.UserName,
+		UpdateBy:  security.GetAuthUserName(ctx),
 		Remark:    param.Remark,
 	}); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)

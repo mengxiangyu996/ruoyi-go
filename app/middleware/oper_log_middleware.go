@@ -3,10 +3,10 @@ package middleware
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"ruoyi-go/app/dto"
+	"ruoyi-go/app/security"
 	"ruoyi-go/app/service"
-	"ruoyi-go/app/token"
 	ipaddress "ruoyi-go/common/ip-address"
 	responsewriter "ruoyi-go/common/response-writer"
 	"ruoyi-go/common/types/constant"
@@ -25,9 +25,9 @@ func OperLogMiddleware() gin.HandlerFunc {
 
 		var operName, deptName string
 
-		if loginUser, _ := token.GetLoginUser(ctx); loginUser != nil {
-			operName = loginUser.NickName
-			deptName = loginUser.DeptName
+		if authUser := security.GetAuthUser(ctx); authUser != nil {
+			operName = authUser.NickName
+			deptName = authUser.DeptName
 		}
 
 		// 记录请求时间，用于获取请求耗时
@@ -36,7 +36,7 @@ func OperLogMiddleware() gin.HandlerFunc {
 		// 因读取请求体后，请求体的数据流会被消耗完毕，未避免EOF错误，需要缓存请求体，并且每次使用后需要重新赋值给ctx.Request.Body
 		bodyBytes, _ := ctx.GetRawData()
 		// 将缓存的请求体重新赋值给ctx.Request.Body，供下方ctx.ShouldBind使用
-		ctx.Request.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
+		ctx.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
 		rw := &responsewriter.ResponseWriter{
 			ResponseWriter: ctx.Writer,
@@ -48,7 +48,7 @@ func OperLogMiddleware() gin.HandlerFunc {
 		ctx.ShouldBind(&param)
 
 		// 因ctx.ShouldBind后，请求体的数据流会被消耗完毕，需要将缓存的请求体重新赋值给ctx.Request.Body
-		ctx.Request.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
+		ctx.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
 		// 将query参数转为map并添加到请求参数中，用query-key的形式以便区分
 		for key, value := range ctx.Request.URL.Query() {

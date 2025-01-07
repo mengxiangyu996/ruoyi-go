@@ -2,8 +2,8 @@ package systemcontroller
 
 import (
 	"ruoyi-go/app/dto"
+	"ruoyi-go/app/security"
 	"ruoyi-go/app/service"
-	"ruoyi-go/app/token"
 	"ruoyi-go/app/validator"
 	"ruoyi-go/common/types/constant"
 	"ruoyi-go/common/utils"
@@ -26,9 +26,7 @@ func (*DeptController) List(ctx *gin.Context) {
 		return
 	}
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
-	depts := (&service.DeptService{}).GetDeptList(param, loginUser.UserId)
+	depts := (&service.DeptService{}).GetDeptList(param, security.GetAuthUserId(ctx))
 
 	response.NewSuccess().SetData("data", depts).Json(ctx)
 }
@@ -38,11 +36,9 @@ func (*DeptController) ListExclude(ctx *gin.Context) {
 
 	deptId, _ := strconv.Atoi(ctx.Param("deptId"))
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
 	data := make([]dto.DeptListResponse, 0)
 
-	depts := (&service.DeptService{}).GetDeptList(dto.DeptListRequest{}, loginUser.UserId)
+	depts := (&service.DeptService{}).GetDeptList(dto.DeptListRequest{}, security.GetAuthUserId(ctx))
 	for _, dept := range depts {
 		if dept.DeptId == deptId || utils.Contains(strings.Split(dept.Ancestors, ","), strconv.Itoa(deptId)) {
 			continue
@@ -86,8 +82,6 @@ func (*DeptController) Create(ctx *gin.Context) {
 		return
 	}
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
 	// 拼接ancestors，获取上级的祖级列表
 	parentDept := (&service.DeptService{}).GetDeptByDeptId(param.ParentId)
 	if parentDept.Status == constant.EXCEPTION_STATUS {
@@ -105,7 +99,7 @@ func (*DeptController) Create(ctx *gin.Context) {
 		Phone:     param.Phone,
 		Email:     param.Email,
 		Status:    param.Status,
-		CreateBy:  loginUser.UserName,
+		CreateBy:  security.GetAuthUserName(ctx),
 	}); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
@@ -142,8 +136,6 @@ func (*DeptController) Update(ctx *gin.Context) {
 		return
 	}
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
 	// 拼接ancestors，获取上级的祖级列表
 	parentDept := (&service.DeptService{}).GetDeptByDeptId(param.ParentId)
 	if parentDept.Status == constant.EXCEPTION_STATUS {
@@ -162,7 +154,7 @@ func (*DeptController) Update(ctx *gin.Context) {
 		Phone:     param.Phone,
 		Email:     param.Email,
 		Status:    param.Status,
-		UpdateBy:  loginUser.UserName,
+		UpdateBy:  security.GetAuthUserName(ctx),
 	}); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return

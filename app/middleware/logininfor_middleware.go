@@ -3,7 +3,7 @@ package middleware
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"ruoyi-go/app/dto"
 	"ruoyi-go/app/service"
 	ipaddress "ruoyi-go/common/ip-address"
@@ -25,7 +25,7 @@ func LogininforMiddleware() gin.HandlerFunc {
 		// 因读取请求体后，请求体的数据流会被消耗完毕，未避免EOF错误，需要缓存请求体，并且每次使用后需要重新赋值给ctx.Request.Body
 		bodyBytes, _ := ctx.GetRawData()
 		// 将缓存的请求体重新赋值给ctx.Request.Body，供下方ctx.ShouldBind使用
-		ctx.Request.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
+		ctx.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
 		rw := &responsewriter.ResponseWriter{
 			ResponseWriter: ctx.Writer,
@@ -41,7 +41,7 @@ func LogininforMiddleware() gin.HandlerFunc {
 		}
 
 		// 因ctx.ShouldBind后，请求体的数据流会被消耗完毕，需要将缓存的请求体重新赋值给ctx.Request.Body
-		ctx.Request.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
+		ctx.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
 		ipaddress := ipaddress.GetAddress(ctx.ClientIP(), ctx.Request.UserAgent())
 

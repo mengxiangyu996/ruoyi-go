@@ -2,8 +2,8 @@ package systemcontroller
 
 import (
 	"ruoyi-go/app/dto"
+	"ruoyi-go/app/security"
 	"ruoyi-go/app/service"
-	"ruoyi-go/app/token"
 	"ruoyi-go/app/validator"
 	"ruoyi-go/common/types/constant"
 	"ruoyi-go/framework/response"
@@ -84,8 +84,6 @@ func (*MenuController) Create(ctx *gin.Context) {
 		return
 	}
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
 	if err := (&service.MenuService{}).CreateMenu(dto.SaveMenu{
 		MenuName:  param.MenuName,
 		ParentId:  param.ParentId,
@@ -101,7 +99,7 @@ func (*MenuController) Create(ctx *gin.Context) {
 		Perms:     param.Perms,
 		Icon:      param.Icon,
 		Status:    param.Status,
-		CreateBy:  loginUser.UserName,
+		CreateBy:  security.GetAuthUserName(ctx),
 	}); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
@@ -133,8 +131,6 @@ func (*MenuController) Update(ctx *gin.Context) {
 		return
 	}
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
 	if err := (&service.MenuService{}).UpdateMenu(dto.SaveMenu{
 		MenuId:    param.MenuId,
 		MenuName:  param.MenuName,
@@ -151,7 +147,7 @@ func (*MenuController) Update(ctx *gin.Context) {
 		Perms:     param.Perms,
 		Icon:      param.Icon,
 		Status:    param.Status,
-		UpdateBy:  loginUser.UserName,
+		UpdateBy:  security.GetAuthUserName(ctx),
 	}); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return

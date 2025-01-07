@@ -2,8 +2,8 @@ package systemcontroller
 
 import (
 	"ruoyi-go/app/dto"
+	"ruoyi-go/app/security"
 	"ruoyi-go/app/service"
-	"ruoyi-go/app/token"
 	"ruoyi-go/app/validator"
 	"ruoyi-go/common/types/constant"
 	"ruoyi-go/common/utils"
@@ -65,13 +65,11 @@ func (*DictTypeController) Create(ctx *gin.Context) {
 		return
 	}
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
 	if err := (&service.DictTypeService{}).CreateDictType(dto.SaveDictType{
 		DictName: param.DictName,
 		DictType: param.DictType,
 		Status:   param.Status,
-		CreateBy: loginUser.UserName,
+		CreateBy: security.GetAuthUserName(ctx),
 		Remark:   param.Remark,
 	}); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
@@ -104,14 +102,12 @@ func (*DictTypeController) Update(ctx *gin.Context) {
 		return
 	}
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
 	if err := (&service.DictTypeService{}).UpdateDictType(dto.SaveDictType{
 		DictId:   param.DictId,
 		DictName: param.DictName,
 		DictType: param.DictType,
 		Status:   param.Status,
-		UpdateBy: loginUser.UserName,
+		UpdateBy: security.GetAuthUserName(ctx),
 		Remark:   param.Remark,
 	}); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)

@@ -325,22 +325,6 @@ func (s *UserService) DeptListToTree(depts []dto.DeptTreeResponse) []*dto.DeptTr
 	return tree
 }
 
-// 查询用户是否拥有权限，拥有返回true
-func (s *UserService) UserHasPerm(userId int, perm string) bool {
-
-	var count int64
-
-	dal.Gorm.Model(model.SysUserRole{}).
-		Joins("JOIN sys_role ON sys_user_role.role_id = sys_role.role_id").
-		Joins("JOIN sys_role_menu ON sys_role_menu.role_id = sys_role.role_id").
-		Joins("JOIN sys_menu ON sys_menu.menu_id = sys_role_menu.menu_id").
-		Where("sys_role.delete_time IS NULL AND sys_menu.delete_time IS NULL").
-		Where("sys_user_role.user_id = ? AND sys_menu.status = ? AND sys_menu.perms = ?", userId, constant.NORMAL_STATUS, perm).
-		Count(&count)
-
-	return count > 0
-}
-
 // 根据角色id查询已分配角色的用户列表
 //
 // allcated：true-已分配；false-未分配
@@ -381,6 +365,36 @@ func (s *UserService) UserHasDeptByDeptId(deptId int) bool {
 	var count int64
 
 	dal.Gorm.Model(model.SysUser{}).Where("dept_id = ?", deptId).Count(&count)
+
+	return count > 0
+}
+
+// 查询用户是否拥有某权限，拥有返回true
+func (s *UserService) UserHasPerms(userId int, perms []string) bool {
+
+	var count int64
+
+	dal.Gorm.Model(model.SysUserRole{}).
+		Joins("JOIN sys_role ON sys_user_role.role_id = sys_role.role_id AND sys_role.status = ?", constant.NORMAL_STATUS).
+		Joins("JOIN sys_role_menu ON sys_role_menu.role_id = sys_role.role_id").
+		Joins("JOIN sys_menu ON sys_menu.menu_id = sys_role_menu.menu_id AND sys_menu.status = ?", constant.NORMAL_STATUS).
+		Where("sys_role.delete_time IS NULL AND sys_menu.delete_time IS NULL").
+		Where("sys_user_role.user_id = ? AND sys_menu.perms IN ?", userId, perms).
+		Count(&count)
+
+	return count > 0
+}
+
+// 查询用户是否拥有某角色，拥有返回true
+func (s *UserService) UserHasRoles(userId int, roles []string) bool {
+
+	var count int64
+
+	dal.Gorm.Model(model.SysUserRole{}).
+		Joins("JOIN sys_role ON sys_user_role.role_id = sys_role.role_id AND sys_role.status = ?", constant.NORMAL_STATUS).
+		Where("sys_role.delete_time IS NULL").
+		Where("sys_user_role.user_id = ? AND sys_role.role_key IN ?", userId, roles).
+		Count(&count)
 
 	return count > 0
 }

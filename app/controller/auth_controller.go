@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 	"ruoyi-go/app/dto"
+	"ruoyi-go/app/security"
 	"ruoyi-go/app/service"
 	"ruoyi-go/app/token"
 	"ruoyi-go/app/validator"
@@ -99,9 +100,7 @@ func (*AuthController) Login(ctx *gin.Context) {
 // 获取授权信息
 func (*AuthController) GetInfo(ctx *gin.Context) {
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
-	user := (&service.UserService{}).GetUserByUserId(loginUser.UserId)
+	user := (&service.UserService{}).GetUserByUserId(security.GetAuthUserId(ctx))
 
 	user.Admin = user.UserId == 1
 
@@ -115,9 +114,9 @@ func (*AuthController) GetInfo(ctx *gin.Context) {
 		Roles:              roles,
 	}
 
-	roleKeys := (&service.RoleService{}).GetRoleKeysByUserId(loginUser.UserId)
+	roleKeys := (&service.RoleService{}).GetRoleKeysByUserId(user.UserId)
 
-	perms := (&service.MenuService{}).GetPermsByUserId(loginUser.UserId)
+	perms := (&service.MenuService{}).GetPermsByUserId(user.UserId)
 
 	response.NewSuccess().SetData("user", data).SetData("roles", roleKeys).SetData("permissions", perms).Json(ctx)
 }
@@ -125,9 +124,7 @@ func (*AuthController) GetInfo(ctx *gin.Context) {
 // 获取授权路由
 func (*AuthController) GetRouters(ctx *gin.Context) {
 
-	loginUser, _ := token.GetLoginUser(ctx)
-
-	menus := (&service.MenuService{}).GetMenuMCListByUserId(loginUser.UserId)
+	menus := (&service.MenuService{}).GetMenuMCListByUserId(security.GetAuthUserId(ctx))
 
 	tree := (&service.MenuService{}).MenusToTree(menus, 0)
 
