@@ -29,7 +29,7 @@ func (*UserController) DeptTree(ctx *gin.Context) {
 
 	depts := (&service.DeptService{}).GetUserDeptTree(security.GetAuthUserId(ctx))
 
-	tree := (&service.UserService{}).DeptListToTree(depts)
+	tree := (&service.UserService{}).DeptListToTree(depts, 0)
 
 	response.NewSuccess().SetData("data", tree).Json(ctx)
 }
