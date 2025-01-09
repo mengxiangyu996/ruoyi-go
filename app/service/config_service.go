@@ -1,8 +1,11 @@
 package service
 
 import (
+	"context"
+	"encoding/json"
 	"ruoyi-go/app/dto"
 	"ruoyi-go/app/model"
+	rediskey "ruoyi-go/common/types/redis-key"
 	"ruoyi-go/framework/dal"
 )
 
@@ -88,6 +91,28 @@ func (s *ConfigService) GetConfigByConfigKey(configKey string) dto.ConfigDetailR
 	var config dto.ConfigDetailResponse
 
 	dal.Gorm.Model(model.SysConfig{}).Where("config_key = ?", configKey).Last(&config)
+
+	return config
+}
+
+// 根据参数key获取参数配置
+func (s *ConfigService) GetConfigCacheByConfigKey(configKey string) dto.ConfigDetailResponse {
+
+	var config dto.ConfigDetailResponse
+
+	// 缓存不为空不从数据库读取，减少数据库压力
+	if configCache, _ := dal.Redis.HGet(context.Background(), rediskey.SysConfigKey, configKey).Result(); configCache != "" {
+		if err := json.Unmarshal([]byte(configCache), &config); err == nil {
+			return config
+		}
+	}
+
+	// 从数据库读取配置并且记录到缓存
+	config = s.GetConfigByConfigKey(configKey)
+	if config.ConfigId > 0 {
+		configBytes, _ := json.Marshal(&config)
+		dal.Redis.HSet(context.Background(), rediskey.SysConfigKey, configKey, string(configBytes)).Result()
+	}
 
 	return config
 }

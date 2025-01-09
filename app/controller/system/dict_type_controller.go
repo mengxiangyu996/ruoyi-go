@@ -6,7 +6,9 @@ import (
 	"ruoyi-go/app/service"
 	"ruoyi-go/app/validator"
 	"ruoyi-go/common/types/constant"
+	rediskey "ruoyi-go/common/types/redis-key"
 	"ruoyi-go/common/utils"
+	"ruoyi-go/framework/dal"
 	"ruoyi-go/framework/response"
 	"strconv"
 	"time"
@@ -184,5 +186,10 @@ func (*DictTypeController) Export(ctx *gin.Context) {
 // 刷新缓存
 func (*DictTypeController) RefreshCache(ctx *gin.Context) {
 
-	response.NewError().SetMsg("未启用缓存，无需刷新").Json(ctx)
+	if err := dal.Redis.Del(ctx.Request.Context(), rediskey.SysDictKey).Err(); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	response.NewSuccess().Json(ctx)
 }

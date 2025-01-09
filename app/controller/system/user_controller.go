@@ -456,7 +456,7 @@ func (*UserController) ImportData(ctx *gin.Context) {
 				Email:       item.Email,
 				Phonenumber: item.Phonenumber,
 				Sex:         item.Sex,
-				Password:    password.Generate((&service.ConfigService{}).GetConfigByConfigKey("sys.user.initPassword").ConfigValue),
+				Password:    password.Generate((&service.ConfigService{}).GetConfigCacheByConfigKey("sys.user.initPassword").ConfigValue),
 				Status:      item.Status,
 				CreateBy:    authUserName,
 			}, nil, nil); err != nil {

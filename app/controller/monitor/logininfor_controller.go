@@ -1,7 +1,6 @@
 package monitorcontroller
 
 import (
-	"context"
 	"regexp"
 	"ruoyi-go/app/dto"
 	"ruoyi-go/app/service"
@@ -83,9 +82,7 @@ func (*LogininforController) Clean(ctx *gin.Context) {
 // 账户解锁（删除登录错误次数限制10分钟缓存）
 func (*LogininforController) Unlock(ctx *gin.Context) {
 
-	userName := ctx.Param("userName")
-
-	if _, err := dal.Redis.Del(context.Background(), rediskey.LoginPasswordErrorKey+userName).Result(); err != nil {
+	if _, err := dal.Redis.Del(ctx.Request.Context(), rediskey.LoginPasswordErrorKey+ctx.Param("userName")).Result(); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
 	}

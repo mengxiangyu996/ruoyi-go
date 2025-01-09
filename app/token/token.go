@@ -65,7 +65,7 @@ func RefreshToken(ctx *gin.Context, user dto.UserTokenResponse) {
 		return
 	}
 
-	dal.Redis.Set(context.Background(), tokenKey, &UserTokenResponse{
+	dal.Redis.Set(ctx.Request.Context(), tokenKey, &UserTokenResponse{
 		UserTokenResponse: user,
 		ExpireTime:        datetime.Datetime{Time: time.Now().Add(time.Minute * time.Duration(config.Data.Token.ExpireTime))},
 	}, time.Minute*time.Duration(config.Data.Token.ExpireTime))
@@ -81,7 +81,7 @@ func GetAuhtUser(ctx *gin.Context) (*UserTokenResponse, error) {
 
 	var user UserTokenResponse
 
-	if err = dal.Redis.Get(context.Background(), tokenKey).Scan(&user); err != nil {
+	if err = dal.Redis.Get(ctx.Request.Context(), tokenKey).Scan(&user); err != nil {
 		return nil, err
 	}
 
@@ -96,7 +96,7 @@ func DeleteToken(ctx *gin.Context) error {
 		return err
 	}
 
-	return dal.Redis.Del(context.Background(), rediskey.UserTokenKey+tokenKey).Err()
+	return dal.Redis.Del(ctx.Request.Context(), rediskey.UserTokenKey+tokenKey).Err()
 }
 
 // 获取授权用户的redis key

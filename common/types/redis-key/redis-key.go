@@ -14,4 +14,10 @@ var (
 
 	// 防重提交 redis key
 	RepeatSubmitKey = config.Data.Ruoyi.Name + ":repeat:submit:"
+
+	// 配置表数据 redis key
+	SysConfigKey = config.Data.Ruoyi.Name + "system:config"
+
+	// 字典表数据 redis key
+	SysDictKey = config.Data.Ruoyi.Name + "system:dict:data"
 )

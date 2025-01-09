@@ -1,9 +1,12 @@
 package service
 
 import (
+	"context"
+	"encoding/json"
 	"ruoyi-go/app/dto"
 	"ruoyi-go/app/model"
 	"ruoyi-go/common/types/constant"
+	rediskey "ruoyi-go/common/types/redis-key"
 	"ruoyi-go/framework/dal"
 )
 
@@ -177,6 +180,28 @@ func (s *DictDataService) GetDictDataByDictType(dictType string) []dto.DictDataL
 	dictDatas := make([]dto.DictDataListResponse, 0)
 
 	dal.Gorm.Model(model.SysDictData{}).Where("status = ? AND dict_type = ?", constant.NORMAL_STATUS, dictType).Find(&dictDatas)
+
+	return dictDatas
+}
+
+// 根据字典类型查询字典数据
+func (s *DictDataService) GetDictDataCacheByDictType(dictType string) []dto.DictDataListResponse {
+
+	dictDatas := make([]dto.DictDataListResponse, 0)
+
+	// 缓存不为空不从数据库读取，减少数据库压力
+	if dictDatasCache, _ := dal.Redis.HGet(context.Background(), rediskey.SysDictKey, dictType).Result(); dictDatasCache != "" {
+		if err := json.Unmarshal([]byte(dictDatasCache), &dictDatas); err == nil {
+			return dictDatas
+		}
+	}
+
+	// 从数据库读取配置并且记录到缓存
+	dictDatas = s.GetDictDataByDictType(dictType)
+	if len(dictDatas) > 0 {
+		dictDadasBytes, _ := json.Marshal(&dictDatas)
+		dal.Redis.HSet(context.Background(), rediskey.SysDictKey, dictType, string(dictDadasBytes))
+	}
 
 	return dictDatas
 }

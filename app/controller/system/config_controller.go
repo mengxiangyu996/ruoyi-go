@@ -6,7 +6,9 @@ import (
 	"ruoyi-go/app/service"
 	"ruoyi-go/app/validator"
 	"ruoyi-go/common/types/constant"
+	rediskey "ruoyi-go/common/types/redis-key"
 	"ruoyi-go/common/utils"
+	"ruoyi-go/framework/dal"
 	"ruoyi-go/framework/response"
 	"strconv"
 	"time"
@@ -144,7 +146,7 @@ func (*ConfigController) ConfigKey(ctx *gin.Context) {
 
 	configKey := ctx.Param("configKey")
 
-	config := (&service.ConfigService{}).GetConfigByConfigKey(configKey)
+	config := (&service.ConfigService{}).GetConfigCacheByConfigKey(configKey)
 
 	response.NewSuccess().SetMsg(config.ConfigValue).Json(ctx)
 }
@@ -187,5 +189,10 @@ func (*ConfigController) Export(ctx *gin.Context) {
 // 刷新缓存
 func (*ConfigController) RefreshCache(ctx *gin.Context) {
 
-	response.NewError().SetMsg("未启用缓存，无需刷新").Json(ctx)
+	if err := dal.Redis.Del(ctx.Request.Context(), rediskey.SysConfigKey).Err(); err != nil {
+		response.NewError().SetMsg(err.Error()).Json(ctx)
+		return
+	}
+
+	response.NewSuccess().Json(ctx)
 }

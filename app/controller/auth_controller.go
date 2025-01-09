@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"context"
 	"ruoyi-go/app/dto"
 	"ruoyi-go/app/security"
 	"ruoyi-go/app/service"
@@ -33,7 +32,7 @@ func (*AuthController) CaptchaImage(ctx *gin.Context) {
 
 	b64s = strings.Replace(b64s, "data:image/png;base64,", "", 1)
 
-	config := (&service.ConfigService{}).GetConfigByConfigKey("sys.account.captchaEnabled")
+	config := (&service.ConfigService{}).GetConfigCacheByConfigKey("sys.account.captchaEnabled")
 
 	response.NewSuccess().SetData("uuid", id).SetData("img", b64s).SetData("captchaEnabled", config.ConfigValue == "true").Json(ctx)
 }
@@ -41,7 +40,7 @@ func (*AuthController) CaptchaImage(ctx *gin.Context) {
 // 注册
 func (*AuthController) Register(ctx *gin.Context) {
 
-	if config := (&service.ConfigService{}).GetConfigByConfigKey("sys.account.registerUser"); config.ConfigValue != "true" {
+	if config := (&service.ConfigService{}).GetConfigCacheByConfigKey("sys.account.registerUser"); config.ConfigValue != "true" {
 		response.NewError().SetMsg("当前系统没有开启注册功能").Json(ctx)
 		return
 	}
@@ -58,7 +57,7 @@ func (*AuthController) Register(ctx *gin.Context) {
 		return
 	}
 
-	if config := (&service.ConfigService{}).GetConfigByConfigKey("sys.account.captchaEnabled"); config.ConfigValue == "true" {
+	if config := (&service.ConfigService{}).GetConfigCacheByConfigKey("sys.account.captchaEnabled"); config.ConfigValue == "true" {
 		if !captcha.NewCaptcha().Verify(param.Uuid, param.Code) {
 			response.NewError().SetMsg("验证码错误").Json(ctx)
 			return
@@ -100,7 +99,7 @@ func (*AuthController) Login(ctx *gin.Context) {
 		return
 	}
 
-	if config := (&service.ConfigService{}).GetConfigByConfigKey("sys.account.captchaEnabled"); config.ConfigValue == "true" {
+	if config := (&service.ConfigService{}).GetConfigCacheByConfigKey("sys.account.captchaEnabled"); config.ConfigValue == "true" {
 		if !captcha.NewCaptcha().Verify(param.Uuid, param.Code) {
 			response.NewError().SetMsg("验证码错误").Json(ctx)
 			return
@@ -114,8 +113,7 @@ func (*AuthController) Login(ctx *gin.Context) {
 	}
 
 	// 登陆密码错误次数超过限制，锁定账号10分钟
-	redisKey := rediskey.LoginPasswordErrorKey + param.Username
-	count, _ := dal.Redis.Get(context.Background(), redisKey).Int()
+	count, _ := dal.Redis.Get(ctx.Request.Context(), rediskey.LoginPasswordErrorKey+param.Username).Int()
 	if count >= config.Data.User.Password.MaxRetryCount {
 		response.NewError().SetMsg("密码错误次数超过限制，请" + strconv.Itoa(config.Data.User.Password.LockTime) + "分钟后重试").Json(ctx)
 		return
@@ -123,13 +121,13 @@ func (*AuthController) Login(ctx *gin.Context) {
 
 	if !password.Verify(user.Password, param.Password) {
 		// 密码错误次数加1，并设置缓存过期时间为锁定时间
-		dal.Redis.Set(context.Background(), redisKey, count+1, time.Minute*time.Duration(config.Data.User.Password.LockTime))
+		dal.Redis.Set(ctx.Request.Context(), rediskey.LoginPasswordErrorKey+param.Username, count+1, time.Minute*time.Duration(config.Data.User.Password.LockTime))
 		response.NewError().SetMsg("密码错误").Json(ctx)
 		return
 	}
 
 	// 登录成功，删除错误次数
-	dal.Redis.Del(context.Background(), redisKey)
+	dal.Redis.Del(ctx.Request.Context(), rediskey.LoginPasswordErrorKey+param.Username)
 
 	token, err := token.GetClaims().GenerateToken(user)
 	if err != nil {

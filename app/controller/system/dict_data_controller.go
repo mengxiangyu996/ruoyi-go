@@ -142,7 +142,7 @@ func (*DictDataController) Type(ctx *gin.Context) {
 
 	dictType := ctx.Param("dictType")
 
-	dictDatas := (&service.DictDataService{}).GetDictDataByDictType(dictType)
+	dictDatas := (&service.DictDataService{}).GetDictDataCacheByDictType(dictType)
 
 	for key, dictData := range dictDatas {
 		dictDatas[key].Default = dictData.IsDefault == constant.IS_DEFAULT_YES
