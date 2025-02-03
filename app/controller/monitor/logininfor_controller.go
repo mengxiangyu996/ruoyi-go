@@ -31,7 +31,7 @@ func (*LogininforController) List(ctx *gin.Context) {
 	// 排序规则默认为倒序（DESC）
 	param.OrderRule = "DESC"
 	if strings.HasPrefix(param.IsAsc, "asc") {
-		param.OrderRule = ""
+		param.OrderRule = "ASC"
 	}
 
 	// 排序字段小驼峰转蛇形
@@ -106,7 +106,7 @@ func (*LogininforController) Export(ctx *gin.Context) {
 	// 排序规则默认为倒序（DESC）
 	param.OrderRule = "DESC"
 	if strings.HasPrefix(param.IsAsc, "asc") {
-		param.OrderRule = ""
+		param.OrderRule = "ASC"
 	}
 
 	// 排序字段小驼峰转蛇形
