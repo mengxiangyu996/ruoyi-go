@@ -1,6 +1,6 @@
 module ruoyi-go
 
-go 1.20
+go 1.21
 
 require (
 	gitee.com/hanshuangjianke/go-excel v0.0.1-beta.4
