@@ -10,8 +10,6 @@ ruoyi:
   domain: localhost:3000
   # 启用SSL
   ssl: false
-  # 公共资源路径
-  publicPath: public/
   # 文件上传路径
   uploadPath: public/upload/
 
