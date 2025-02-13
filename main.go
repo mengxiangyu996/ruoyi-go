@@ -54,7 +54,14 @@ func main() {
 	// 使用恢复中间件
 	server.Use(gin.Recovery())
 
-	// 设置上传文件静态资源
+	// 设置文件资源目录
+	// 如果前端使用的是 history 路由模式，需要使用 nginx 代理
+	// 注释 server.Static("/admin", "web/admin")
+	// 如果前后端不分离方式部署需要配置前端为 hash 路由模式
+	// 解除 server.Static("/admin", "web/admin") 注释
+	// 并在项目根目录下创建 web/admin 目录，将前端打包后的 dist 内的文件复制到该目录下
+	// server.Static("/admin", "web/admin")
+	// 设置上传文件目录aa
 	server.Static(config.Data.Ruoyi.UploadPath, config.Data.Ruoyi.UploadPath)
 
 	// 注册路由
