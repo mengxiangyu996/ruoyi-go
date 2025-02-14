@@ -61,7 +61,7 @@ func main() {
 	// 解除 server.Static("/admin", "web/admin") 注释
 	// 并在项目根目录下创建 web/admin 目录，将前端打包后的 dist 内的文件复制到该目录下
 	// server.Static("/admin", "web/admin")
-	// 设置上传文件目录aa
+	// 设置上传文件目录
 	server.Static(config.Data.Ruoyi.UploadPath, config.Data.Ruoyi.UploadPath)
 
 	// 注册路由
