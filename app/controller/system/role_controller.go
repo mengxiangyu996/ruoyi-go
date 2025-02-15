@@ -5,7 +5,6 @@ import (
 	"ruoyi-go/app/security"
 	"ruoyi-go/app/service"
 	"ruoyi-go/app/validator"
-	"ruoyi-go/common/types/constant"
 	"ruoyi-go/common/utils"
 	"ruoyi-go/framework/response"
 	"strconv"
@@ -44,9 +43,6 @@ func (*RoleController) Detail(ctx *gin.Context) {
 
 // 新增角色
 func (*RoleController) Create(ctx *gin.Context) {
-
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_INSERT)
 
 	var param dto.CreateRoleRequest
 
@@ -97,9 +93,6 @@ func (*RoleController) Create(ctx *gin.Context) {
 
 // 更新角色
 func (*RoleController) Update(ctx *gin.Context) {
-
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
 
 	var param dto.UpdateRoleRequest
 
@@ -152,9 +145,6 @@ func (*RoleController) Update(ctx *gin.Context) {
 // 删除角色
 func (*RoleController) Remove(ctx *gin.Context) {
 
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_DELETE)
-
 	roleIds, err := utils.StringToIntSlice(ctx.Param("roleIds"), ",")
 	if err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
@@ -180,9 +170,6 @@ func (*RoleController) Remove(ctx *gin.Context) {
 
 // 修改角色状态
 func (*RoleController) ChangeStatus(ctx *gin.Context) {
-
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
 
 	var param dto.UpdateRoleRequest
 
@@ -222,9 +209,6 @@ func (*RoleController) DeptTree(ctx *gin.Context) {
 
 // 分配数据权限
 func (*RoleController) DataScope(ctx *gin.Context) {
-
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
 
 	var param dto.UpdateRoleRequest
 
@@ -284,9 +268,6 @@ func (*RoleController) RoleAuthUserUnallocatedList(ctx *gin.Context) {
 // 批量选择用户授权
 func (*RoleController) RoleAuthUserSelectAll(ctx *gin.Context) {
 
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
-
 	var param dto.RoleAuthUserSelectAllRequest
 
 	if err := ctx.ShouldBind(&param); err != nil {
@@ -311,9 +292,6 @@ func (*RoleController) RoleAuthUserSelectAll(ctx *gin.Context) {
 // 取消授权用户
 func (*RoleController) RoleAuthUserCancel(ctx *gin.Context) {
 
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
-
 	var param dto.RoleAuthUserCancelRequest
 
 	if err := ctx.ShouldBind(&param); err != nil {
@@ -331,9 +309,6 @@ func (*RoleController) RoleAuthUserCancel(ctx *gin.Context) {
 
 // 批量取消授权用户
 func (*RoleController) RoleAuthUserCancelAll(ctx *gin.Context) {
-
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
 
 	var param dto.RoleAuthUserCancelAllRequest
 
@@ -358,9 +333,6 @@ func (*RoleController) RoleAuthUserCancelAll(ctx *gin.Context) {
 
 // 数据导出
 func (*RoleController) Export(ctx *gin.Context) {
-
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_EXPORT)
 
 	var param dto.RoleListRequest
 

@@ -5,7 +5,6 @@ import (
 	"ruoyi-go/app/security"
 	"ruoyi-go/app/service"
 	"ruoyi-go/app/validator"
-	"ruoyi-go/common/types/constant"
 	"ruoyi-go/common/utils"
 	"ruoyi-go/framework/response"
 	"strconv"
@@ -44,9 +43,6 @@ func (*PostController) Detail(ctx *gin.Context) {
 
 // 新增岗位
 func (*PostController) Create(ctx *gin.Context) {
-
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_INSERT)
 
 	var param dto.CreatePostRequest
 
@@ -87,9 +83,6 @@ func (*PostController) Create(ctx *gin.Context) {
 
 // 更新岗位
 func (*PostController) Update(ctx *gin.Context) {
-
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
 
 	var param dto.UpdatePostRequest
 
@@ -132,9 +125,6 @@ func (*PostController) Update(ctx *gin.Context) {
 // 删除岗位
 func (*PostController) Remove(ctx *gin.Context) {
 
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_DELETE)
-
 	postIds, err := utils.StringToIntSlice(ctx.Param("postIds"), ",")
 	if err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
@@ -151,9 +141,6 @@ func (*PostController) Remove(ctx *gin.Context) {
 
 // 数据导出
 func (*PostController) Export(ctx *gin.Context) {
-
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_EXPORT)
 
 	var param dto.PostListRequest
 

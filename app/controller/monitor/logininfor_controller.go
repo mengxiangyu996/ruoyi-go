@@ -4,7 +4,6 @@ import (
 	"regexp"
 	"ruoyi-go/app/dto"
 	"ruoyi-go/app/service"
-	"ruoyi-go/common/types/constant"
 	rediskey "ruoyi-go/common/types/redis-key"
 	"ruoyi-go/common/utils"
 	"ruoyi-go/framework/dal"
@@ -48,9 +47,6 @@ func (*LogininforController) List(ctx *gin.Context) {
 // 删除登录日志
 func (*LogininforController) Remove(ctx *gin.Context) {
 
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_DELETE)
-
 	infoIds, err := utils.StringToIntSlice(ctx.Param("infoIds"), ",")
 	if err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
@@ -67,9 +63,6 @@ func (*LogininforController) Remove(ctx *gin.Context) {
 
 // 清空登录日志
 func (*LogininforController) Clean(ctx *gin.Context) {
-
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_CLEAN)
 
 	if err := (&service.LogininforService{}).DeleteLogininfor(nil); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
@@ -92,9 +85,6 @@ func (*LogininforController) Unlock(ctx *gin.Context) {
 
 // 数据导出
 func (*LogininforController) Export(ctx *gin.Context) {
-
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_EXPORT)
 
 	var param dto.LogininforListRequest
 

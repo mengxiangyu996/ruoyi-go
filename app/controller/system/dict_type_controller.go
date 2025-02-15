@@ -5,7 +5,6 @@ import (
 	"ruoyi-go/app/security"
 	"ruoyi-go/app/service"
 	"ruoyi-go/app/validator"
-	"ruoyi-go/common/types/constant"
 	rediskey "ruoyi-go/common/types/redis-key"
 	"ruoyi-go/common/utils"
 	"ruoyi-go/framework/dal"
@@ -47,9 +46,6 @@ func (*DictTypeController) Detail(ctx *gin.Context) {
 // 新增字典类型
 func (*DictTypeController) Create(ctx *gin.Context) {
 
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_INSERT)
-
 	var param dto.CreateDictTypeRequest
 
 	if err := ctx.ShouldBind(&param); err != nil {
@@ -83,9 +79,6 @@ func (*DictTypeController) Create(ctx *gin.Context) {
 
 // 更新字典类型
 func (*DictTypeController) Update(ctx *gin.Context) {
-
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
 
 	var param dto.UpdateDictTypeRequest
 
@@ -122,9 +115,6 @@ func (*DictTypeController) Update(ctx *gin.Context) {
 // 删除字典类型
 func (*DictTypeController) Remove(ctx *gin.Context) {
 
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_DELETE)
-
 	dictIds, err := utils.StringToIntSlice(ctx.Param("dictIds"), ",")
 	if err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
@@ -151,9 +141,6 @@ func (*DictTypeController) Optionselect(ctx *gin.Context) {
 
 // 数据导出
 func (*DictTypeController) Export(ctx *gin.Context) {
-
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_EXPORT)
 
 	var param dto.DictTypeListRequest
 

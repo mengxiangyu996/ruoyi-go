@@ -45,9 +45,6 @@ func (*DictDataController) Detail(ctx *gin.Context) {
 // 新增字典数据
 func (*DictDataController) Create(ctx *gin.Context) {
 
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_INSERT)
-
 	var param dto.CreateDictDataRequest
 
 	if err := ctx.ShouldBind(&param); err != nil {
@@ -81,9 +78,6 @@ func (*DictDataController) Create(ctx *gin.Context) {
 
 // 更新字典数据
 func (*DictDataController) Update(ctx *gin.Context) {
-
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
 
 	var param dto.UpdateDictDataRequest
 
@@ -120,9 +114,6 @@ func (*DictDataController) Update(ctx *gin.Context) {
 // 删除字典数据
 func (*DictDataController) Remove(ctx *gin.Context) {
 
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_DELETE)
-
 	dictCodes, err := utils.StringToIntSlice(ctx.Param("dictCodes"), ",")
 	if err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
@@ -153,9 +144,6 @@ func (*DictDataController) Type(ctx *gin.Context) {
 
 // 数据导出
 func (*DictDataController) Export(ctx *gin.Context) {
-
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_EXPORT)
 
 	var param dto.DictDataListRequest
 

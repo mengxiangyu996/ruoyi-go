@@ -4,7 +4,6 @@ import (
 	"regexp"
 	"ruoyi-go/app/dto"
 	"ruoyi-go/app/service"
-	"ruoyi-go/common/types/constant"
 	"ruoyi-go/common/utils"
 	"ruoyi-go/framework/response"
 	"strconv"
@@ -47,9 +46,6 @@ func (*OperlogController) List(ctx *gin.Context) {
 // 删除操作日志
 func (*OperlogController) Remove(ctx *gin.Context) {
 
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_DELETE)
-
 	operIds, err := utils.StringToIntSlice(ctx.Param("operIds"), ",")
 	if err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
@@ -67,9 +63,6 @@ func (*OperlogController) Remove(ctx *gin.Context) {
 // 清空操作日志
 func (*OperlogController) Clean(ctx *gin.Context) {
 
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_CLEAN)
-
 	if err := (&service.OperLogService{}).DeleteOperLog(nil); err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
 		return
@@ -80,9 +73,6 @@ func (*OperlogController) Clean(ctx *gin.Context) {
 
 // 数据导出
 func (*OperlogController) Export(ctx *gin.Context) {
-
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_EXPORT)
 
 	var param dto.OperLogListRequest
 

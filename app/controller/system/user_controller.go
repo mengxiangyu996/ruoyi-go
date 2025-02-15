@@ -8,7 +8,6 @@ import (
 	"ruoyi-go/app/service"
 	"ruoyi-go/app/validator"
 	"ruoyi-go/common/password"
-	"ruoyi-go/common/types/constant"
 	"ruoyi-go/common/upload"
 	"ruoyi-go/common/utils"
 	"ruoyi-go/config"
@@ -103,9 +102,6 @@ func (*UserController) Detail(ctx *gin.Context) {
 // 新增用户
 func (*UserController) Create(ctx *gin.Context) {
 
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_INSERT)
-
 	var param dto.CreateUserRequest
 
 	if err := ctx.ShouldBind(&param); err != nil {
@@ -159,9 +155,6 @@ func (*UserController) Create(ctx *gin.Context) {
 // 更新用户
 func (*UserController) Update(ctx *gin.Context) {
 
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
-
 	var param dto.UpdateUserRequest
 
 	if err := ctx.ShouldBind(&param); err != nil {
@@ -209,9 +202,6 @@ func (*UserController) Update(ctx *gin.Context) {
 // 删除用户
 func (*UserController) Remove(ctx *gin.Context) {
 
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_DELETE)
-
 	userIds, err := utils.StringToIntSlice(ctx.Param("userIds"), ",")
 	if err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
@@ -233,9 +223,6 @@ func (*UserController) Remove(ctx *gin.Context) {
 
 // 更改用户状态
 func (*UserController) ChangeStatus(ctx *gin.Context) {
-
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
 
 	var param dto.UpdateUserRequest
 
@@ -263,9 +250,6 @@ func (*UserController) ChangeStatus(ctx *gin.Context) {
 
 // 重置用户密码
 func (*UserController) ResetPwd(ctx *gin.Context) {
-
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
 
 	var param dto.UpdateUserRequest
 
@@ -339,9 +323,6 @@ func (*UserController) AuthRole(ctx *gin.Context) {
 // 用户授权角色
 func (*UserController) AddAuthRole(ctx *gin.Context) {
 
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
-
 	var param dto.AddUserAuthRoleRequest
 
 	if err := ctx.ShouldBind(&param); err != nil {
@@ -389,9 +370,6 @@ func (*UserController) ImportTemplate(ctx *gin.Context) {
 
 // 导入用户数据
 func (*UserController) ImportData(ctx *gin.Context) {
-
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_IMPORT)
 
 	file, err := ctx.FormFile("file")
 	if err != nil {
@@ -514,9 +492,6 @@ func (*UserController) ImportData(ctx *gin.Context) {
 
 // 导出用户数据
 func (*UserController) Export(ctx *gin.Context) {
-
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_EXPORT)
 
 	var param dto.UserListRequest
 

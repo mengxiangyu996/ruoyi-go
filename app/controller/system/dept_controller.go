@@ -62,9 +62,6 @@ func (*DeptController) Detail(ctx *gin.Context) {
 // 新增部门
 func (*DeptController) Create(ctx *gin.Context) {
 
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_INSERT)
-
 	var param dto.CreateDeptRequest
 
 	if err := ctx.ShouldBind(&param); err != nil {
@@ -110,9 +107,6 @@ func (*DeptController) Create(ctx *gin.Context) {
 
 // 更新部门
 func (*DeptController) Update(ctx *gin.Context) {
-
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
 
 	var param dto.UpdateDeptRequest
 
@@ -165,9 +159,6 @@ func (*DeptController) Update(ctx *gin.Context) {
 
 // 删除部门
 func (*DeptController) Remove(ctx *gin.Context) {
-
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_DELETE)
 
 	deptId, _ := strconv.Atoi(ctx.Param("deptId"))
 

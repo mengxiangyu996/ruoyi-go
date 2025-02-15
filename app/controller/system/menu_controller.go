@@ -5,7 +5,6 @@ import (
 	"ruoyi-go/app/security"
 	"ruoyi-go/app/service"
 	"ruoyi-go/app/validator"
-	"ruoyi-go/common/types/constant"
 	"ruoyi-go/framework/response"
 	"strconv"
 
@@ -64,9 +63,6 @@ func (*MenuController) RoleMenuTreeselect(ctx *gin.Context) {
 // 新增菜单
 func (*MenuController) Create(ctx *gin.Context) {
 
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_INSERT)
-
 	var param dto.CreateMenuRequest
 
 	if err := ctx.ShouldBind(&param); err != nil {
@@ -110,9 +106,6 @@ func (*MenuController) Create(ctx *gin.Context) {
 
 // 更新菜单
 func (*MenuController) Update(ctx *gin.Context) {
-
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
 
 	var param dto.UpdateMenuRequest
 
@@ -158,9 +151,6 @@ func (*MenuController) Update(ctx *gin.Context) {
 
 // 删除菜单
 func (*MenuController) Remove(ctx *gin.Context) {
-
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_DELETE)
 
 	menuId, _ := strconv.Atoi(ctx.Param("menuId"))
 

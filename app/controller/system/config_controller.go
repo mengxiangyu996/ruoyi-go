@@ -5,7 +5,6 @@ import (
 	"ruoyi-go/app/security"
 	"ruoyi-go/app/service"
 	"ruoyi-go/app/validator"
-	"ruoyi-go/common/types/constant"
 	rediskey "ruoyi-go/common/types/redis-key"
 	"ruoyi-go/common/utils"
 	"ruoyi-go/framework/dal"
@@ -47,9 +46,6 @@ func (*ConfigController) Detail(ctx *gin.Context) {
 // 新增参数
 func (*ConfigController) Create(ctx *gin.Context) {
 
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_INSERT)
-
 	var param dto.CreateConfigRequest
 
 	if err := ctx.ShouldBind(&param); err != nil {
@@ -84,9 +80,6 @@ func (*ConfigController) Create(ctx *gin.Context) {
 
 // 更新参数
 func (*ConfigController) Update(ctx *gin.Context) {
-
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_UPDATE)
 
 	var param dto.UpdateConfigRequest
 
@@ -124,9 +117,6 @@ func (*ConfigController) Update(ctx *gin.Context) {
 // 删除参数
 func (*ConfigController) Remove(ctx *gin.Context) {
 
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_DELETE)
-
 	configIds, err := utils.StringToIntSlice(ctx.Param("configIds"), ",")
 	if err != nil {
 		response.NewError().SetMsg(err.Error()).Json(ctx)
@@ -153,9 +143,6 @@ func (*ConfigController) ConfigKey(ctx *gin.Context) {
 
 // 数据导出
 func (*ConfigController) Export(ctx *gin.Context) {
-
-	// 设置业务类型，操作日志获取
-	ctx.Set(constant.REQUEST_BUSINESS_TYPE, constant.REQUEST_BUSINESS_TYPE_EXPORT)
 
 	var param dto.ConfigListRequest
 

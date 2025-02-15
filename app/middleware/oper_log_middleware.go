@@ -18,7 +18,9 @@ import (
 )
 
 // 操作日志中间件
-func OperLogMiddleware() gin.HandlerFunc {
+// title 操作模块标题
+// businessType 操作类型 constant.REQUEST_BUSINESS_TYPE_*
+func OperLogMiddleware(title string, businessType int) gin.HandlerFunc {
 
 	return func(ctx *gin.Context) {
 
@@ -59,8 +61,8 @@ func OperLogMiddleware() gin.HandlerFunc {
 		ipaddress := ipaddress.GetAddress(ctx.ClientIP(), ctx.Request.UserAgent())
 
 		sysOperLog := dto.SaveOperLogRequest{
-			Title:         ctx.FullPath(),
-			BusinessType:  0,
+			Title:         title,
+			BusinessType:  businessType,
 			Method:        ctx.HandlerName(),
 			RequestMethod: ctx.Request.Method,
 			OperName:      operName,
@@ -79,13 +81,6 @@ func OperLogMiddleware() gin.HandlerFunc {
 		ctx.Writer = rw
 
 		ctx.Next()
-
-		if ctx.GetString(constant.REQUEST_TITLE) != "" {
-			sysOperLog.Title = ctx.GetString(constant.REQUEST_TITLE)
-		}
-		if ctx.GetInt(constant.REQUEST_BUSINESS_TYPE) != 0 {
-			sysOperLog.BusinessType = ctx.GetInt(constant.REQUEST_BUSINESS_TYPE)
-		}
 
 		sysOperLog.JsonResult = rw.Body.String()
 
