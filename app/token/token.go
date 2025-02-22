@@ -140,12 +140,12 @@ type UserTokenResponse struct {
 	ExpireTime datetime.Datetime `json:"expireTime"`
 }
 
-// 序列化dto.UserTokenResponse，实现redis读取
+// 序列化dto.UserTokenResponse，实现redis读写
 func (u UserTokenResponse) MarshalBinary() ([]byte, error) {
 	return json.Marshal(u)
 }
 
-// 反序列化dto.UserTokenResponse，实现redis读取
+// 反序列化dto.UserTokenResponse，实现redis读写
 func (u *UserTokenResponse) UnmarshalBinary(data []byte) error {
 	return json.Unmarshal(data, u)
 }
