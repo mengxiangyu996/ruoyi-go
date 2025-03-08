@@ -26,7 +26,7 @@ func UpdateDeptValidator(param dto.UpdateDeptRequest) error {
 		return errors.New("参数错误")
 	}
 
-	if param.ParentId <= 0 {
+	if param.DeptId != 100 && param.ParentId <= 0 {
 		return errors.New("请选择上级部门")
 	}
 
