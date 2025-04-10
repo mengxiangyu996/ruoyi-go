@@ -96,7 +96,7 @@ func DeleteToken(ctx *gin.Context) error {
 		return err
 	}
 
-	return dal.Redis.Del(ctx.Request.Context(), rediskey.UserTokenKey+tokenKey).Err()
+	return dal.Redis.Del(ctx.Request.Context(), tokenKey).Err()
 }
 
 // 获取授权用户的redis key
