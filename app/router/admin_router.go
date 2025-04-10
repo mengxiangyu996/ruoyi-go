@@ -13,6 +13,7 @@ import (
 // 后台路由组
 func RegisterAdminGroupApi(api *gin.RouterGroup) {
 
+	api.Use(middleware.Cors())                                                                  // 跨域中间件
 	api.GET("/captchaImage", (&controller.AuthController{}).CaptchaImage)                       // 获取验证码
 	api.POST("/register", (&controller.AuthController{}).Register)                              // 注册
 	api.POST("/login", middleware.LogininforMiddleware(), (&controller.AuthController{}).Login) // 登录
