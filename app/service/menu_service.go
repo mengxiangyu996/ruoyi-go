@@ -267,7 +267,7 @@ func (s *MenuService) BuildRouterMenus(menus []dto.MenuListTreeResponse) []dto.M
 			}
 			router.Path = "/"
 			children := dto.MenuMetaTreeResponse{
-				Path:      s.InnerLinkReplaceEach(menu.Path),
+				Path:      s.InnerLinkReplacePach(menu.Path),
 				Component: constant.INNER_LINK_COMPONENT,
 				Name:      s.GetRouteNameOrDefault(menu.RouteName, menu.Path),
 				Meta: dto.MenuMetaResponse{
@@ -312,7 +312,7 @@ func (s *MenuService) GetRoutePath(menu dto.MenuListTreeResponse) string {
 
 	// 内链打开外网方式
 	if menu.ParentId != 0 && !s.IsInnerLink(menu) {
-		routePath = s.InnerLinkReplaceEach(routePath)
+		routePath = s.InnerLinkReplacePach(routePath)
 	}
 
 	// 非外链并且是一级目录（类型为目录）
@@ -358,7 +358,7 @@ func (s *MenuService) IsParentView(menu dto.MenuListTreeResponse) bool {
 }
 
 // 内链域名特殊字符替换
-func (s *MenuService) InnerLinkReplaceEach(path string) string {
+func (s *MenuService) InnerLinkReplacePach(path string) string {
 	// 去掉 http:// 和 https://
 	path = strings.ReplaceAll(path, "http://", "")
 	path = strings.ReplaceAll(path, "https://", "")
