@@ -1,6 +1,10 @@
 <h1 align="center" style="margin: 30px 0 30px; font-weight: bold; font-size: 30px">RuoYi-Go</h1>
 <h4 align="center">基于Go+Gin+Gorm实现的若依服务端脚手架</h4>
 
+[中文](https://www.readme-i18n.com/mengxiangyu996/ruoyi-go?lang=zh) | 
+[English](https://www.readme-i18n.com/mengxiangyu996/ruoyi-go?lang=en)
+
+
 ## 平台简介
 * 本仓库为后端技术栈 [Gin](https://gin-gonic.com/zh-cn/docs) + [Gorm](https://gorm.io/zh_CN/docs/index.html) 的 `golang` 版本。
 * 配套前端代码仓库地址 [RuoYi-Vue3](https://github.com/yangzongzhuan/RuoYi-Vue3) 或使用 [RuoYi-Vue3-ts](https://github.com/zzh948498/RuoYi-Vue3-ts)
