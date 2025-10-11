@@ -24,5 +24,8 @@
 # Dependency directories (remove the comment below to include it)
 vendor
 
+# 文件目录
+web/upload
+
 # 配置文件
 application.yaml
