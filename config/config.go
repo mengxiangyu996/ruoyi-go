@@ -25,6 +25,8 @@ type Config struct {
 
 	// 开发环境配置
 	Server struct {
+		// 地址
+		Host string `yaml:"host"`
 		// 端口
 		Port int `yaml:"port"`
 		// 模式，可选值：debug、test、release
