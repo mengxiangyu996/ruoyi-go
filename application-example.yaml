@@ -15,6 +15,8 @@ ruoyi:
 
 # 开发环境配置
 server:
+  # 地址
+  host: localhost
   # 端口
   port: 3000
   # 模式，可选值：debug、test、release
