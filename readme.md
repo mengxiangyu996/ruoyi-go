@@ -10,7 +10,7 @@
 > **提示：** 运行前请先安装好 `go` 环境，版本 `1.18` 以上。
 
     # 克隆项目
-    git clone https://github.com/mengxiangyu996/ruoyi-go.git
+    git clone https://github.com/fivepmcoder/ruoyi-go.git
 
     # 进入项目目录
     cd ruoyi-go
@@ -71,10 +71,10 @@
 - [RuoYi-Vue3-ts](https://github.com/zzh948498/RuoYi-Vue3-ts)
 
 ## Star History
-<a href="https://www.star-history.com/#mengxiangyu996/ruoyi-go&Date">
+<a href="https://www.star-history.com/#fivepmcoder/ruoyi-go&Date">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=mengxiangyu996/ruoyi-go&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=mengxiangyu996/ruoyi-go&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=mengxiangyu996/ruoyi-go&type=Date" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=fivepmcoder/ruoyi-go&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=fivepmcoder/ruoyi-go&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=fivepmcoder/ruoyi-go&type=Date" />
  </picture>
 </a>
